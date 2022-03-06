@@ -1,0 +1,44 @@
+name: Publish Release
+
+on:
+  workflow_dispatch:
+  release:
+    types: [ published ]
+
+jobs:
+  bundle-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          repository: ${{ github.event.repository.full_name }}
+          ref: "master"
+
+      - name: Install Foreman
+        uses: rojo-rbx/setup-foreman@v1.0.1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install NPM dependencies
+        uses: bahmutov/npm-install@v1.7.4
+
+      - name: Compile roblox-ts
+        run: |
+          npm run compile
+
+      - name: Build model
+        run: |
+          npm run build
+
+      - name: Bundle modules
+        run: |
+          remodel run ci/bundle.lua public/latest.lua ${{ github.event.release.tag_name }} minify
+          remodel run ci/bundle.lua public/latest.debug.lua ${{ github.event.release.tag_name }}-dbg debug
+
+      - name: Commit latest
+        uses: EndBug/add-and-commit@v8.0.2
+        with:
+          default_author: "github_actions"
+          add: "['public/latest.lua', 'public/latest.debug.lua']"
+          message: 🐋 Release ${{ github.event.release.tag_name }}

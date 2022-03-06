@@ -1,0 +1,24 @@
+{
+	"name": "Orca Test Place",
+	"tree": {
+		"$className": "DataModel",
+
+		"StarterPlayer": {
+			"$className": "StarterPlayer",
+
+			"StarterPlayerScripts": {
+				"$className": "StarterPlayerScripts",
+
+				"Orca": {
+					"$path": "out",
+					"include": {
+						"$path": "include",
+						"node_modules": {
+							"$path": "node_modules/@rbxts"
+						}
+					}
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,4 @@
+std = "roblox+remodel+lua51"
+
+[rules]
+global_usage = "allow"

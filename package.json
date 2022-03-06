@@ -1,0 +1,36 @@
+{
+	"name": "orca",
+	"scripts": {
+		"compile": "npx rbxtsc --verbose --type=model",
+		"watch": "npx rbxtsc -w",
+		"build": "rojo build default.project.json --output \"Orca.rbxm\"",
+		"serve": "rojo serve place.project.json",
+		"bundle": "npm run build && remodel run ci/bundle.lua public/dev.lua dev verbose",
+		"bundle:dbg": "npm run build && remodel run ci/bundle.lua public/dev.lua dev_dbg debug verbose",
+		"bundle:min": "npm run build && remodel run ci/bundle.lua public/dev.lua dev_min minify verbose"
+	},
+	"devDependencies": {
+		"@rbxts/compiler-types": "^1.3.2-types.0",
+		"@rbxts/exploit-types": "github:richie0866/exploit-types",
+		"@rbxts/types": "^1.0.571",
+		"@typescript-eslint/eslint-plugin": "^5.13.0",
+		"@typescript-eslint/parser": "^5.13.0",
+		"eslint": "^8.10.0",
+		"eslint-config-prettier": "^8.5.0",
+		"eslint-plugin-prettier": "^4.0.0",
+		"eslint-plugin-roblox-ts": "^0.0.32",
+		"luamin": "^1.0.4",
+		"prettier": "^2.5.1",
+		"roblox-ts": "^1.2.7",
+		"typescript": "^4.5.5"
+	},
+	"dependencies": {
+		"@rbxts/flipper": "^2.0.1",
+		"@rbxts/make": "^1.0.6",
+		"@rbxts/roact": "^1.4.0-ts.2",
+		"@rbxts/roact-hooked": "^1.2.4",
+		"@rbxts/roact-rodux-hooked": "^1.0.4",
+		"@rbxts/rodux": "^3.0.0-ts.3",
+		"@rbxts/services": "^1.2.0"
+	}
+}
