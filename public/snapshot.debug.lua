@@ -104,7 +104,7 @@ end
 
 ---@param id string
 ---@return table<string, any> environment
-local function createModuleEnvironment(id)
+local function newEnv(id)
 	return setmetatable({
 		VERSION = "22d065a-dbg",
 		script = instanceFromId[id],
@@ -122,7 +122,7 @@ end
 ---@param path string
 ---@param parent string | nil
 ---@param fn function
-local function createModule(name, className, path, parent, fn)
+local function newModule(name, className, path, parent, fn)
 	local instance = Instance.new(className)
 	instance.Name = name
 	instance.Parent = instanceFromId[parent]
@@ -141,7 +141,7 @@ end
 ---@param className string
 ---@param path string
 ---@param parent string | nil
-local function createInstance(name, className, path, parent)
+local function newInstance(name, className, path, parent)
 	local instance = Instance.new(className)
 	instance.Name = name
 	instance.Parent = instanceFromId[parent]
@@ -161,9 +161,9 @@ local function init()
 end
 
 
-createInstance("Orca", "Folder", "Orca", nil)
+newInstance("Orca", "Folder", "Orca", nil)
 
-createModule("App", "ModuleScript", "Orca.App", "Orca", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("App", "ModuleScript", "Orca.App", "Orca", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.include.RuntimeLib)\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
 local Dashboard = TS.import(script, script.Parent, \"views\", \"Dashboard\").default\
@@ -180,18 +180,18 @@ local default = App\
 return {\
 \9default = default,\
 }\
-", '@'.."Orca.App")) setfenv(fn, createModuleEnvironment("Orca.App")) return fn() end)
+", '@'.."Orca.App")) setfenv(fn, newEnv("Orca.App")) return fn() end)
 
-createInstance("components", "Folder", "Orca.components", "Orca")
+newInstance("components", "Folder", "Orca.components", "Orca")
 
-createModule("Acrylic", "ModuleScript", "Orca.components.Acrylic", "Orca.components", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("Acrylic", "ModuleScript", "Orca.components.Acrylic", "Orca.components", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.include.RuntimeLib)\
 local exports = {}\
 exports.default = TS.import(script, script, \"Acrylic\").default\
 return exports\
-", '@'.."Orca.components.Acrylic")) setfenv(fn, createModuleEnvironment("Orca.components.Acrylic")) return fn() end)
+", '@'.."Orca.components.Acrylic")) setfenv(fn, newEnv("Orca.components.Acrylic")) return fn() end)
 
-createModule("Acrylic", "ModuleScript", "Orca.components.Acrylic.Acrylic", "Orca.components.Acrylic", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("Acrylic", "ModuleScript", "Orca.components.Acrylic.Acrylic", "Orca.components.Acrylic", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.include.RuntimeLib)\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
 local _roact_hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out)\
@@ -348,9 +348,9 @@ AcrylicBlur = hooked(AcrylicBlurComponent)\
 return {\
 \9default = default,\
 }\
-", '@'.."Orca.components.Acrylic.Acrylic")) setfenv(fn, createModuleEnvironment("Orca.components.Acrylic.Acrylic")) return fn() end)
+", '@'.."Orca.components.Acrylic.Acrylic")) setfenv(fn, newEnv("Orca.components.Acrylic.Acrylic")) return fn() end)
 
-createModule("Acrylic.story", "ModuleScript", "Orca.components.Acrylic.Acrylic.story", "Orca.components.Acrylic", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("Acrylic.story", "ModuleScript", "Orca.components.Acrylic.Acrylic.story", "Orca.components.Acrylic", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.include.RuntimeLib)\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
 local Provider = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-rodux-hooked\").out).Provider\
@@ -392,9 +392,9 @@ return function(target)\
 \9\9return Roact.unmount(handle)\
 \9end\
 end\
-", '@'.."Orca.components.Acrylic.Acrylic.story")) setfenv(fn, createModuleEnvironment("Orca.components.Acrylic.Acrylic.story")) return fn() end)
+", '@'.."Orca.components.Acrylic.Acrylic.story")) setfenv(fn, newEnv("Orca.components.Acrylic.Acrylic.story")) return fn() end)
 
-createModule("acrylic-instance", "ModuleScript", "Orca.components.Acrylic.acrylic-instance", "Orca.components.Acrylic", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("acrylic-instance", "ModuleScript", "Orca.components.Acrylic.acrylic-instance", "Orca.components.Acrylic", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.include.RuntimeLib)\
 local Make = TS.import(script, TS.getModule(script, \"@rbxts\", \"make\"))\
 local fill = {\
@@ -485,9 +485,9 @@ local acrylicInstance = Make(\"Model\", _object)\
 return {\
 \9acrylicInstance = acrylicInstance,\
 }\
-", '@'.."Orca.components.Acrylic.acrylic-instance")) setfenv(fn, createModuleEnvironment("Orca.components.Acrylic.acrylic-instance")) return fn() end)
+", '@'.."Orca.components.Acrylic.acrylic-instance")) setfenv(fn, newEnv("Orca.components.Acrylic.acrylic-instance")) return fn() end)
 
-createModule("ActionButton", "ModuleScript", "Orca.components.ActionButton", "Orca.components", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("ActionButton", "ModuleScript", "Orca.components.ActionButton", "Orca.components", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.include.RuntimeLib)\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
 local _roact_hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out)\
@@ -578,9 +578,9 @@ local default = hooked(ActionButton)\
 return {\
 \9default = default,\
 }\
-", '@'.."Orca.components.ActionButton")) setfenv(fn, createModuleEnvironment("Orca.components.ActionButton")) return fn() end)
+", '@'.."Orca.components.ActionButton")) setfenv(fn, newEnv("Orca.components.ActionButton")) return fn() end)
 
-createModule("Border", "ModuleScript", "Orca.components.Border", "Orca.components", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("Border", "ModuleScript", "Orca.components.Border", "Orca.components", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.include.RuntimeLib)\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
 local hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out).hooked\
@@ -651,9 +651,9 @@ local default = hooked(Border)\
 return {\
 \9default = default,\
 }\
-", '@'.."Orca.components.Border")) setfenv(fn, createModuleEnvironment("Orca.components.Border")) return fn() end)
+", '@'.."Orca.components.Border")) setfenv(fn, newEnv("Orca.components.Border")) return fn() end)
 
-createModule("BrightButton", "ModuleScript", "Orca.components.BrightButton", "Orca.components", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("BrightButton", "ModuleScript", "Orca.components.BrightButton", "Orca.components", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.include.RuntimeLib)\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
 local hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out).hooked\
@@ -788,9 +788,9 @@ local default = hooked(BrightButton)\
 return {\
 \9default = default,\
 }\
-", '@'.."Orca.components.BrightButton")) setfenv(fn, createModuleEnvironment("Orca.components.BrightButton")) return fn() end)
+", '@'.."Orca.components.BrightButton")) setfenv(fn, newEnv("Orca.components.BrightButton")) return fn() end)
 
-createModule("BrightSlider", "ModuleScript", "Orca.components.BrightSlider", "Orca.components", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("BrightSlider", "ModuleScript", "Orca.components.BrightSlider", "Orca.components", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.include.RuntimeLib)\
 local Spring = TS.import(script, TS.getModule(script, \"@rbxts\", \"flipper\").src).Spring\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
@@ -982,9 +982,9 @@ Drag = hooked(DragComponent)\
 return {\
 \9default = default,\
 }\
-", '@'.."Orca.components.BrightSlider")) setfenv(fn, createModuleEnvironment("Orca.components.BrightSlider")) return fn() end)
+", '@'.."Orca.components.BrightSlider")) setfenv(fn, newEnv("Orca.components.BrightSlider")) return fn() end)
 
-createModule("Canvas", "ModuleScript", "Orca.components.Canvas", "Orca.components", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("Canvas", "ModuleScript", "Orca.components.Canvas", "Orca.components", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.include.RuntimeLib)\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
 local hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out).hooked\
@@ -1060,9 +1060,9 @@ local default = hooked(Canvas)\
 return {\
 \9default = default,\
 }\
-", '@'.."Orca.components.Canvas")) setfenv(fn, createModuleEnvironment("Orca.components.Canvas")) return fn() end)
+", '@'.."Orca.components.Canvas")) setfenv(fn, newEnv("Orca.components.Canvas")) return fn() end)
 
-createModule("Card", "ModuleScript", "Orca.components.Card", "Orca.components", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("Card", "ModuleScript", "Orca.components.Card", "Orca.components", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.include.RuntimeLib)\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
 local hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out).hooked\
@@ -1158,9 +1158,9 @@ local default = hooked(Card)\
 return {\
 \9default = default,\
 }\
-", '@'.."Orca.components.Card")) setfenv(fn, createModuleEnvironment("Orca.components.Card")) return fn() end)
+", '@'.."Orca.components.Card")) setfenv(fn, newEnv("Orca.components.Card")) return fn() end)
 
-createModule("Fill", "ModuleScript", "Orca.components.Fill", "Orca.components", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("Fill", "ModuleScript", "Orca.components.Fill", "Orca.components", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.include.RuntimeLib)\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
 local hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out).hooked\
@@ -1238,9 +1238,9 @@ local default = hooked(Fill)\
 return {\
 \9default = default,\
 }\
-", '@'.."Orca.components.Fill")) setfenv(fn, createModuleEnvironment("Orca.components.Fill")) return fn() end)
+", '@'.."Orca.components.Fill")) setfenv(fn, newEnv("Orca.components.Fill")) return fn() end)
 
-createModule("Glow", "ModuleScript", "Orca.components.Glow", "Orca.components", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("Glow", "ModuleScript", "Orca.components.Glow", "Orca.components", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.include.RuntimeLib)\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
 local _roact_hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out)\
@@ -1374,9 +1374,9 @@ return {\
 \9RADIUS_TO_CENTER_OFFSET = RADIUS_TO_CENTER_OFFSET,\
 \9default = default,\
 }\
-", '@'.."Orca.components.Glow")) setfenv(fn, createModuleEnvironment("Orca.components.Glow")) return fn() end)
+", '@'.."Orca.components.Glow")) setfenv(fn, newEnv("Orca.components.Glow")) return fn() end)
 
-createModule("ParallaxImage", "ModuleScript", "Orca.components.ParallaxImage", "Orca.components", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("ParallaxImage", "ModuleScript", "Orca.components.ParallaxImage", "Orca.components", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.include.RuntimeLib)\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
 local mapBinding = TS.import(script, script.Parent.Parent, \"utils\", \"binding-util\").mapBinding\
@@ -1416,9 +1416,9 @@ local default = ParallaxImage\
 return {\
 \9default = default,\
 }\
-", '@'.."Orca.components.ParallaxImage")) setfenv(fn, createModuleEnvironment("Orca.components.ParallaxImage")) return fn() end)
+", '@'.."Orca.components.ParallaxImage")) setfenv(fn, newEnv("Orca.components.ParallaxImage")) return fn() end)
 
-createModule("constants", "ModuleScript", "Orca.constants", "Orca", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("constants", "ModuleScript", "Orca.constants", "Orca", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local IS_DEV = getgenv == nil\
 local _condition = VERSION\
 if _condition == nil then\
@@ -1429,24 +1429,24 @@ return {\
 \9IS_DEV = IS_DEV,\
 \9VERSION_TAG = VERSION_TAG,\
 }\
-", '@'.."Orca.constants")) setfenv(fn, createModuleEnvironment("Orca.constants")) return fn() end)
+", '@'.."Orca.constants")) setfenv(fn, newEnv("Orca.constants")) return fn() end)
 
-createInstance("context", "Folder", "Orca.context", "Orca")
+newInstance("context", "Folder", "Orca.context", "Orca")
 
-createModule("scale-context", "ModuleScript", "Orca.context.scale-context", "Orca.context", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("scale-context", "ModuleScript", "Orca.context.scale-context", "Orca.context", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.include.RuntimeLib)\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
 local ScaleContext = Roact.createContext((Roact.createBinding(1)))\
 return {\
 \9ScaleContext = ScaleContext,\
 }\
-", '@'.."Orca.context.scale-context")) setfenv(fn, createModuleEnvironment("Orca.context.scale-context")) return fn() end)
+", '@'.."Orca.context.scale-context")) setfenv(fn, newEnv("Orca.context.scale-context")) return fn() end)
 
-createInstance("hooks", "Folder", "Orca.hooks", "Orca")
+newInstance("hooks", "Folder", "Orca.hooks", "Orca")
 
-createInstance("common", "Folder", "Orca.hooks.common", "Orca.hooks")
+newInstance("common", "Folder", "Orca.hooks.common", "Orca.hooks")
 
-createModule("flipper-hooks", "ModuleScript", "Orca.hooks.common.flipper-hooks", "Orca.hooks.common", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("flipper-hooks", "ModuleScript", "Orca.hooks.common.flipper-hooks", "Orca.hooks.common", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.include.RuntimeLib)\
 local exports = {}\
 exports.getBinding = TS.import(script, script, \"get-binding\").getBinding\
@@ -1456,9 +1456,9 @@ exports.useLinear = TS.import(script, script, \"use-linear\").useLinear\
 exports.useMotor = TS.import(script, script, \"use-motor\").useMotor\
 exports.useSpring = TS.import(script, script, \"use-spring\").useSpring\
 return exports\
-", '@'.."Orca.hooks.common.flipper-hooks")) setfenv(fn, createModuleEnvironment("Orca.hooks.common.flipper-hooks")) return fn() end)
+", '@'.."Orca.hooks.common.flipper-hooks")) setfenv(fn, newEnv("Orca.hooks.common.flipper-hooks")) return fn() end)
 
-createModule("get-binding", "ModuleScript", "Orca.hooks.common.flipper-hooks.get-binding", "Orca.hooks.common.flipper-hooks", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("get-binding", "ModuleScript", "Orca.hooks.common.flipper-hooks.get-binding", "Orca.hooks.common.flipper-hooks", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.Parent.include.RuntimeLib)\
 local isMotor = TS.import(script, TS.getModule(script, \"@rbxts\", \"flipper\").src).isMotor\
 local createBinding = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src).createBinding\
@@ -1482,9 +1482,9 @@ end\
 return {\
 \9getBinding = getBinding,\
 }\
-", '@'.."Orca.hooks.common.flipper-hooks.get-binding")) setfenv(fn, createModuleEnvironment("Orca.hooks.common.flipper-hooks.get-binding")) return fn() end)
+", '@'.."Orca.hooks.common.flipper-hooks.get-binding")) setfenv(fn, newEnv("Orca.hooks.common.flipper-hooks.get-binding")) return fn() end)
 
-createModule("use-goal", "ModuleScript", "Orca.hooks.common.flipper-hooks.use-goal", "Orca.hooks.common.flipper-hooks", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("use-goal", "ModuleScript", "Orca.hooks.common.flipper-hooks.use-goal", "Orca.hooks.common.flipper-hooks", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.Parent.include.RuntimeLib)\
 local getBinding = TS.import(script, script.Parent, \"get-binding\").getBinding\
 local useMotor = TS.import(script, script.Parent, \"use-motor\").useMotor\
@@ -1496,9 +1496,9 @@ end\
 return {\
 \9useGoal = useGoal,\
 }\
-", '@'.."Orca.hooks.common.flipper-hooks.use-goal")) setfenv(fn, createModuleEnvironment("Orca.hooks.common.flipper-hooks.use-goal")) return fn() end)
+", '@'.."Orca.hooks.common.flipper-hooks.use-goal")) setfenv(fn, newEnv("Orca.hooks.common.flipper-hooks.use-goal")) return fn() end)
 
-createModule("use-instant", "ModuleScript", "Orca.hooks.common.flipper-hooks.use-instant", "Orca.hooks.common.flipper-hooks", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("use-instant", "ModuleScript", "Orca.hooks.common.flipper-hooks.use-instant", "Orca.hooks.common.flipper-hooks", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.Parent.include.RuntimeLib)\
 local Instant = TS.import(script, TS.getModule(script, \"@rbxts\", \"flipper\").src).Instant\
 local useGoal = TS.import(script, script.Parent, \"use-goal\").useGoal\
@@ -1508,9 +1508,9 @@ end\
 return {\
 \9useInstant = useInstant,\
 }\
-", '@'.."Orca.hooks.common.flipper-hooks.use-instant")) setfenv(fn, createModuleEnvironment("Orca.hooks.common.flipper-hooks.use-instant")) return fn() end)
+", '@'.."Orca.hooks.common.flipper-hooks.use-instant")) setfenv(fn, newEnv("Orca.hooks.common.flipper-hooks.use-instant")) return fn() end)
 
-createModule("use-linear", "ModuleScript", "Orca.hooks.common.flipper-hooks.use-linear", "Orca.hooks.common.flipper-hooks", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("use-linear", "ModuleScript", "Orca.hooks.common.flipper-hooks.use-linear", "Orca.hooks.common.flipper-hooks", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.Parent.include.RuntimeLib)\
 local Linear = TS.import(script, TS.getModule(script, \"@rbxts\", \"flipper\").src).Linear\
 local useGoal = TS.import(script, script.Parent, \"use-goal\").useGoal\
@@ -1520,9 +1520,9 @@ end\
 return {\
 \9useLinear = useLinear,\
 }\
-", '@'.."Orca.hooks.common.flipper-hooks.use-linear")) setfenv(fn, createModuleEnvironment("Orca.hooks.common.flipper-hooks.use-linear")) return fn() end)
+", '@'.."Orca.hooks.common.flipper-hooks.use-linear")) setfenv(fn, newEnv("Orca.hooks.common.flipper-hooks.use-linear")) return fn() end)
 
-createModule("use-motor", "ModuleScript", "Orca.hooks.common.flipper-hooks.use-motor", "Orca.hooks.common.flipper-hooks", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("use-motor", "ModuleScript", "Orca.hooks.common.flipper-hooks.use-motor", "Orca.hooks.common.flipper-hooks", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.Parent.include.RuntimeLib)\
 local _flipper = TS.import(script, TS.getModule(script, \"@rbxts\", \"flipper\").src)\
 local GroupMotor = _flipper.GroupMotor\
@@ -1543,9 +1543,9 @@ end\
 return {\
 \9useMotor = useMotor,\
 }\
-", '@'.."Orca.hooks.common.flipper-hooks.use-motor")) setfenv(fn, createModuleEnvironment("Orca.hooks.common.flipper-hooks.use-motor")) return fn() end)
+", '@'.."Orca.hooks.common.flipper-hooks.use-motor")) setfenv(fn, newEnv("Orca.hooks.common.flipper-hooks.use-motor")) return fn() end)
 
-createModule("use-spring", "ModuleScript", "Orca.hooks.common.flipper-hooks.use-spring", "Orca.hooks.common.flipper-hooks", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("use-spring", "ModuleScript", "Orca.hooks.common.flipper-hooks.use-spring", "Orca.hooks.common.flipper-hooks", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.Parent.include.RuntimeLib)\
 local Spring = TS.import(script, TS.getModule(script, \"@rbxts\", \"flipper\").src).Spring\
 local useGoal = TS.import(script, script.Parent, \"use-goal\").useGoal\
@@ -1555,9 +1555,9 @@ end\
 return {\
 \9useSpring = useSpring,\
 }\
-", '@'.."Orca.hooks.common.flipper-hooks.use-spring")) setfenv(fn, createModuleEnvironment("Orca.hooks.common.flipper-hooks.use-spring")) return fn() end)
+", '@'.."Orca.hooks.common.flipper-hooks.use-spring")) setfenv(fn, newEnv("Orca.hooks.common.flipper-hooks.use-spring")) return fn() end)
 
-createModule("rodux-hooks", "ModuleScript", "Orca.hooks.common.rodux-hooks", "Orca.hooks.common", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("rodux-hooks", "ModuleScript", "Orca.hooks.common.rodux-hooks", "Orca.hooks.common", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.include.RuntimeLib)\
 local _roact_rodux_hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-rodux-hooked\").out)\
 local useDispatch = _roact_rodux_hooked.useDispatch\
@@ -1575,9 +1575,9 @@ return {\
 \9useAppDispatch = useAppDispatch,\
 \9useAppStore = useAppStore,\
 }\
-", '@'.."Orca.hooks.common.rodux-hooks")) setfenv(fn, createModuleEnvironment("Orca.hooks.common.rodux-hooks")) return fn() end)
+", '@'.."Orca.hooks.common.rodux-hooks")) setfenv(fn, newEnv("Orca.hooks.common.rodux-hooks")) return fn() end)
 
-createModule("use-delayed-state", "ModuleScript", "Orca.hooks.common.use-delayed-state", "Orca.hooks.common", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("use-delayed-state", "ModuleScript", "Orca.hooks.common.use-delayed-state", "Orca.hooks.common", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.include.RuntimeLib)\
 local _roact_hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out)\
 local useEffect = _roact_hooked.useEffect\
@@ -1631,9 +1631,9 @@ end\
 return {\
 \9useDelayedState = useDelayedState,\
 }\
-", '@'.."Orca.hooks.common.use-delayed-state")) setfenv(fn, createModuleEnvironment("Orca.hooks.common.use-delayed-state")) return fn() end)
+", '@'.."Orca.hooks.common.use-delayed-state")) setfenv(fn, newEnv("Orca.hooks.common.use-delayed-state")) return fn() end)
 
-createModule("use-did-mount", "ModuleScript", "Orca.hooks.common.use-did-mount", "Orca.hooks.common", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("use-did-mount", "ModuleScript", "Orca.hooks.common.use-did-mount", "Orca.hooks.common", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.include.RuntimeLib)\
 local _roact_hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out)\
 local useEffect = _roact_hooked.useEffect\
@@ -1658,9 +1658,9 @@ return {\
 \9useDidMount = useDidMount,\
 \9useIsMount = useIsMount,\
 }\
-", '@'.."Orca.hooks.common.use-did-mount")) setfenv(fn, createModuleEnvironment("Orca.hooks.common.use-did-mount")) return fn() end)
+", '@'.."Orca.hooks.common.use-did-mount")) setfenv(fn, newEnv("Orca.hooks.common.use-did-mount")) return fn() end)
 
-createModule("use-forced-update", "ModuleScript", "Orca.hooks.common.use-forced-update", "Orca.hooks.common", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("use-forced-update", "ModuleScript", "Orca.hooks.common.use-forced-update", "Orca.hooks.common", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.include.RuntimeLib)\
 local _roact_hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out)\
 local useCallback = _roact_hooked.useCallback\
@@ -1677,9 +1677,9 @@ end\
 return {\
 \9useForcedUpdate = useForcedUpdate,\
 }\
-", '@'.."Orca.hooks.common.use-forced-update")) setfenv(fn, createModuleEnvironment("Orca.hooks.common.use-forced-update")) return fn() end)
+", '@'.."Orca.hooks.common.use-forced-update")) setfenv(fn, newEnv("Orca.hooks.common.use-forced-update")) return fn() end)
 
-createModule("use-interval", "ModuleScript", "Orca.hooks.common.use-interval", "Orca.hooks.common", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("use-interval", "ModuleScript", "Orca.hooks.common.use-interval", "Orca.hooks.common", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.include.RuntimeLib)\
 local _roact_hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out)\
 local useEffect = _roact_hooked.useEffect\
@@ -1705,9 +1705,9 @@ end\
 return {\
 \9useInterval = useInterval,\
 }\
-", '@'.."Orca.hooks.common.use-interval")) setfenv(fn, createModuleEnvironment("Orca.hooks.common.use-interval")) return fn() end)
+", '@'.."Orca.hooks.common.use-interval")) setfenv(fn, newEnv("Orca.hooks.common.use-interval")) return fn() end)
 
-createModule("use-mouse-location", "ModuleScript", "Orca.hooks.common.use-mouse-location", "Orca.hooks.common", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("use-mouse-location", "ModuleScript", "Orca.hooks.common.use-mouse-location", "Orca.hooks.common", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.include.RuntimeLib)\
 local _roact_hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out)\
 local useBinding = _roact_hooked.useBinding\
@@ -1736,9 +1736,9 @@ end\
 return {\
 \9useMouseLocation = useMouseLocation,\
 }\
-", '@'.."Orca.hooks.common.use-mouse-location")) setfenv(fn, createModuleEnvironment("Orca.hooks.common.use-mouse-location")) return fn() end)
+", '@'.."Orca.hooks.common.use-mouse-location")) setfenv(fn, newEnv("Orca.hooks.common.use-mouse-location")) return fn() end)
 
-createModule("use-promise", "ModuleScript", "Orca.hooks.common.use-promise", "Orca.hooks.common", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("use-promise", "ModuleScript", "Orca.hooks.common.use-promise", "Orca.hooks.common", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.include.RuntimeLib)\
 local _roact_hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out)\
 local useEffect = _roact_hooked.useEffect\
@@ -1823,9 +1823,9 @@ end\
 return {\
 \9usePromise = usePromise,\
 }\
-", '@'.."Orca.hooks.common.use-promise")) setfenv(fn, createModuleEnvironment("Orca.hooks.common.use-promise")) return fn() end)
+", '@'.."Orca.hooks.common.use-promise")) setfenv(fn, newEnv("Orca.hooks.common.use-promise")) return fn() end)
 
-createModule("use-set-state", "ModuleScript", "Orca.hooks.common.use-set-state", "Orca.hooks.common", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("use-set-state", "ModuleScript", "Orca.hooks.common.use-set-state", "Orca.hooks.common", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.include.RuntimeLib)\
 local useState = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out).useState\
 local function useSetState(initialState)\
@@ -1859,9 +1859,9 @@ end\
 return {\
 \9default = useSetState,\
 }\
-", '@'.."Orca.hooks.common.use-set-state")) setfenv(fn, createModuleEnvironment("Orca.hooks.common.use-set-state")) return fn() end)
+", '@'.."Orca.hooks.common.use-set-state")) setfenv(fn, newEnv("Orca.hooks.common.use-set-state")) return fn() end)
 
-createModule("use-spring", "ModuleScript", "Orca.hooks.common.use-spring", "Orca.hooks.common", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("use-spring", "ModuleScript", "Orca.hooks.common.use-spring", "Orca.hooks.common", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.include.RuntimeLib)\
 local Spring = TS.import(script, TS.getModule(script, \"@rbxts\", \"flipper\").src).Spring\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
@@ -1923,9 +1923,9 @@ end\
 return {\
 \9useSpring = useSpring,\
 }\
-", '@'.."Orca.hooks.common.use-spring")) setfenv(fn, createModuleEnvironment("Orca.hooks.common.use-spring")) return fn() end)
+", '@'.."Orca.hooks.common.use-spring")) setfenv(fn, newEnv("Orca.hooks.common.use-spring")) return fn() end)
 
-createModule("use-viewport-size", "ModuleScript", "Orca.hooks.common.use-viewport-size", "Orca.hooks.common", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("use-viewport-size", "ModuleScript", "Orca.hooks.common.use-viewport-size", "Orca.hooks.common", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.include.RuntimeLib)\
 local _roact_hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out)\
 local useBinding = _roact_hooked.useBinding\
@@ -1971,9 +1971,9 @@ end\
 return {\
 \9useViewportSize = useViewportSize,\
 }\
-", '@'.."Orca.hooks.common.use-viewport-size")) setfenv(fn, createModuleEnvironment("Orca.hooks.common.use-viewport-size")) return fn() end)
+", '@'.."Orca.hooks.common.use-viewport-size")) setfenv(fn, newEnv("Orca.hooks.common.use-viewport-size")) return fn() end)
 
-createModule("use-current-page", "ModuleScript", "Orca.hooks.use-current-page", "Orca.hooks", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("use-current-page", "ModuleScript", "Orca.hooks.use-current-page", "Orca.hooks", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.include.RuntimeLib)\
 local useAppSelector = TS.import(script, script.Parent, \"common\", \"rodux-hooks\").useAppSelector\
 local function useCurrentPage()\
@@ -1990,9 +1990,9 @@ return {\
 \9useCurrentPage = useCurrentPage,\
 \9useIsPageOpen = useIsPageOpen,\
 }\
-", '@'.."Orca.hooks.use-current-page")) setfenv(fn, createModuleEnvironment("Orca.hooks.use-current-page")) return fn() end)
+", '@'.."Orca.hooks.use-current-page")) setfenv(fn, newEnv("Orca.hooks.use-current-page")) return fn() end)
 
-createModule("use-friends", "ModuleScript", "Orca.hooks.use-friends", "Orca.hooks", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("use-friends", "ModuleScript", "Orca.hooks.use-friends", "Orca.hooks", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.include.RuntimeLib)\
 local useMemo = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out).useMemo\
 local Players = TS.import(script, TS.getModule(script, \"@rbxts\", \"services\")).Players\
@@ -2081,9 +2081,9 @@ return {\
 \9useFriendsPlaying = useFriendsPlaying,\
 \9useFriendActivity = useFriendActivity,\
 }\
-", '@'.."Orca.hooks.use-friends")) setfenv(fn, createModuleEnvironment("Orca.hooks.use-friends")) return fn() end)
+", '@'.."Orca.hooks.use-friends")) setfenv(fn, newEnv("Orca.hooks.use-friends")) return fn() end)
 
-createModule("use-scale", "ModuleScript", "Orca.hooks.use-scale", "Orca.hooks", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("use-scale", "ModuleScript", "Orca.hooks.use-scale", "Orca.hooks", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.include.RuntimeLib)\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
 local useContext = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out).useContext\
@@ -2099,9 +2099,9 @@ end\
 return {\
 \9useScale = useScale,\
 }\
-", '@'.."Orca.hooks.use-scale")) setfenv(fn, createModuleEnvironment("Orca.hooks.use-scale")) return fn() end)
+", '@'.."Orca.hooks.use-scale")) setfenv(fn, newEnv("Orca.hooks.use-scale")) return fn() end)
 
-createModule("use-theme", "ModuleScript", "Orca.hooks.use-theme", "Orca.hooks", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("use-theme", "ModuleScript", "Orca.hooks.use-theme", "Orca.hooks", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.include.RuntimeLib)\
 local useAppSelector = TS.import(script, script.Parent, \"common\", \"rodux-hooks\").useAppSelector\
 local function useTheme(key)\
@@ -2112,16 +2112,16 @@ end\
 return {\
 \9useTheme = useTheme,\
 }\
-", '@'.."Orca.hooks.use-theme")) setfenv(fn, createModuleEnvironment("Orca.hooks.use-theme")) return fn() end)
+", '@'.."Orca.hooks.use-theme")) setfenv(fn, newEnv("Orca.hooks.use-theme")) return fn() end)
 
-createModule("jobs", "ModuleScript", "Orca.jobs", "Orca", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("jobs", "ModuleScript", "Orca.jobs", "Orca", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.include.RuntimeLib)\
 local exports = {}\
 exports.setStore = TS.import(script, script, \"helpers\", \"job-store\").setStore\
 return exports\
-", '@'.."Orca.jobs")) setfenv(fn, createModuleEnvironment("Orca.jobs")) return fn() end)
+", '@'.."Orca.jobs")) setfenv(fn, newEnv("Orca.jobs")) return fn() end)
 
-createModule("acrylic", "LocalScript", "Orca.jobs.acrylic", "Orca.jobs", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("acrylic", "LocalScript", "Orca.jobs.acrylic", "Orca.jobs", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.include.RuntimeLib)\
 local Make = TS.import(script, TS.getModule(script, \"@rbxts\", \"make\"))\
 local Lighting = TS.import(script, TS.getModule(script, \"@rbxts\", \"services\")).Lighting\
@@ -2178,11 +2178,11 @@ end)\
 main():catch(function(err)\
 \9warn(\"[acrylic-worker] \" .. tostring(err))\
 end)\
-", '@'.."Orca.jobs.acrylic")) setfenv(fn, createModuleEnvironment("Orca.jobs.acrylic")) return fn() end)
+", '@'.."Orca.jobs.acrylic")) setfenv(fn, newEnv("Orca.jobs.acrylic")) return fn() end)
 
-createInstance("character", "Folder", "Orca.jobs.character", "Orca.jobs")
+newInstance("character", "Folder", "Orca.jobs.character", "Orca.jobs")
 
-createModule("flight", "LocalScript", "Orca.jobs.character.flight", "Orca.jobs.character", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("flight", "LocalScript", "Orca.jobs.character.flight", "Orca.jobs.character", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.include.RuntimeLib)\
 local _flipper = TS.import(script, TS.getModule(script, \"@rbxts\", \"flipper\").src)\
 local GroupMotor = _flipper.GroupMotor\
@@ -2342,9 +2342,9 @@ end\
 main():catch(function(err)\
 \9warn(\"[flight-worker] \" .. tostring(err))\
 end)\
-", '@'.."Orca.jobs.character.flight")) setfenv(fn, createModuleEnvironment("Orca.jobs.character.flight")) return fn() end)
+", '@'.."Orca.jobs.character.flight")) setfenv(fn, newEnv("Orca.jobs.character.flight")) return fn() end)
 
-createModule("ghost", "LocalScript", "Orca.jobs.character.ghost", "Orca.jobs.character", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("ghost", "LocalScript", "Orca.jobs.character.ghost", "Orca.jobs.character", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.include.RuntimeLib)\
 local _services = TS.import(script, TS.getModule(script, \"@rbxts\", \"services\"))\
 local Players = _services.Players\
@@ -2492,9 +2492,9 @@ end)\
 main():catch(function(err)\
 \9warn(\"[ghost-worker] \" .. tostring(err))\
 end)\
-", '@'.."Orca.jobs.character.ghost")) setfenv(fn, createModuleEnvironment("Orca.jobs.character.ghost")) return fn() end)
+", '@'.."Orca.jobs.character.ghost")) setfenv(fn, newEnv("Orca.jobs.character.ghost")) return fn() end)
 
-createModule("godmode", "LocalScript", "Orca.jobs.character.godmode", "Orca.jobs.character", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("godmode", "LocalScript", "Orca.jobs.character.godmode", "Orca.jobs.character", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.include.RuntimeLib)\
 local _services = TS.import(script, TS.getModule(script, \"@rbxts\", \"services\"))\
 local Players = _services.Players\
@@ -2570,9 +2570,9 @@ end)\
 main():catch(function(err)\
 \9warn(\"[godmode-worker] \" .. tostring(err))\
 end)\
-", '@'.."Orca.jobs.character.godmode")) setfenv(fn, createModuleEnvironment("Orca.jobs.character.godmode")) return fn() end)
+", '@'.."Orca.jobs.character.godmode")) setfenv(fn, newEnv("Orca.jobs.character.godmode")) return fn() end)
 
-createModule("humanoid", "LocalScript", "Orca.jobs.character.humanoid", "Orca.jobs.character", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("humanoid", "LocalScript", "Orca.jobs.character.humanoid", "Orca.jobs.character", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.include.RuntimeLib)\
 local Players = TS.import(script, TS.getModule(script, \"@rbxts\", \"services\")).Players\
 local _job_store = TS.import(script, script.Parent.Parent, \"helpers\", \"job-store\")\
@@ -2661,9 +2661,9 @@ end\
 main():catch(function(err)\
 \9warn(\"[humanoid-worker] \" .. tostring(err))\
 end)\
-", '@'.."Orca.jobs.character.humanoid")) setfenv(fn, createModuleEnvironment("Orca.jobs.character.humanoid")) return fn() end)
+", '@'.."Orca.jobs.character.humanoid")) setfenv(fn, newEnv("Orca.jobs.character.humanoid")) return fn() end)
 
-createModule("refresh", "LocalScript", "Orca.jobs.character.refresh", "Orca.jobs.character", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("refresh", "LocalScript", "Orca.jobs.character.refresh", "Orca.jobs.character", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.include.RuntimeLib)\
 local _services = TS.import(script, TS.getModule(script, \"@rbxts\", \"services\"))\
 local Players = _services.Players\
@@ -2729,9 +2729,9 @@ end)\
 main():catch(function(err)\
 \9warn(\"[refresh-worker] \" .. tostring(err))\
 end)\
-", '@'.."Orca.jobs.character.refresh")) setfenv(fn, createModuleEnvironment("Orca.jobs.character.refresh")) return fn() end)
+", '@'.."Orca.jobs.character.refresh")) setfenv(fn, newEnv("Orca.jobs.character.refresh")) return fn() end)
 
-createModule("freecam", "LocalScript", "Orca.jobs.freecam", "Orca.jobs", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("freecam", "LocalScript", "Orca.jobs.freecam", "Orca.jobs", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.include.RuntimeLib)\
 local _freecam = TS.import(script, script.Parent, \"helpers\", \"freecam\")\
 local DisableFreecam = _freecam.DisableFreecam\
@@ -2749,11 +2749,11 @@ end)\
 main():catch(function(err)\
 \9warn(\"[freecam-worker] \" .. tostring(err))\
 end)\
-", '@'.."Orca.jobs.freecam")) setfenv(fn, createModuleEnvironment("Orca.jobs.freecam")) return fn() end)
+", '@'.."Orca.jobs.freecam")) setfenv(fn, newEnv("Orca.jobs.freecam")) return fn() end)
 
-createInstance("helpers", "Folder", "Orca.jobs.helpers", "Orca.jobs")
+newInstance("helpers", "Folder", "Orca.jobs.helpers", "Orca.jobs")
 
-createModule("freecam", "ModuleScript", "Orca.jobs.helpers.freecam", "Orca.jobs.helpers", function () local fn = assert(loadstring("------------------------------------------------------------------------\
+newModule("freecam", "ModuleScript", "Orca.jobs.helpers.freecam", "Orca.jobs.helpers", function () local fn = assert(loadstring("------------------------------------------------------------------------\
 -- Freecam\
 -- Cinematic free camera for spectating and video production.\
 ------------------------------------------------------------------------\
@@ -3210,9 +3210,9 @@ return {\
 \9EnableFreecam = EnableFreecam,\
 \9DisableFreecam = DisableFreecam,\
 }\
-", '@'.."Orca.jobs.helpers.freecam")) setfenv(fn, createModuleEnvironment("Orca.jobs.helpers.freecam")) return fn() end)
+", '@'.."Orca.jobs.helpers.freecam")) setfenv(fn, newEnv("Orca.jobs.helpers.freecam")) return fn() end)
 
-createModule("get-selected-player", "ModuleScript", "Orca.jobs.helpers.get-selected-player", "Orca.jobs.helpers", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("get-selected-player", "ModuleScript", "Orca.jobs.helpers.get-selected-player", "Orca.jobs.helpers", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.include.RuntimeLib)\
 local Players = TS.import(script, TS.getModule(script, \"@rbxts\", \"services\")).Players\
 local getStore = TS.import(script, script.Parent, \"job-store\").getStore\
@@ -3239,9 +3239,9 @@ end)\
 return {\
 \9getSelectedPlayer = getSelectedPlayer,\
 }\
-", '@'.."Orca.jobs.helpers.get-selected-player")) setfenv(fn, createModuleEnvironment("Orca.jobs.helpers.get-selected-player")) return fn() end)
+", '@'.."Orca.jobs.helpers.get-selected-player")) setfenv(fn, newEnv("Orca.jobs.helpers.get-selected-player")) return fn() end)
 
-createModule("job-store", "ModuleScript", "Orca.jobs.helpers.job-store", "Orca.jobs.helpers", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("job-store", "ModuleScript", "Orca.jobs.helpers.job-store", "Orca.jobs.helpers", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.include.RuntimeLib)\
 local setInterval = TS.import(script, script.Parent.Parent.Parent, \"utils\", \"timeout\").setInterval\
 local store = {}\
@@ -3293,11 +3293,11 @@ return {\
 \9getStore = getStore,\
 \9onJobChange = onJobChange,\
 }\
-", '@'.."Orca.jobs.helpers.job-store")) setfenv(fn, createModuleEnvironment("Orca.jobs.helpers.job-store")) return fn() end)
+", '@'.."Orca.jobs.helpers.job-store")) setfenv(fn, newEnv("Orca.jobs.helpers.job-store")) return fn() end)
 
-createInstance("players", "Folder", "Orca.jobs.players", "Orca.jobs")
+newInstance("players", "Folder", "Orca.jobs.players", "Orca.jobs")
 
-createModule("hide", "LocalScript", "Orca.jobs.players.hide", "Orca.jobs.players", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("hide", "LocalScript", "Orca.jobs.players.hide", "Orca.jobs.players", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.include.RuntimeLib)\
 local Players = TS.import(script, TS.getModule(script, \"@rbxts\", \"services\")).Players\
 local getSelectedPlayer = TS.import(script, script.Parent.Parent, \"helpers\", \"get-selected-player\").getSelectedPlayer\
@@ -3373,9 +3373,9 @@ end)\
 main():catch(function(err)\
 \9warn(\"[hide-worker] \" .. tostring(err))\
 end)\
-", '@'.."Orca.jobs.players.hide")) setfenv(fn, createModuleEnvironment("Orca.jobs.players.hide")) return fn() end)
+", '@'.."Orca.jobs.players.hide")) setfenv(fn, newEnv("Orca.jobs.players.hide")) return fn() end)
 
-createModule("kill", "LocalScript", "Orca.jobs.players.kill", "Orca.jobs.players", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("kill", "LocalScript", "Orca.jobs.players.kill", "Orca.jobs.players", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.include.RuntimeLib)\
 local _services = TS.import(script, TS.getModule(script, \"@rbxts\", \"services\"))\
 local Players = _services.Players\
@@ -3525,9 +3525,9 @@ end)\
 main():catch(function(err)\
 \9warn(\"[kill-worker] \" .. tostring(err))\
 end)\
-", '@'.."Orca.jobs.players.kill")) setfenv(fn, createModuleEnvironment("Orca.jobs.players.kill")) return fn() end)
+", '@'.."Orca.jobs.players.kill")) setfenv(fn, newEnv("Orca.jobs.players.kill")) return fn() end)
 
-createModule("spectate", "LocalScript", "Orca.jobs.players.spectate", "Orca.jobs.players", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("spectate", "LocalScript", "Orca.jobs.players.spectate", "Orca.jobs.players", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.include.RuntimeLib)\
 local Workspace = TS.import(script, TS.getModule(script, \"@rbxts\", \"services\")).Workspace\
 local getSelectedPlayer = TS.import(script, script.Parent.Parent, \"helpers\", \"get-selected-player\").getSelectedPlayer\
@@ -3585,9 +3585,9 @@ end)\
 main():catch(function(err)\
 \9warn(\"[spectate-worker] \" .. tostring(err))\
 end)\
-", '@'.."Orca.jobs.players.spectate")) setfenv(fn, createModuleEnvironment("Orca.jobs.players.spectate")) return fn() end)
+", '@'.."Orca.jobs.players.spectate")) setfenv(fn, newEnv("Orca.jobs.players.spectate")) return fn() end)
 
-createModule("teleport", "LocalScript", "Orca.jobs.players.teleport", "Orca.jobs.players", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("teleport", "LocalScript", "Orca.jobs.players.teleport", "Orca.jobs.players", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.include.RuntimeLib)\
 local Players = TS.import(script, TS.getModule(script, \"@rbxts\", \"services\")).Players\
 local getSelectedPlayer = TS.import(script, script.Parent.Parent, \"helpers\", \"get-selected-player\").getSelectedPlayer\
@@ -3639,9 +3639,9 @@ end)\
 main():catch(function(err)\
 \9warn(\"[teleport-worker] \" .. tostring(err))\
 end)\
-", '@'.."Orca.jobs.players.teleport")) setfenv(fn, createModuleEnvironment("Orca.jobs.players.teleport")) return fn() end)
+", '@'.."Orca.jobs.players.teleport")) setfenv(fn, newEnv("Orca.jobs.players.teleport")) return fn() end)
 
-createModule("server", "LocalScript", "Orca.jobs.server", "Orca.jobs", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("server", "LocalScript", "Orca.jobs.server", "Orca.jobs", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.include.RuntimeLib)\
 local _services = TS.import(script, TS.getModule(script, \"@rbxts\", \"services\"))\
 local HttpService = _services.HttpService\
@@ -3745,9 +3745,9 @@ end)\
 main():catch(function(err)\
 \9warn(\"[server-worker] \" .. tostring(err))\
 end)\
-", '@'.."Orca.jobs.server")) setfenv(fn, createModuleEnvironment("Orca.jobs.server")) return fn() end)
+", '@'.."Orca.jobs.server")) setfenv(fn, newEnv("Orca.jobs.server")) return fn() end)
 
-createModule("main", "LocalScript", "Orca.main", "Orca", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("main", "LocalScript", "Orca.main", "Orca", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.include.RuntimeLib)\
 local Make = TS.import(script, TS.getModule(script, \"@rbxts\", \"make\"))\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
@@ -3787,13 +3787,13 @@ if time() > 3 then\
 \9\9return store:dispatch(toggleDashboard())\
 \9end)\
 end\
-", '@'.."Orca.main")) setfenv(fn, createModuleEnvironment("Orca.main")) return fn() end)
+", '@'.."Orca.main")) setfenv(fn, newEnv("Orca.main")) return fn() end)
 
-createInstance("store", "Folder", "Orca.store", "Orca")
+newInstance("store", "Folder", "Orca.store", "Orca")
 
-createInstance("actions", "Folder", "Orca.store.actions", "Orca.store")
+newInstance("actions", "Folder", "Orca.store.actions", "Orca.store")
 
-createModule("dashboard.action", "ModuleScript", "Orca.store.actions.dashboard.action", "Orca.store.actions", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("dashboard.action", "ModuleScript", "Orca.store.actions.dashboard.action", "Orca.store.actions", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.include.RuntimeLib)\
 local Rodux = TS.import(script, TS.getModule(script, \"@rbxts\", \"rodux\").src)\
 local setDashboardPage = Rodux.makeActionCreator(\"dashboard/setDashboardPage\", function(page)\
@@ -3828,9 +3828,9 @@ return {\
 \9playerSelected = playerSelected,\
 \9playerDeselected = playerDeselected,\
 }\
-", '@'.."Orca.store.actions.dashboard.action")) setfenv(fn, createModuleEnvironment("Orca.store.actions.dashboard.action")) return fn() end)
+", '@'.."Orca.store.actions.dashboard.action")) setfenv(fn, newEnv("Orca.store.actions.dashboard.action")) return fn() end)
 
-createModule("jobs.action", "ModuleScript", "Orca.store.actions.jobs.action", "Orca.store.actions", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("jobs.action", "ModuleScript", "Orca.store.actions.jobs.action", "Orca.store.actions", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.include.RuntimeLib)\
 local Rodux = TS.import(script, TS.getModule(script, \"@rbxts\", \"rodux\").src)\
 local setJobActive = Rodux.makeActionCreator(\"jobs/setJobActive\", function(jobName, active)\
@@ -3849,9 +3849,9 @@ return {\
 \9setJobActive = setJobActive,\
 \9setJobValue = setJobValue,\
 }\
-", '@'.."Orca.store.actions.jobs.action")) setfenv(fn, createModuleEnvironment("Orca.store.actions.jobs.action")) return fn() end)
+", '@'.."Orca.store.actions.jobs.action")) setfenv(fn, newEnv("Orca.store.actions.jobs.action")) return fn() end)
 
-createModule("options.action", "ModuleScript", "Orca.store.actions.options.action", "Orca.store.actions", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("options.action", "ModuleScript", "Orca.store.actions.options.action", "Orca.store.actions", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.include.RuntimeLib)\
 local Rodux = TS.import(script, TS.getModule(script, \"@rbxts\", \"rodux\").src)\
 local setAcrylicBlurEnabled = Rodux.makeActionCreator(\"options/setAcrylicBlurEnabled\", function(active)\
@@ -3862,9 +3862,9 @@ end)\
 return {\
 \9setAcrylicBlurEnabled = setAcrylicBlurEnabled,\
 }\
-", '@'.."Orca.store.actions.options.action")) setfenv(fn, createModuleEnvironment("Orca.store.actions.options.action")) return fn() end)
+", '@'.."Orca.store.actions.options.action")) setfenv(fn, newEnv("Orca.store.actions.options.action")) return fn() end)
 
-createModule("theme.action", "ModuleScript", "Orca.store.actions.theme.action", "Orca.store.actions", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("theme.action", "ModuleScript", "Orca.store.actions.theme.action", "Orca.store.actions", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.include.RuntimeLib)\
 local Rodux = TS.import(script, TS.getModule(script, \"@rbxts\", \"rodux\").src)\
 local setTheme = Rodux.makeActionCreator(\"theme/setTheme\", function(theme)\
@@ -3875,11 +3875,11 @@ end)\
 return {\
 \9setTheme = setTheme,\
 }\
-", '@'.."Orca.store.actions.theme.action")) setfenv(fn, createModuleEnvironment("Orca.store.actions.theme.action")) return fn() end)
+", '@'.."Orca.store.actions.theme.action")) setfenv(fn, newEnv("Orca.store.actions.theme.action")) return fn() end)
 
-createInstance("models", "Folder", "Orca.store.models", "Orca.store")
+newInstance("models", "Folder", "Orca.store.models", "Orca.store")
 
-createModule("dashboard.model", "ModuleScript", "Orca.store.models.dashboard.model", "Orca.store.models", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("dashboard.model", "ModuleScript", "Orca.store.models.dashboard.model", "Orca.store.models", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local DashboardPage\
 do\
 \9local _inverse = {}\
@@ -3912,20 +3912,20 @@ return {\
 \9PAGE_TO_INDEX = PAGE_TO_INDEX,\
 \9PAGE_TO_ICON = PAGE_TO_ICON,\
 }\
-", '@'.."Orca.store.models.dashboard.model")) setfenv(fn, createModuleEnvironment("Orca.store.models.dashboard.model")) return fn() end)
+", '@'.."Orca.store.models.dashboard.model")) setfenv(fn, newEnv("Orca.store.models.dashboard.model")) return fn() end)
 
-createModule("jobs.model", "ModuleScript", "Orca.store.models.jobs.model", "Orca.store.models", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
-", '@'.."Orca.store.models.jobs.model")) setfenv(fn, createModuleEnvironment("Orca.store.models.jobs.model")) return fn() end)
+newModule("jobs.model", "ModuleScript", "Orca.store.models.jobs.model", "Orca.store.models", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+", '@'.."Orca.store.models.jobs.model")) setfenv(fn, newEnv("Orca.store.models.jobs.model")) return fn() end)
 
-createModule("options.model", "ModuleScript", "Orca.store.models.options.model", "Orca.store.models", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
-", '@'.."Orca.store.models.options.model")) setfenv(fn, createModuleEnvironment("Orca.store.models.options.model")) return fn() end)
+newModule("options.model", "ModuleScript", "Orca.store.models.options.model", "Orca.store.models", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+", '@'.."Orca.store.models.options.model")) setfenv(fn, newEnv("Orca.store.models.options.model")) return fn() end)
 
-createModule("theme.model", "ModuleScript", "Orca.store.models.theme.model", "Orca.store.models", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
-", '@'.."Orca.store.models.theme.model")) setfenv(fn, createModuleEnvironment("Orca.store.models.theme.model")) return fn() end)
+newModule("theme.model", "ModuleScript", "Orca.store.models.theme.model", "Orca.store.models", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+", '@'.."Orca.store.models.theme.model")) setfenv(fn, newEnv("Orca.store.models.theme.model")) return fn() end)
 
-createInstance("reducers", "Folder", "Orca.store.reducers", "Orca.store")
+newInstance("reducers", "Folder", "Orca.store.reducers", "Orca.store")
 
-createModule("dashboard.reducer", "ModuleScript", "Orca.store.reducers.dashboard.reducer", "Orca.store.reducers", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("dashboard.reducer", "ModuleScript", "Orca.store.reducers.dashboard.reducer", "Orca.store.reducers", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.include.RuntimeLib)\
 local Rodux = TS.import(script, TS.getModule(script, \"@rbxts\", \"rodux\").src)\
 local DashboardPage = TS.import(script, script.Parent.Parent, \"models\", \"dashboard.model\").DashboardPage\
@@ -4002,9 +4002,9 @@ local dashboardReducer = Rodux.createReducer(initialState, {\
 return {\
 \9dashboardReducer = dashboardReducer,\
 }\
-", '@'.."Orca.store.reducers.dashboard.reducer")) setfenv(fn, createModuleEnvironment("Orca.store.reducers.dashboard.reducer")) return fn() end)
+", '@'.."Orca.store.reducers.dashboard.reducer")) setfenv(fn, newEnv("Orca.store.reducers.dashboard.reducer")) return fn() end)
 
-createModule("jobs.reducer", "ModuleScript", "Orca.store.reducers.jobs.reducer", "Orca.store.reducers", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("jobs.reducer", "ModuleScript", "Orca.store.reducers.jobs.reducer", "Orca.store.reducers", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.include.RuntimeLib)\
 local Rodux = TS.import(script, TS.getModule(script, \"@rbxts\", \"rodux\").src)\
 local initialState = {\
@@ -4084,9 +4084,9 @@ local jobsReducer = Rodux.createReducer(initialState, {\
 return {\
 \9jobsReducer = jobsReducer,\
 }\
-", '@'.."Orca.store.reducers.jobs.reducer")) setfenv(fn, createModuleEnvironment("Orca.store.reducers.jobs.reducer")) return fn() end)
+", '@'.."Orca.store.reducers.jobs.reducer")) setfenv(fn, newEnv("Orca.store.reducers.jobs.reducer")) return fn() end)
 
-createModule("options.reducer", "ModuleScript", "Orca.store.reducers.options.reducer", "Orca.store.reducers", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("options.reducer", "ModuleScript", "Orca.store.reducers.options.reducer", "Orca.store.reducers", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.include.RuntimeLib)\
 local Rodux = TS.import(script, TS.getModule(script, \"@rbxts\", \"rodux\").src)\
 local initialState = {\
@@ -4105,9 +4105,9 @@ local optionsReducer = Rodux.createReducer(initialState, {\
 return {\
 \9optionsReducer = optionsReducer,\
 }\
-", '@'.."Orca.store.reducers.options.reducer")) setfenv(fn, createModuleEnvironment("Orca.store.reducers.options.reducer")) return fn() end)
+", '@'.."Orca.store.reducers.options.reducer")) setfenv(fn, newEnv("Orca.store.reducers.options.reducer")) return fn() end)
 
-createModule("theme.reducer", "ModuleScript", "Orca.store.reducers.theme.reducer", "Orca.store.reducers", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("theme.reducer", "ModuleScript", "Orca.store.reducers.theme.reducer", "Orca.store.reducers", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.include.RuntimeLib)\
 local Rodux = TS.import(script, TS.getModule(script, \"@rbxts\", \"rodux\").src)\
 local sorbet = TS.import(script, script.Parent.Parent.Parent, \"themes\", \"sorbet\").sorbet\
@@ -4127,9 +4127,9 @@ local themeReducer = Rodux.createReducer(initialState, {\
 return {\
 \9themeReducer = themeReducer,\
 }\
-", '@'.."Orca.store.reducers.theme.reducer")) setfenv(fn, createModuleEnvironment("Orca.store.reducers.theme.reducer")) return fn() end)
+", '@'.."Orca.store.reducers.theme.reducer")) setfenv(fn, newEnv("Orca.store.reducers.theme.reducer")) return fn() end)
 
-createModule("store", "ModuleScript", "Orca.store.store", "Orca.store", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("store", "ModuleScript", "Orca.store.store", "Orca.store", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.include.RuntimeLib)\
 local Rodux = TS.import(script, TS.getModule(script, \"@rbxts\", \"rodux\").src)\
 local dashboardReducer = TS.import(script, script.Parent, \"reducers\", \"dashboard.reducer\").dashboardReducer\
@@ -4148,9 +4148,9 @@ end\
 return {\
 \9configureStore = configureStore,\
 }\
-", '@'.."Orca.store.store")) setfenv(fn, createModuleEnvironment("Orca.store.store")) return fn() end)
+", '@'.."Orca.store.store")) setfenv(fn, newEnv("Orca.store.store")) return fn() end)
 
-createModule("themes", "ModuleScript", "Orca.themes", "Orca", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("themes", "ModuleScript", "Orca.themes", "Orca", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.include.RuntimeLib)\
 local darkTheme = TS.import(script, script, \"dark-theme\").darkTheme\
 local frostedGlass = TS.import(script, script, \"frosted-glass\").frostedGlass\
@@ -4165,9 +4165,9 @@ end\
 return {\
 \9getThemes = getThemes,\
 }\
-", '@'.."Orca.themes")) setfenv(fn, createModuleEnvironment("Orca.themes")) return fn() end)
+", '@'.."Orca.themes")) setfenv(fn, newEnv("Orca.themes")) return fn() end)
 
-createModule("dark-theme", "ModuleScript", "Orca.themes.dark-theme", "Orca.themes", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("dark-theme", "ModuleScript", "Orca.themes.dark-theme", "Orca.themes", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.include.RuntimeLib)\
 local hex = TS.import(script, script.Parent.Parent, \"utils\", \"color3\").hex\
 local darkTheme = {\
@@ -4379,9 +4379,9 @@ local darkTheme = {\
 return {\
 \9darkTheme = darkTheme,\
 }\
-", '@'.."Orca.themes.dark-theme")) setfenv(fn, createModuleEnvironment("Orca.themes.dark-theme")) return fn() end)
+", '@'.."Orca.themes.dark-theme")) setfenv(fn, newEnv("Orca.themes.dark-theme")) return fn() end)
 
-createModule("frosted-glass", "ModuleScript", "Orca.themes.frosted-glass", "Orca.themes", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("frosted-glass", "ModuleScript", "Orca.themes.frosted-glass", "Orca.themes", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.include.RuntimeLib)\
 local darkTheme = TS.import(script, script.Parent, \"dark-theme\").darkTheme\
 local hex = TS.import(script, script.Parent.Parent, \"utils\", \"color3\").hex\
@@ -4630,9 +4630,9 @@ local frostedGlass = _object\
 return {\
 \9frostedGlass = frostedGlass,\
 }\
-", '@'.."Orca.themes.frosted-glass")) setfenv(fn, createModuleEnvironment("Orca.themes.frosted-glass")) return fn() end)
+", '@'.."Orca.themes.frosted-glass")) setfenv(fn, newEnv("Orca.themes.frosted-glass")) return fn() end)
 
-createModule("high-contrast", "ModuleScript", "Orca.themes.high-contrast", "Orca.themes", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("high-contrast", "ModuleScript", "Orca.themes.high-contrast", "Orca.themes", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.include.RuntimeLib)\
 local darkTheme = TS.import(script, script.Parent, \"dark-theme\").darkTheme\
 local hex = TS.import(script, script.Parent.Parent, \"utils\", \"color3\").hex\
@@ -4832,9 +4832,9 @@ local highContrast = _object\
 return {\
 \9highContrast = highContrast,\
 }\
-", '@'.."Orca.themes.high-contrast")) setfenv(fn, createModuleEnvironment("Orca.themes.high-contrast")) return fn() end)
+", '@'.."Orca.themes.high-contrast")) setfenv(fn, newEnv("Orca.themes.high-contrast")) return fn() end)
 
-createModule("light-theme", "ModuleScript", "Orca.themes.light-theme", "Orca.themes", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("light-theme", "ModuleScript", "Orca.themes.light-theme", "Orca.themes", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.include.RuntimeLib)\
 local darkTheme = TS.import(script, script.Parent, \"dark-theme\").darkTheme\
 local hex = TS.import(script, script.Parent.Parent, \"utils\", \"color3\").hex\
@@ -5027,9 +5027,9 @@ local lightTheme = _object\
 return {\
 \9lightTheme = lightTheme,\
 }\
-", '@'.."Orca.themes.light-theme")) setfenv(fn, createModuleEnvironment("Orca.themes.light-theme")) return fn() end)
+", '@'.."Orca.themes.light-theme")) setfenv(fn, newEnv("Orca.themes.light-theme")) return fn() end)
 
-createModule("obsidian", "ModuleScript", "Orca.themes.obsidian", "Orca.themes", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("obsidian", "ModuleScript", "Orca.themes.obsidian", "Orca.themes", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.include.RuntimeLib)\
 local darkTheme = TS.import(script, script.Parent, \"dark-theme\").darkTheme\
 local hex = TS.import(script, script.Parent.Parent, \"utils\", \"color3\").hex\
@@ -5297,9 +5297,9 @@ local obsidian = _object\
 return {\
 \9obsidian = obsidian,\
 }\
-", '@'.."Orca.themes.obsidian")) setfenv(fn, createModuleEnvironment("Orca.themes.obsidian")) return fn() end)
+", '@'.."Orca.themes.obsidian")) setfenv(fn, newEnv("Orca.themes.obsidian")) return fn() end)
 
-createModule("sorbet", "ModuleScript", "Orca.themes.sorbet", "Orca.themes", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("sorbet", "ModuleScript", "Orca.themes.sorbet", "Orca.themes", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.include.RuntimeLib)\
 local darkTheme = TS.import(script, script.Parent, \"dark-theme\").darkTheme\
 local hex = TS.import(script, script.Parent.Parent, \"utils\", \"color3\").hex\
@@ -5534,14 +5534,14 @@ local sorbet = _object\
 return {\
 \9sorbet = sorbet,\
 }\
-", '@'.."Orca.themes.sorbet")) setfenv(fn, createModuleEnvironment("Orca.themes.sorbet")) return fn() end)
+", '@'.."Orca.themes.sorbet")) setfenv(fn, newEnv("Orca.themes.sorbet")) return fn() end)
 
-createModule("theme.interface", "ModuleScript", "Orca.themes.theme.interface", "Orca.themes", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
-", '@'.."Orca.themes.theme.interface")) setfenv(fn, createModuleEnvironment("Orca.themes.theme.interface")) return fn() end)
+newModule("theme.interface", "ModuleScript", "Orca.themes.theme.interface", "Orca.themes", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+", '@'.."Orca.themes.theme.interface")) setfenv(fn, newEnv("Orca.themes.theme.interface")) return fn() end)
 
-createInstance("utils", "Folder", "Orca.utils", "Orca")
+newInstance("utils", "Folder", "Orca.utils", "Orca")
 
-createModule("array-util", "ModuleScript", "Orca.utils.array-util", "Orca.utils", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("array-util", "ModuleScript", "Orca.utils.array-util", "Orca.utils", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local function arrayToMap(arr, mapper)\
 \9-- ▼ ReadonlyArray.map ▼\
 \9local _newValue = table.create(#arr)\
@@ -5558,9 +5558,9 @@ end\
 return {\
 \9arrayToMap = arrayToMap,\
 }\
-", '@'.."Orca.utils.array-util")) setfenv(fn, createModuleEnvironment("Orca.utils.array-util")) return fn() end)
+", '@'.."Orca.utils.array-util")) setfenv(fn, newEnv("Orca.utils.array-util")) return fn() end)
 
-createModule("binding-util", "ModuleScript", "Orca.utils.binding-util", "Orca.utils", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("binding-util", "ModuleScript", "Orca.utils.binding-util", "Orca.utils", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.include.RuntimeLib)\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
 local function isBinding(binding)\
@@ -5577,9 +5577,9 @@ return {\
 \9mapBinding = mapBinding,\
 \9asBinding = asBinding,\
 }\
-", '@'.."Orca.utils.binding-util")) setfenv(fn, createModuleEnvironment("Orca.utils.binding-util")) return fn() end)
+", '@'.."Orca.utils.binding-util")) setfenv(fn, newEnv("Orca.utils.binding-util")) return fn() end)
 
-createModule("color3", "ModuleScript", "Orca.utils.color3", "Orca.utils", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("color3", "ModuleScript", "Orca.utils.color3", "Orca.utils", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local function getLuminance(color)\
 \9if typeof(color) == \"ColorSequence\" then\
 \9\9color = color.Keypoints[1].Value\
@@ -5635,9 +5635,9 @@ return {\
 \9hsv = hsv,\
 \9hsl = hsl,\
 }\
-", '@'.."Orca.utils.color3")) setfenv(fn, createModuleEnvironment("Orca.utils.color3")) return fn() end)
+", '@'.."Orca.utils.color3")) setfenv(fn, newEnv("Orca.utils.color3")) return fn() end)
 
-createModule("debug", "ModuleScript", "Orca.utils.debug", "Orca.utils", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("debug", "ModuleScript", "Orca.utils.debug", "Orca.utils", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local clock = os.clock()\
 local clockName = \"clock\"\
 local debugCounter = {}\
@@ -5663,9 +5663,9 @@ return {\
 \9startTimer = startTimer,\
 \9endTimer = endTimer,\
 }\
-", '@'.."Orca.utils.debug")) setfenv(fn, createModuleEnvironment("Orca.utils.debug")) return fn() end)
+", '@'.."Orca.utils.debug")) setfenv(fn, newEnv("Orca.utils.debug")) return fn() end)
 
-createModule("http", "ModuleScript", "Orca.utils.http", "Orca.utils", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("http", "ModuleScript", "Orca.utils.http", "Orca.utils", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.include.RuntimeLib)\
 local HttpService = TS.import(script, TS.getModule(script, \"@rbxts\", \"services\")).HttpService\
 local IS_DEV = TS.import(script, script.Parent.Parent, \"constants\").IS_DEV\
@@ -5692,9 +5692,9 @@ return {\
 \9get = get,\
 \9post = post,\
 }\
-", '@'.."Orca.utils.http")) setfenv(fn, createModuleEnvironment("Orca.utils.http")) return fn() end)
+", '@'.."Orca.utils.http")) setfenv(fn, newEnv("Orca.utils.http")) return fn() end)
 
-createModule("number-util", "ModuleScript", "Orca.utils.number-util", "Orca.utils", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("number-util", "ModuleScript", "Orca.utils.number-util", "Orca.utils", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local function map(n, min0, max0, min1, max1)\
 \9return min1 + ((n - min0) * (max1 - min1)) / (max0 - min0)\
 end\
@@ -5705,9 +5705,9 @@ return {\
 \9map = map,\
 \9lerp = lerp,\
 }\
-", '@'.."Orca.utils.number-util")) setfenv(fn, createModuleEnvironment("Orca.utils.number-util")) return fn() end)
+", '@'.."Orca.utils.number-util")) setfenv(fn, newEnv("Orca.utils.number-util")) return fn() end)
 
-createModule("timeout", "ModuleScript", "Orca.utils.timeout", "Orca.utils", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("timeout", "ModuleScript", "Orca.utils.timeout", "Orca.utils", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.include.RuntimeLib)\
 local RunService = TS.import(script, TS.getModule(script, \"@rbxts\", \"services\")).RunService\
 local Timeout\
@@ -5790,9 +5790,9 @@ return {\
 \9Timeout = Timeout,\
 \9Interval = Interval,\
 }\
-", '@'.."Orca.utils.timeout")) setfenv(fn, createModuleEnvironment("Orca.utils.timeout")) return fn() end)
+", '@'.."Orca.utils.timeout")) setfenv(fn, newEnv("Orca.utils.timeout")) return fn() end)
 
-createModule("udim2", "ModuleScript", "Orca.utils.udim2", "Orca.utils", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("udim2", "ModuleScript", "Orca.utils.udim2", "Orca.utils", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local function px(x, y)\
 \9return UDim2.new(0, x, 0, y)\
 end\
@@ -5810,18 +5810,18 @@ return {\
 \9scale = scale,\
 \9applyUDim2 = applyUDim2,\
 }\
-", '@'.."Orca.utils.udim2")) setfenv(fn, createModuleEnvironment("Orca.utils.udim2")) return fn() end)
+", '@'.."Orca.utils.udim2")) setfenv(fn, newEnv("Orca.utils.udim2")) return fn() end)
 
-createInstance("views", "Folder", "Orca.views", "Orca")
+newInstance("views", "Folder", "Orca.views", "Orca")
 
-createModule("Clock", "ModuleScript", "Orca.views.Clock", "Orca.views", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("Clock", "ModuleScript", "Orca.views.Clock", "Orca.views", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.include.RuntimeLib)\
 local exports = {}\
 exports.default = TS.import(script, script, \"Clock\").default\
 return exports\
-", '@'.."Orca.views.Clock")) setfenv(fn, createModuleEnvironment("Orca.views.Clock")) return fn() end)
+", '@'.."Orca.views.Clock")) setfenv(fn, newEnv("Orca.views.Clock")) return fn() end)
 
-createModule("Clock", "ModuleScript", "Orca.views.Clock.Clock", "Orca.views.Clock", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("Clock", "ModuleScript", "Orca.views.Clock.Clock", "Orca.views.Clock", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.include.RuntimeLib)\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
 local _roact_hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out)\
@@ -5939,16 +5939,16 @@ local default = hooked(Clock)\
 return {\
 \9default = default,\
 }\
-", '@'.."Orca.views.Clock.Clock")) setfenv(fn, createModuleEnvironment("Orca.views.Clock.Clock")) return fn() end)
+", '@'.."Orca.views.Clock.Clock")) setfenv(fn, newEnv("Orca.views.Clock.Clock")) return fn() end)
 
-createModule("Dashboard", "ModuleScript", "Orca.views.Dashboard", "Orca.views", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("Dashboard", "ModuleScript", "Orca.views.Dashboard", "Orca.views", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.include.RuntimeLib)\
 local exports = {}\
 exports.default = TS.import(script, script, \"Dashboard\").default\
 return exports\
-", '@'.."Orca.views.Dashboard")) setfenv(fn, createModuleEnvironment("Orca.views.Dashboard")) return fn() end)
+", '@'.."Orca.views.Dashboard")) setfenv(fn, newEnv("Orca.views.Dashboard")) return fn() end)
 
-createModule("Dashboard", "ModuleScript", "Orca.views.Dashboard.Dashboard", "Orca.views.Dashboard", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("Dashboard", "ModuleScript", "Orca.views.Dashboard.Dashboard", "Orca.views.Dashboard", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.include.RuntimeLib)\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
 local _roact_hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out)\
@@ -6060,9 +6060,9 @@ local default = hooked(Dashboard)\
 return {\
 \9default = default,\
 }\
-", '@'.."Orca.views.Dashboard.Dashboard")) setfenv(fn, createModuleEnvironment("Orca.views.Dashboard.Dashboard")) return fn() end)
+", '@'.."Orca.views.Dashboard.Dashboard")) setfenv(fn, newEnv("Orca.views.Dashboard.Dashboard")) return fn() end)
 
-createModule("Dashboard.story", "ModuleScript", "Orca.views.Dashboard.Dashboard.story", "Orca.views.Dashboard", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("Dashboard.story", "ModuleScript", "Orca.views.Dashboard.Dashboard.story", "Orca.views.Dashboard", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.include.RuntimeLib)\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
 local Provider = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-rodux-hooked\").out).Provider\
@@ -6086,16 +6086,16 @@ return function(target)\
 \9\9return Roact.unmount(handle)\
 \9end\
 end\
-", '@'.."Orca.views.Dashboard.Dashboard.story")) setfenv(fn, createModuleEnvironment("Orca.views.Dashboard.Dashboard.story")) return fn() end)
+", '@'.."Orca.views.Dashboard.Dashboard.story")) setfenv(fn, newEnv("Orca.views.Dashboard.Dashboard.story")) return fn() end)
 
-createModule("Hint", "ModuleScript", "Orca.views.Hint", "Orca.views", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("Hint", "ModuleScript", "Orca.views.Hint", "Orca.views", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.include.RuntimeLib)\
 local exports = {}\
 exports.default = TS.import(script, script, \"Hint\").default\
 return exports\
-", '@'.."Orca.views.Hint")) setfenv(fn, createModuleEnvironment("Orca.views.Hint")) return fn() end)
+", '@'.."Orca.views.Hint")) setfenv(fn, newEnv("Orca.views.Hint")) return fn() end)
 
-createModule("Hint", "ModuleScript", "Orca.views.Hint.Hint", "Orca.views.Hint", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("Hint", "ModuleScript", "Orca.views.Hint.Hint", "Orca.views.Hint", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.include.RuntimeLib)\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
 local _roact_hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out)\
@@ -6152,16 +6152,16 @@ local default = hooked(Hint)\
 return {\
 \9default = default,\
 }\
-", '@'.."Orca.views.Hint.Hint")) setfenv(fn, createModuleEnvironment("Orca.views.Hint.Hint")) return fn() end)
+", '@'.."Orca.views.Hint.Hint")) setfenv(fn, newEnv("Orca.views.Hint.Hint")) return fn() end)
 
-createModule("Navbar", "ModuleScript", "Orca.views.Navbar", "Orca.views", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("Navbar", "ModuleScript", "Orca.views.Navbar", "Orca.views", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.include.RuntimeLib)\
 local exports = {}\
 exports.default = TS.import(script, script, \"Navbar\").default\
 return exports\
-", '@'.."Orca.views.Navbar")) setfenv(fn, createModuleEnvironment("Orca.views.Navbar")) return fn() end)
+", '@'.."Orca.views.Navbar")) setfenv(fn, newEnv("Orca.views.Navbar")) return fn() end)
 
-createModule("Navbar", "ModuleScript", "Orca.views.Navbar.Navbar", "Orca.views.Navbar", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("Navbar", "ModuleScript", "Orca.views.Navbar.Navbar", "Orca.views.Navbar", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.include.RuntimeLib)\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
 local hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out).hooked\
@@ -6313,9 +6313,9 @@ end\
 return {\
 \9default = default,\
 }\
-", '@'.."Orca.views.Navbar.Navbar")) setfenv(fn, createModuleEnvironment("Orca.views.Navbar.Navbar")) return fn() end)
+", '@'.."Orca.views.Navbar.Navbar")) setfenv(fn, newEnv("Orca.views.Navbar.Navbar")) return fn() end)
 
-createModule("Navbar.story", "ModuleScript", "Orca.views.Navbar.Navbar.story", "Orca.views.Navbar", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("Navbar.story", "ModuleScript", "Orca.views.Navbar.Navbar.story", "Orca.views.Navbar", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.include.RuntimeLib)\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
 local Provider = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-rodux-hooked\").out).Provider\
@@ -6339,9 +6339,9 @@ return function(target)\
 \9\9return Roact.unmount(handle)\
 \9end\
 end\
-", '@'.."Orca.views.Navbar.Navbar.story")) setfenv(fn, createModuleEnvironment("Orca.views.Navbar.Navbar.story")) return fn() end)
+", '@'.."Orca.views.Navbar.Navbar.story")) setfenv(fn, newEnv("Orca.views.Navbar.Navbar.story")) return fn() end)
 
-createModule("NavbarTab", "ModuleScript", "Orca.views.Navbar.NavbarTab", "Orca.views.Navbar", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("NavbarTab", "ModuleScript", "Orca.views.Navbar.NavbarTab", "Orca.views.Navbar", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.include.RuntimeLib)\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
 local _roact_hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out)\
@@ -6399,23 +6399,23 @@ local default = hooked(NavbarTab)\
 return {\
 \9default = default,\
 }\
-", '@'.."Orca.views.Navbar.NavbarTab")) setfenv(fn, createModuleEnvironment("Orca.views.Navbar.NavbarTab")) return fn() end)
+", '@'.."Orca.views.Navbar.NavbarTab")) setfenv(fn, newEnv("Orca.views.Navbar.NavbarTab")) return fn() end)
 
-createModule("Pages", "ModuleScript", "Orca.views.Pages", "Orca.views", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("Pages", "ModuleScript", "Orca.views.Pages", "Orca.views", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.include.RuntimeLib)\
 local exports = {}\
 exports.default = TS.import(script, script, \"Pages\").default\
 return exports\
-", '@'.."Orca.views.Pages")) setfenv(fn, createModuleEnvironment("Orca.views.Pages")) return fn() end)
+", '@'.."Orca.views.Pages")) setfenv(fn, newEnv("Orca.views.Pages")) return fn() end)
 
-createModule("Apps", "ModuleScript", "Orca.views.Pages.Apps", "Orca.views.Pages", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("Apps", "ModuleScript", "Orca.views.Pages.Apps", "Orca.views.Pages", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.include.RuntimeLib)\
 local exports = {}\
 exports.default = TS.import(script, script, \"Apps\").default\
 return exports\
-", '@'.."Orca.views.Pages.Apps")) setfenv(fn, createModuleEnvironment("Orca.views.Pages.Apps")) return fn() end)
+", '@'.."Orca.views.Pages.Apps")) setfenv(fn, newEnv("Orca.views.Pages.Apps")) return fn() end)
 
-createModule("Apps", "ModuleScript", "Orca.views.Pages.Apps.Apps", "Orca.views.Pages.Apps", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("Apps", "ModuleScript", "Orca.views.Pages.Apps.Apps", "Orca.views.Pages.Apps", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.Parent.include.RuntimeLib)\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
 local pure = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out).pure\
@@ -6439,16 +6439,16 @@ local default = pure(Apps)\
 return {\
 \9default = default,\
 }\
-", '@'.."Orca.views.Pages.Apps.Apps")) setfenv(fn, createModuleEnvironment("Orca.views.Pages.Apps.Apps")) return fn() end)
+", '@'.."Orca.views.Pages.Apps.Apps")) setfenv(fn, newEnv("Orca.views.Pages.Apps.Apps")) return fn() end)
 
-createModule("PlayersCard", "ModuleScript", "Orca.views.Pages.Apps.PlayersCard", "Orca.views.Pages.Apps", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("PlayersCard", "ModuleScript", "Orca.views.Pages.Apps.PlayersCard", "Orca.views.Pages.Apps", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.Parent.include.RuntimeLib)\
 local exports = {}\
 exports.default = TS.import(script, script, \"PlayersCard\").default\
 return exports\
-", '@'.."Orca.views.Pages.Apps.PlayersCard")) setfenv(fn, createModuleEnvironment("Orca.views.Pages.Apps.PlayersCard")) return fn() end)
+", '@'.."Orca.views.Pages.Apps.PlayersCard")) setfenv(fn, newEnv("Orca.views.Pages.Apps.PlayersCard")) return fn() end)
 
-createModule("Actions", "ModuleScript", "Orca.views.Pages.Apps.PlayersCard.Actions", "Orca.views.Pages.Apps.PlayersCard", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("Actions", "ModuleScript", "Orca.views.Pages.Apps.PlayersCard.Actions", "Orca.views.Pages.Apps.PlayersCard", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.Parent.Parent.include.RuntimeLib)\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
 local hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out).hooked\
@@ -6500,9 +6500,9 @@ local default = hooked(Actions)\
 return {\
 \9default = default,\
 }\
-", '@'.."Orca.views.Pages.Apps.PlayersCard.Actions")) setfenv(fn, createModuleEnvironment("Orca.views.Pages.Apps.PlayersCard.Actions")) return fn() end)
+", '@'.."Orca.views.Pages.Apps.PlayersCard.Actions")) setfenv(fn, newEnv("Orca.views.Pages.Apps.PlayersCard.Actions")) return fn() end)
 
-createModule("Avatar", "ModuleScript", "Orca.views.Pages.Apps.PlayersCard.Avatar", "Orca.views.Pages.Apps.PlayersCard", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("Avatar", "ModuleScript", "Orca.views.Pages.Apps.PlayersCard.Avatar", "Orca.views.Pages.Apps.PlayersCard", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.Parent.Parent.include.RuntimeLib)\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
 local hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out).hooked\
@@ -6555,9 +6555,9 @@ local default = hooked(Avatar)\
 return {\
 \9default = default,\
 }\
-", '@'.."Orca.views.Pages.Apps.PlayersCard.Avatar")) setfenv(fn, createModuleEnvironment("Orca.views.Pages.Apps.PlayersCard.Avatar")) return fn() end)
+", '@'.."Orca.views.Pages.Apps.PlayersCard.Avatar")) setfenv(fn, newEnv("Orca.views.Pages.Apps.PlayersCard.Avatar")) return fn() end)
 
-createModule("PlayersCard", "ModuleScript", "Orca.views.Pages.Apps.PlayersCard.PlayersCard", "Orca.views.Pages.Apps.PlayersCard", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("PlayersCard", "ModuleScript", "Orca.views.Pages.Apps.PlayersCard.PlayersCard", "Orca.views.Pages.Apps.PlayersCard", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.Parent.Parent.include.RuntimeLib)\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
 local hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out).hooked\
@@ -6588,9 +6588,9 @@ local default = hooked(PlayersCard)\
 return {\
 \9default = default,\
 }\
-", '@'.."Orca.views.Pages.Apps.PlayersCard.PlayersCard")) setfenv(fn, createModuleEnvironment("Orca.views.Pages.Apps.PlayersCard.PlayersCard")) return fn() end)
+", '@'.."Orca.views.Pages.Apps.PlayersCard.PlayersCard")) setfenv(fn, newEnv("Orca.views.Pages.Apps.PlayersCard.PlayersCard")) return fn() end)
 
-createModule("Selection", "ModuleScript", "Orca.views.Pages.Apps.PlayersCard.Selection", "Orca.views.Pages.Apps.PlayersCard", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("Selection", "ModuleScript", "Orca.views.Pages.Apps.PlayersCard.Selection", "Orca.views.Pages.Apps.PlayersCard", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.Parent.Parent.include.RuntimeLib)\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
 local _roact_hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out)\
@@ -6909,9 +6909,9 @@ PlayerEntry = hooked(PlayerEntryComponent)\
 return {\
 \9default = default,\
 }\
-", '@'.."Orca.views.Pages.Apps.PlayersCard.Selection")) setfenv(fn, createModuleEnvironment("Orca.views.Pages.Apps.PlayersCard.Selection")) return fn() end)
+", '@'.."Orca.views.Pages.Apps.PlayersCard.Selection")) setfenv(fn, newEnv("Orca.views.Pages.Apps.PlayersCard.Selection")) return fn() end)
 
-createModule("Username", "ModuleScript", "Orca.views.Pages.Apps.PlayersCard.Username", "Orca.views.Pages.Apps.PlayersCard", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("Username", "ModuleScript", "Orca.views.Pages.Apps.PlayersCard.Username", "Orca.views.Pages.Apps.PlayersCard", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.Parent.Parent.include.RuntimeLib)\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
 local hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out).hooked\
@@ -6965,16 +6965,16 @@ local default = hooked(Username)\
 return {\
 \9default = default,\
 }\
-", '@'.."Orca.views.Pages.Apps.PlayersCard.Username")) setfenv(fn, createModuleEnvironment("Orca.views.Pages.Apps.PlayersCard.Username")) return fn() end)
+", '@'.."Orca.views.Pages.Apps.PlayersCard.Username")) setfenv(fn, newEnv("Orca.views.Pages.Apps.PlayersCard.Username")) return fn() end)
 
-createModule("Home", "ModuleScript", "Orca.views.Pages.Home", "Orca.views.Pages", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("Home", "ModuleScript", "Orca.views.Pages.Home", "Orca.views.Pages", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.include.RuntimeLib)\
 local exports = {}\
 exports.default = TS.import(script, script, \"Home\").default\
 return exports\
-", '@'.."Orca.views.Pages.Home")) setfenv(fn, createModuleEnvironment("Orca.views.Pages.Home")) return fn() end)
+", '@'.."Orca.views.Pages.Home")) setfenv(fn, newEnv("Orca.views.Pages.Home")) return fn() end)
 
-createModule("FriendActivityCard", "ModuleScript", "Orca.views.Pages.Home.FriendActivityCard", "Orca.views.Pages.Home", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("FriendActivityCard", "ModuleScript", "Orca.views.Pages.Home.FriendActivityCard", "Orca.views.Pages.Home", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.Parent.include.RuntimeLib)\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
 local _roact_hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out)\
@@ -7231,9 +7231,9 @@ FriendEntry = hooked(FriendEntryComponent)\
 return {\
 \9default = default,\
 }\
-", '@'.."Orca.views.Pages.Home.FriendActivityCard")) setfenv(fn, createModuleEnvironment("Orca.views.Pages.Home.FriendActivityCard")) return fn() end)
+", '@'.."Orca.views.Pages.Home.FriendActivityCard")) setfenv(fn, newEnv("Orca.views.Pages.Home.FriendActivityCard")) return fn() end)
 
-createModule("Home", "ModuleScript", "Orca.views.Pages.Home.Home", "Orca.views.Pages.Home", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("Home", "ModuleScript", "Orca.views.Pages.Home.Home", "Orca.views.Pages.Home", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.Parent.include.RuntimeLib)\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
 local pure = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out).pure\
@@ -7263,9 +7263,9 @@ local default = pure(Home)\
 return {\
 \9default = default,\
 }\
-", '@'.."Orca.views.Pages.Home.Home")) setfenv(fn, createModuleEnvironment("Orca.views.Pages.Home.Home")) return fn() end)
+", '@'.."Orca.views.Pages.Home.Home")) setfenv(fn, newEnv("Orca.views.Pages.Home.Home")) return fn() end)
 
-createModule("Home.story", "ModuleScript", "Orca.views.Pages.Home.Home.story", "Orca.views.Pages.Home", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("Home.story", "ModuleScript", "Orca.views.Pages.Home.Home.story", "Orca.views.Pages.Home", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.Parent.include.RuntimeLib)\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
 local Provider = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-rodux-hooked\").out).Provider\
@@ -7289,16 +7289,16 @@ return function(target)\
 \9\9return Roact.unmount(handle)\
 \9end\
 end\
-", '@'.."Orca.views.Pages.Home.Home.story")) setfenv(fn, createModuleEnvironment("Orca.views.Pages.Home.Home.story")) return fn() end)
+", '@'.."Orca.views.Pages.Home.Home.story")) setfenv(fn, newEnv("Orca.views.Pages.Home.Home.story")) return fn() end)
 
-createModule("ProfileCard", "ModuleScript", "Orca.views.Pages.Home.ProfileCard", "Orca.views.Pages.Home", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("ProfileCard", "ModuleScript", "Orca.views.Pages.Home.ProfileCard", "Orca.views.Pages.Home", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.Parent.include.RuntimeLib)\
 local exports = {}\
 exports.default = TS.import(script, script, \"ProfileCard\").default\
 return exports\
-", '@'.."Orca.views.Pages.Home.ProfileCard")) setfenv(fn, createModuleEnvironment("Orca.views.Pages.Home.ProfileCard")) return fn() end)
+", '@'.."Orca.views.Pages.Home.ProfileCard")) setfenv(fn, newEnv("Orca.views.Pages.Home.ProfileCard")) return fn() end)
 
-createModule("Actions", "ModuleScript", "Orca.views.Pages.Home.ProfileCard.Actions", "Orca.views.Pages.Home.ProfileCard", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("Actions", "ModuleScript", "Orca.views.Pages.Home.ProfileCard.Actions", "Orca.views.Pages.Home.ProfileCard", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.Parent.Parent.include.RuntimeLib)\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
 local hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out).hooked\
@@ -7349,9 +7349,9 @@ local default = hooked(Actions)\
 return {\
 \9default = default,\
 }\
-", '@'.."Orca.views.Pages.Home.ProfileCard.Actions")) setfenv(fn, createModuleEnvironment("Orca.views.Pages.Home.ProfileCard.Actions")) return fn() end)
+", '@'.."Orca.views.Pages.Home.ProfileCard.Actions")) setfenv(fn, newEnv("Orca.views.Pages.Home.ProfileCard.Actions")) return fn() end)
 
-createModule("Avatar", "ModuleScript", "Orca.views.Pages.Home.ProfileCard.Avatar", "Orca.views.Pages.Home.ProfileCard", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("Avatar", "ModuleScript", "Orca.views.Pages.Home.ProfileCard.Avatar", "Orca.views.Pages.Home.ProfileCard", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.Parent.Parent.include.RuntimeLib)\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
 local hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out).hooked\
@@ -7395,9 +7395,9 @@ local default = hooked(Avatar)\
 return {\
 \9default = default,\
 }\
-", '@'.."Orca.views.Pages.Home.ProfileCard.Avatar")) setfenv(fn, createModuleEnvironment("Orca.views.Pages.Home.ProfileCard.Avatar")) return fn() end)
+", '@'.."Orca.views.Pages.Home.ProfileCard.Avatar")) setfenv(fn, newEnv("Orca.views.Pages.Home.ProfileCard.Avatar")) return fn() end)
 
-createModule("Info", "ModuleScript", "Orca.views.Pages.Home.ProfileCard.Info", "Orca.views.Pages.Home.ProfileCard", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("Info", "ModuleScript", "Orca.views.Pages.Home.ProfileCard.Info", "Orca.views.Pages.Home.ProfileCard", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.Parent.Parent.include.RuntimeLib)\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
 local hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out).hooked\
@@ -7512,9 +7512,9 @@ local default = hooked(Info)\
 return {\
 \9default = default,\
 }\
-", '@'.."Orca.views.Pages.Home.ProfileCard.Info")) setfenv(fn, createModuleEnvironment("Orca.views.Pages.Home.ProfileCard.Info")) return fn() end)
+", '@'.."Orca.views.Pages.Home.ProfileCard.Info")) setfenv(fn, newEnv("Orca.views.Pages.Home.ProfileCard.Info")) return fn() end)
 
-createModule("ProfileCard", "ModuleScript", "Orca.views.Pages.Home.ProfileCard.ProfileCard", "Orca.views.Pages.Home.ProfileCard", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("ProfileCard", "ModuleScript", "Orca.views.Pages.Home.ProfileCard.ProfileCard", "Orca.views.Pages.Home.ProfileCard", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.Parent.Parent.include.RuntimeLib)\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
 local hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out).hooked\
@@ -7555,9 +7555,9 @@ local default = hooked(ProfileCard)\
 return {\
 \9default = default,\
 }\
-", '@'.."Orca.views.Pages.Home.ProfileCard.ProfileCard")) setfenv(fn, createModuleEnvironment("Orca.views.Pages.Home.ProfileCard.ProfileCard")) return fn() end)
+", '@'.."Orca.views.Pages.Home.ProfileCard.ProfileCard")) setfenv(fn, newEnv("Orca.views.Pages.Home.ProfileCard.ProfileCard")) return fn() end)
 
-createModule("Sliders", "ModuleScript", "Orca.views.Pages.Home.ProfileCard.Sliders", "Orca.views.Pages.Home.ProfileCard", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("Sliders", "ModuleScript", "Orca.views.Pages.Home.ProfileCard.Sliders", "Orca.views.Pages.Home.ProfileCard", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.Parent.Parent.include.RuntimeLib)\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
 local _roact_hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out)\
@@ -7726,9 +7726,9 @@ Slider = hooked(SliderComponent)\
 return {\
 \9default = default,\
 }\
-", '@'.."Orca.views.Pages.Home.ProfileCard.Sliders")) setfenv(fn, createModuleEnvironment("Orca.views.Pages.Home.ProfileCard.Sliders")) return fn() end)
+", '@'.."Orca.views.Pages.Home.ProfileCard.Sliders")) setfenv(fn, newEnv("Orca.views.Pages.Home.ProfileCard.Sliders")) return fn() end)
 
-createModule("Username", "ModuleScript", "Orca.views.Pages.Home.ProfileCard.Username", "Orca.views.Pages.Home.ProfileCard", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("Username", "ModuleScript", "Orca.views.Pages.Home.ProfileCard.Username", "Orca.views.Pages.Home.ProfileCard", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.Parent.Parent.include.RuntimeLib)\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
 local hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out).hooked\
@@ -7772,16 +7772,16 @@ local default = hooked(Username)\
 return {\
 \9default = default,\
 }\
-", '@'.."Orca.views.Pages.Home.ProfileCard.Username")) setfenv(fn, createModuleEnvironment("Orca.views.Pages.Home.ProfileCard.Username")) return fn() end)
+", '@'.."Orca.views.Pages.Home.ProfileCard.Username")) setfenv(fn, newEnv("Orca.views.Pages.Home.ProfileCard.Username")) return fn() end)
 
-createModule("ServerCard", "ModuleScript", "Orca.views.Pages.Home.ServerCard", "Orca.views.Pages.Home", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("ServerCard", "ModuleScript", "Orca.views.Pages.Home.ServerCard", "Orca.views.Pages.Home", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.Parent.include.RuntimeLib)\
 local exports = {}\
 exports.default = TS.import(script, script, \"ServerCard\").default\
 return exports\
-", '@'.."Orca.views.Pages.Home.ServerCard")) setfenv(fn, createModuleEnvironment("Orca.views.Pages.Home.ServerCard")) return fn() end)
+", '@'.."Orca.views.Pages.Home.ServerCard")) setfenv(fn, newEnv("Orca.views.Pages.Home.ServerCard")) return fn() end)
 
-createModule("ServerAction", "ModuleScript", "Orca.views.Pages.Home.ServerCard.ServerAction", "Orca.views.Pages.Home.ServerCard", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("ServerAction", "ModuleScript", "Orca.views.Pages.Home.ServerCard.ServerAction", "Orca.views.Pages.Home.ServerCard", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.Parent.Parent.include.RuntimeLib)\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
 local _roact_hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out)\
@@ -7868,9 +7868,9 @@ local default = hooked(ServerAction)\
 return {\
 \9default = default,\
 }\
-", '@'.."Orca.views.Pages.Home.ServerCard.ServerAction")) setfenv(fn, createModuleEnvironment("Orca.views.Pages.Home.ServerCard.ServerAction")) return fn() end)
+", '@'.."Orca.views.Pages.Home.ServerCard.ServerAction")) setfenv(fn, newEnv("Orca.views.Pages.Home.ServerCard.ServerAction")) return fn() end)
 
-createModule("ServerCard", "ModuleScript", "Orca.views.Pages.Home.ServerCard.ServerCard", "Orca.views.Pages.Home.ServerCard", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("ServerCard", "ModuleScript", "Orca.views.Pages.Home.ServerCard.ServerCard", "Orca.views.Pages.Home.ServerCard", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.Parent.Parent.include.RuntimeLib)\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
 local hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out).hooked\
@@ -7947,9 +7947,9 @@ local default = hooked(ServerCard)\
 return {\
 \9default = default,\
 }\
-", '@'.."Orca.views.Pages.Home.ServerCard.ServerCard")) setfenv(fn, createModuleEnvironment("Orca.views.Pages.Home.ServerCard.ServerCard")) return fn() end)
+", '@'.."Orca.views.Pages.Home.ServerCard.ServerCard")) setfenv(fn, newEnv("Orca.views.Pages.Home.ServerCard.ServerCard")) return fn() end)
 
-createModule("StatusLabel", "ModuleScript", "Orca.views.Pages.Home.ServerCard.StatusLabel", "Orca.views.Pages.Home.ServerCard", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("StatusLabel", "ModuleScript", "Orca.views.Pages.Home.ServerCard.StatusLabel", "Orca.views.Pages.Home.ServerCard", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.Parent.Parent.include.RuntimeLib)\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
 local _roact_hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out)\
@@ -8004,9 +8004,9 @@ local default = hooked(StatusLabel)\
 return {\
 \9default = default,\
 }\
-", '@'.."Orca.views.Pages.Home.ServerCard.StatusLabel")) setfenv(fn, createModuleEnvironment("Orca.views.Pages.Home.ServerCard.StatusLabel")) return fn() end)
+", '@'.."Orca.views.Pages.Home.ServerCard.StatusLabel")) setfenv(fn, newEnv("Orca.views.Pages.Home.ServerCard.StatusLabel")) return fn() end)
 
-createModule("TitleCard", "ModuleScript", "Orca.views.Pages.Home.TitleCard", "Orca.views.Pages.Home", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("TitleCard", "ModuleScript", "Orca.views.Pages.Home.TitleCard", "Orca.views.Pages.Home", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.Parent.include.RuntimeLib)\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
 local hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out).hooked\
@@ -8128,16 +8128,16 @@ Label = hooked(LabelComponent)\
 return {\
 \9default = default,\
 }\
-", '@'.."Orca.views.Pages.Home.TitleCard")) setfenv(fn, createModuleEnvironment("Orca.views.Pages.Home.TitleCard")) return fn() end)
+", '@'.."Orca.views.Pages.Home.TitleCard")) setfenv(fn, newEnv("Orca.views.Pages.Home.TitleCard")) return fn() end)
 
-createModule("Options", "ModuleScript", "Orca.views.Pages.Options", "Orca.views.Pages", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("Options", "ModuleScript", "Orca.views.Pages.Options", "Orca.views.Pages", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.include.RuntimeLib)\
 local exports = {}\
 exports.default = TS.import(script, script, \"Options\").default\
 return exports\
-", '@'.."Orca.views.Pages.Options")) setfenv(fn, createModuleEnvironment("Orca.views.Pages.Options")) return fn() end)
+", '@'.."Orca.views.Pages.Options")) setfenv(fn, newEnv("Orca.views.Pages.Options")) return fn() end)
 
-createModule("Options", "ModuleScript", "Orca.views.Pages.Options.Options", "Orca.views.Pages.Options", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("Options", "ModuleScript", "Orca.views.Pages.Options.Options", "Orca.views.Pages.Options", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.Parent.include.RuntimeLib)\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
 local pure = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out).pure\
@@ -8161,16 +8161,16 @@ local default = pure(Options)\
 return {\
 \9default = default,\
 }\
-", '@'.."Orca.views.Pages.Options.Options")) setfenv(fn, createModuleEnvironment("Orca.views.Pages.Options.Options")) return fn() end)
+", '@'.."Orca.views.Pages.Options.Options")) setfenv(fn, newEnv("Orca.views.Pages.Options.Options")) return fn() end)
 
-createModule("ThemesCard", "ModuleScript", "Orca.views.Pages.Options.ThemesCard", "Orca.views.Pages.Options", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("ThemesCard", "ModuleScript", "Orca.views.Pages.Options.ThemesCard", "Orca.views.Pages.Options", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.Parent.include.RuntimeLib)\
 local exports = {}\
 exports.default = TS.import(script, script, \"ThemesCard\").default\
 return exports\
-", '@'.."Orca.views.Pages.Options.ThemesCard")) setfenv(fn, createModuleEnvironment("Orca.views.Pages.Options.ThemesCard")) return fn() end)
+", '@'.."Orca.views.Pages.Options.ThemesCard")) setfenv(fn, newEnv("Orca.views.Pages.Options.ThemesCard")) return fn() end)
 
-createModule("ThemeItem", "ModuleScript", "Orca.views.Pages.Options.ThemesCard.ThemeItem", "Orca.views.Pages.Options.ThemesCard", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("ThemeItem", "ModuleScript", "Orca.views.Pages.Options.ThemesCard.ThemeItem", "Orca.views.Pages.Options.ThemesCard", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.Parent.Parent.include.RuntimeLib)\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
 local _roact_hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out)\
@@ -8401,9 +8401,9 @@ return {\
 \9ENTRY_TEXT_PADDING = ENTRY_TEXT_PADDING,\
 \9default = default,\
 }\
-", '@'.."Orca.views.Pages.Options.ThemesCard.ThemeItem")) setfenv(fn, createModuleEnvironment("Orca.views.Pages.Options.ThemesCard.ThemeItem")) return fn() end)
+", '@'.."Orca.views.Pages.Options.ThemesCard.ThemeItem")) setfenv(fn, newEnv("Orca.views.Pages.Options.ThemesCard.ThemeItem")) return fn() end)
 
-createModule("ThemesCard", "ModuleScript", "Orca.views.Pages.Options.ThemesCard.ThemesCard", "Orca.views.Pages.Options.ThemesCard", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("ThemesCard", "ModuleScript", "Orca.views.Pages.Options.ThemesCard.ThemesCard", "Orca.views.Pages.Options.ThemesCard", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.Parent.Parent.include.RuntimeLib)\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
 local _roact_hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out)\
@@ -8484,9 +8484,9 @@ local default = hooked(ThemesCard)\
 return {\
 \9default = default,\
 }\
-", '@'.."Orca.views.Pages.Options.ThemesCard.ThemesCard")) setfenv(fn, createModuleEnvironment("Orca.views.Pages.Options.ThemesCard.ThemesCard")) return fn() end)
+", '@'.."Orca.views.Pages.Options.ThemesCard.ThemesCard")) setfenv(fn, newEnv("Orca.views.Pages.Options.ThemesCard.ThemesCard")) return fn() end)
 
-createModule("Pages", "ModuleScript", "Orca.views.Pages.Pages", "Orca.views.Pages", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("Pages", "ModuleScript", "Orca.views.Pages.Pages", "Orca.views.Pages", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.include.RuntimeLib)\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
 local hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out).hooked\
@@ -8533,16 +8533,16 @@ local default = hooked(Pages)\
 return {\
 \9default = default,\
 }\
-", '@'.."Orca.views.Pages.Pages")) setfenv(fn, createModuleEnvironment("Orca.views.Pages.Pages")) return fn() end)
+", '@'.."Orca.views.Pages.Pages")) setfenv(fn, newEnv("Orca.views.Pages.Pages")) return fn() end)
 
-createModule("Scripts", "ModuleScript", "Orca.views.Pages.Scripts", "Orca.views.Pages", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("Scripts", "ModuleScript", "Orca.views.Pages.Scripts", "Orca.views.Pages", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.include.RuntimeLib)\
 local exports = {}\
 exports.default = TS.import(script, script, \"Scripts\").default\
 return exports\
-", '@'.."Orca.views.Pages.Scripts")) setfenv(fn, createModuleEnvironment("Orca.views.Pages.Scripts")) return fn() end)
+", '@'.."Orca.views.Pages.Scripts")) setfenv(fn, newEnv("Orca.views.Pages.Scripts")) return fn() end)
 
-createModule("Content", "ModuleScript", "Orca.views.Pages.Scripts.Content", "Orca.views.Pages.Scripts", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("Content", "ModuleScript", "Orca.views.Pages.Scripts.Content", "Orca.views.Pages.Scripts", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.Parent.include.RuntimeLib)\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
 local hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out).hooked\
@@ -8667,9 +8667,9 @@ local default = hooked(Content)\
 return {\
 \9default = default,\
 }\
-", '@'.."Orca.views.Pages.Scripts.Content")) setfenv(fn, createModuleEnvironment("Orca.views.Pages.Scripts.Content")) return fn() end)
+", '@'.."Orca.views.Pages.Scripts.Content")) setfenv(fn, newEnv("Orca.views.Pages.Scripts.Content")) return fn() end)
 
-createModule("ScriptCard", "ModuleScript", "Orca.views.Pages.Scripts.ScriptCard", "Orca.views.Pages.Scripts", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("ScriptCard", "ModuleScript", "Orca.views.Pages.Scripts.ScriptCard", "Orca.views.Pages.Scripts", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.Parent.include.RuntimeLib)\
 local Spring = TS.import(script, TS.getModule(script, \"@rbxts\", \"flipper\").src).Spring\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
@@ -8874,9 +8874,9 @@ local default = hooked(ScriptCard)\
 return {\
 \9default = default,\
 }\
-", '@'.."Orca.views.Pages.Scripts.ScriptCard")) setfenv(fn, createModuleEnvironment("Orca.views.Pages.Scripts.ScriptCard")) return fn() end)
+", '@'.."Orca.views.Pages.Scripts.ScriptCard")) setfenv(fn, newEnv("Orca.views.Pages.Scripts.ScriptCard")) return fn() end)
 
-createModule("Scripts", "ModuleScript", "Orca.views.Pages.Scripts.Scripts", "Orca.views.Pages.Scripts", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("Scripts", "ModuleScript", "Orca.views.Pages.Scripts.Scripts", "Orca.views.Pages.Scripts", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.Parent.include.RuntimeLib)\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
 local pure = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out).pure\
@@ -9050,9 +9050,9 @@ local default = pure(Scripts)\
 return {\
 \9default = default,\
 }\
-", '@'.."Orca.views.Pages.Scripts.Scripts")) setfenv(fn, createModuleEnvironment("Orca.views.Pages.Scripts.Scripts")) return fn() end)
+", '@'.."Orca.views.Pages.Scripts.Scripts")) setfenv(fn, newEnv("Orca.views.Pages.Scripts.Scripts")) return fn() end)
 
-createModule("constants", "ModuleScript", "Orca.views.Pages.Scripts.constants", "Orca.views.Pages.Scripts", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("constants", "ModuleScript", "Orca.views.Pages.Scripts.constants", "Orca.views.Pages.Scripts", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local BASE_WINDOW_HEIGHT = 880\
 local BASE_WINDOW_WIDTH = 1824\
 local BASE_PADDING = 48\
@@ -9061,11 +9061,11 @@ return {\
 \9BASE_WINDOW_WIDTH = BASE_WINDOW_WIDTH,\
 \9BASE_PADDING = BASE_PADDING,\
 }\
-", '@'.."Orca.views.Pages.Scripts.constants")) setfenv(fn, createModuleEnvironment("Orca.views.Pages.Scripts.constants")) return fn() end)
+", '@'.."Orca.views.Pages.Scripts.constants")) setfenv(fn, newEnv("Orca.views.Pages.Scripts.constants")) return fn() end)
 
-createInstance("include", "Folder", "Orca.include", "Orca")
+newInstance("include", "Folder", "Orca.include", "Orca")
 
-createModule("Promise", "ModuleScript", "Orca.include.Promise", "Orca.include", function () local fn = assert(loadstring("--[[\
+newModule("Promise", "ModuleScript", "Orca.include.Promise", "Orca.include", function () local fn = assert(loadstring("--[[\
 \9An implementation of Promises similar to Promise/A+.\
 ]]\
 \
@@ -10467,9 +10467,9 @@ function Promise.fromEvent(event, predicate)\
 end\
 \
 return Promise\
-", '@'.."Orca.include.Promise")) setfenv(fn, createModuleEnvironment("Orca.include.Promise")) return fn() end)
+", '@'.."Orca.include.Promise")) setfenv(fn, newEnv("Orca.include.Promise")) return fn() end)
 
-createModule("RuntimeLib", "ModuleScript", "Orca.include.RuntimeLib", "Orca.include", function () local fn = assert(loadstring("local Promise = require(script.Parent.Promise)\
+newModule("RuntimeLib", "ModuleScript", "Orca.include.RuntimeLib", "Orca.include", function () local fn = assert(loadstring("local Promise = require(script.Parent.Promise)\
 \
 local RunService = game:GetService(\"RunService\")\
 local ReplicatedFirst = game:GetService(\"ReplicatedFirst\")\
@@ -10698,21 +10698,21 @@ function TS.generator(callback)\
 end\
 \
 return TS\
-", '@'.."Orca.include.RuntimeLib")) setfenv(fn, createModuleEnvironment("Orca.include.RuntimeLib")) return fn() end)
+", '@'.."Orca.include.RuntimeLib")) setfenv(fn, newEnv("Orca.include.RuntimeLib")) return fn() end)
 
-createInstance("node_modules", "Folder", "Orca.include.node_modules", "Orca.include")
+newInstance("node_modules", "Folder", "Orca.include.node_modules", "Orca.include")
 
-createInstance("compiler-types", "Folder", "Orca.include.node_modules.compiler-types", "Orca.include.node_modules")
+newInstance("compiler-types", "Folder", "Orca.include.node_modules.compiler-types", "Orca.include.node_modules")
 
-createInstance("types", "Folder", "Orca.include.node_modules.compiler-types.types", "Orca.include.node_modules.compiler-types")
+newInstance("types", "Folder", "Orca.include.node_modules.compiler-types.types", "Orca.include.node_modules.compiler-types")
 
-createInstance("exploit-types", "Folder", "Orca.include.node_modules.exploit-types", "Orca.include.node_modules")
+newInstance("exploit-types", "Folder", "Orca.include.node_modules.exploit-types", "Orca.include.node_modules")
 
-createInstance("types", "Folder", "Orca.include.node_modules.exploit-types.types", "Orca.include.node_modules.exploit-types")
+newInstance("types", "Folder", "Orca.include.node_modules.exploit-types.types", "Orca.include.node_modules.exploit-types")
 
-createInstance("flipper", "Folder", "Orca.include.node_modules.flipper", "Orca.include.node_modules")
+newInstance("flipper", "Folder", "Orca.include.node_modules.flipper", "Orca.include.node_modules")
 
-createModule("src", "ModuleScript", "Orca.include.node_modules.flipper.src", "Orca.include.node_modules.flipper", function () local fn = assert(loadstring("local Flipper = {\13\
+newModule("src", "ModuleScript", "Orca.include.node_modules.flipper.src", "Orca.include.node_modules.flipper", function () local fn = assert(loadstring("local Flipper = {\13\
 \9SingleMotor = require(script.SingleMotor),\13\
 \9GroupMotor = require(script.GroupMotor),\13\
 \13\
@@ -10723,9 +10723,9 @@ createModule("src", "ModuleScript", "Orca.include.node_modules.flipper.src", "Or
 \9isMotor = require(script.isMotor),\13\
 }\13\
 \13\
-return Flipper", '@'.."Orca.include.node_modules.flipper.src")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.flipper.src")) return fn() end)
+return Flipper", '@'.."Orca.include.node_modules.flipper.src")) setfenv(fn, newEnv("Orca.include.node_modules.flipper.src")) return fn() end)
 
-createModule("BaseMotor", "ModuleScript", "Orca.include.node_modules.flipper.src.BaseMotor", "Orca.include.node_modules.flipper.src", function () local fn = assert(loadstring("local RunService = game:GetService(\"RunService\")\13\
+newModule("BaseMotor", "ModuleScript", "Orca.include.node_modules.flipper.src.BaseMotor", "Orca.include.node_modules.flipper.src", function () local fn = assert(loadstring("local RunService = game:GetService(\"RunService\")\13\
 \13\
 local Signal = require(script.Parent.Signal)\13\
 \13\
@@ -10780,9 +10780,9 @@ function BaseMotor:__tostring()\13\
 end\13\
 \13\
 return BaseMotor\13\
-", '@'.."Orca.include.node_modules.flipper.src.BaseMotor")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.flipper.src.BaseMotor")) return fn() end)
+", '@'.."Orca.include.node_modules.flipper.src.BaseMotor")) setfenv(fn, newEnv("Orca.include.node_modules.flipper.src.BaseMotor")) return fn() end)
 
-createModule("GroupMotor", "ModuleScript", "Orca.include.node_modules.flipper.src.GroupMotor", "Orca.include.node_modules.flipper.src", function () local fn = assert(loadstring("local BaseMotor = require(script.Parent.BaseMotor)\13\
+newModule("GroupMotor", "ModuleScript", "Orca.include.node_modules.flipper.src.GroupMotor", "Orca.include.node_modules.flipper.src", function () local fn = assert(loadstring("local BaseMotor = require(script.Parent.BaseMotor)\13\
 local SingleMotor = require(script.Parent.SingleMotor)\13\
 \13\
 local isMotor = require(script.Parent.isMotor)\13\
@@ -10889,9 +10889,9 @@ function GroupMotor:__tostring()\13\
 end\13\
 \13\
 return GroupMotor\13\
-", '@'.."Orca.include.node_modules.flipper.src.GroupMotor")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.flipper.src.GroupMotor")) return fn() end)
+", '@'.."Orca.include.node_modules.flipper.src.GroupMotor")) setfenv(fn, newEnv("Orca.include.node_modules.flipper.src.GroupMotor")) return fn() end)
 
-createModule("Instant", "ModuleScript", "Orca.include.node_modules.flipper.src.Instant", "Orca.include.node_modules.flipper.src", function () local fn = assert(loadstring("local Instant = {}\13\
+newModule("Instant", "ModuleScript", "Orca.include.node_modules.flipper.src.Instant", "Orca.include.node_modules.flipper.src", function () local fn = assert(loadstring("local Instant = {}\13\
 Instant.__index = Instant\13\
 \13\
 function Instant.new(targetValue)\13\
@@ -10907,9 +10907,9 @@ function Instant:step()\13\
 \9}\13\
 end\13\
 \13\
-return Instant", '@'.."Orca.include.node_modules.flipper.src.Instant")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.flipper.src.Instant")) return fn() end)
+return Instant", '@'.."Orca.include.node_modules.flipper.src.Instant")) setfenv(fn, newEnv("Orca.include.node_modules.flipper.src.Instant")) return fn() end)
 
-createModule("Linear", "ModuleScript", "Orca.include.node_modules.flipper.src.Linear", "Orca.include.node_modules.flipper.src", function () local fn = assert(loadstring("local Linear = {}\13\
+newModule("Linear", "ModuleScript", "Orca.include.node_modules.flipper.src.Linear", "Orca.include.node_modules.flipper.src", function () local fn = assert(loadstring("local Linear = {}\13\
 Linear.__index = Linear\13\
 \13\
 function Linear.new(targetValue, options)\13\
@@ -10944,9 +10944,9 @@ function Linear:step(state, dt)\13\
 \9}\13\
 end\13\
 \13\
-return Linear", '@'.."Orca.include.node_modules.flipper.src.Linear")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.flipper.src.Linear")) return fn() end)
+return Linear", '@'.."Orca.include.node_modules.flipper.src.Linear")) setfenv(fn, newEnv("Orca.include.node_modules.flipper.src.Linear")) return fn() end)
 
-createModule("Signal", "ModuleScript", "Orca.include.node_modules.flipper.src.Signal", "Orca.include.node_modules.flipper.src", function () local fn = assert(loadstring("local Connection = {}\13\
+newModule("Signal", "ModuleScript", "Orca.include.node_modules.flipper.src.Signal", "Orca.include.node_modules.flipper.src", function () local fn = assert(loadstring("local Connection = {}\13\
 Connection.__index = Connection\13\
 \13\
 function Connection.new(signal, handler)\13\
@@ -11003,9 +11003,9 @@ function Signal:wait()\13\
 \9return coroutine.yield()\13\
 end\13\
 \13\
-return Signal", '@'.."Orca.include.node_modules.flipper.src.Signal")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.flipper.src.Signal")) return fn() end)
+return Signal", '@'.."Orca.include.node_modules.flipper.src.Signal")) setfenv(fn, newEnv("Orca.include.node_modules.flipper.src.Signal")) return fn() end)
 
-createModule("SingleMotor", "ModuleScript", "Orca.include.node_modules.flipper.src.SingleMotor", "Orca.include.node_modules.flipper.src", function () local fn = assert(loadstring("local BaseMotor = require(script.Parent.BaseMotor)\13\
+newModule("SingleMotor", "ModuleScript", "Orca.include.node_modules.flipper.src.SingleMotor", "Orca.include.node_modules.flipper.src", function () local fn = assert(loadstring("local BaseMotor = require(script.Parent.BaseMotor)\13\
 \13\
 local SingleMotor = setmetatable({}, BaseMotor)\13\
 SingleMotor.__index = SingleMotor\13\
@@ -11072,9 +11072,9 @@ function SingleMotor:__tostring()\13\
 end\13\
 \13\
 return SingleMotor\13\
-", '@'.."Orca.include.node_modules.flipper.src.SingleMotor")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.flipper.src.SingleMotor")) return fn() end)
+", '@'.."Orca.include.node_modules.flipper.src.SingleMotor")) setfenv(fn, newEnv("Orca.include.node_modules.flipper.src.SingleMotor")) return fn() end)
 
-createModule("Spring", "ModuleScript", "Orca.include.node_modules.flipper.src.Spring", "Orca.include.node_modules.flipper.src", function () local fn = assert(loadstring("local VELOCITY_THRESHOLD = 0.001\13\
+newModule("Spring", "ModuleScript", "Orca.include.node_modules.flipper.src.Spring", "Orca.include.node_modules.flipper.src", function () local fn = assert(loadstring("local VELOCITY_THRESHOLD = 0.001\13\
 local POSITION_THRESHOLD = 0.001\13\
 \13\
 local EPS = 0.0001\13\
@@ -11181,9 +11181,9 @@ function Spring:step(state, dt)\13\
 \9}\13\
 end\13\
 \13\
-return Spring", '@'.."Orca.include.node_modules.flipper.src.Spring")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.flipper.src.Spring")) return fn() end)
+return Spring", '@'.."Orca.include.node_modules.flipper.src.Spring")) setfenv(fn, newEnv("Orca.include.node_modules.flipper.src.Spring")) return fn() end)
 
-createModule("isMotor", "ModuleScript", "Orca.include.node_modules.flipper.src.isMotor", "Orca.include.node_modules.flipper.src", function () local fn = assert(loadstring("local function isMotor(value)\13\
+newModule("isMotor", "ModuleScript", "Orca.include.node_modules.flipper.src.isMotor", "Orca.include.node_modules.flipper.src", function () local fn = assert(loadstring("local function isMotor(value)\13\
 \9local motorType = tostring(value):match(\"^Motor%((.+)%)$\")\13\
 \13\
 \9if motorType then\13\
@@ -11193,11 +11193,11 @@ createModule("isMotor", "ModuleScript", "Orca.include.node_modules.flipper.src.i
 \9end\13\
 end\13\
 \13\
-return isMotor", '@'.."Orca.include.node_modules.flipper.src.isMotor")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.flipper.src.isMotor")) return fn() end)
+return isMotor", '@'.."Orca.include.node_modules.flipper.src.isMotor")) setfenv(fn, newEnv("Orca.include.node_modules.flipper.src.isMotor")) return fn() end)
 
-createInstance("typings", "Folder", "Orca.include.node_modules.flipper.typings", "Orca.include.node_modules.flipper")
+newInstance("typings", "Folder", "Orca.include.node_modules.flipper.typings", "Orca.include.node_modules.flipper")
 
-createModule("make", "ModuleScript", "Orca.include.node_modules.make", "Orca.include.node_modules", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.3\
+newModule("make", "ModuleScript", "Orca.include.node_modules.make", "Orca.include.node_modules", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.3\
 --[[\
 \9*\
 \9* Returns a table wherein an object's writable properties can be specified,\
@@ -11239,17 +11239,17 @@ local function Make(className, settings)\
 \9return instance\
 end\
 return Make\
-", '@'.."Orca.include.node_modules.make")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.make")) return fn() end)
+", '@'.."Orca.include.node_modules.make")) setfenv(fn, newEnv("Orca.include.node_modules.make")) return fn() end)
 
-createInstance("node_modules", "Folder", "Orca.include.node_modules.make.node_modules", "Orca.include.node_modules.make")
+newInstance("node_modules", "Folder", "Orca.include.node_modules.make.node_modules", "Orca.include.node_modules.make")
 
-createInstance("@rbxts", "Folder", "Orca.include.node_modules.make.node_modules.@rbxts", "Orca.include.node_modules.make.node_modules")
+newInstance("@rbxts", "Folder", "Orca.include.node_modules.make.node_modules.@rbxts", "Orca.include.node_modules.make.node_modules")
 
-createInstance("compiler-types", "Folder", "Orca.include.node_modules.make.node_modules.@rbxts.compiler-types", "Orca.include.node_modules.make.node_modules.@rbxts")
+newInstance("compiler-types", "Folder", "Orca.include.node_modules.make.node_modules.@rbxts.compiler-types", "Orca.include.node_modules.make.node_modules.@rbxts")
 
-createInstance("types", "Folder", "Orca.include.node_modules.make.node_modules.@rbxts.compiler-types.types", "Orca.include.node_modules.make.node_modules.@rbxts.compiler-types")
+newInstance("types", "Folder", "Orca.include.node_modules.make.node_modules.@rbxts.compiler-types.types", "Orca.include.node_modules.make.node_modules.@rbxts.compiler-types")
 
-createModule("object-utils", "ModuleScript", "Orca.include.node_modules.object-utils", "Orca.include.node_modules", function () local fn = assert(loadstring("local HttpService = game:GetService(\"HttpService\")\
+newModule("object-utils", "ModuleScript", "Orca.include.node_modules.object-utils", "Orca.include.node_modules", function () local fn = assert(loadstring("local HttpService = game:GetService(\"HttpService\")\
 \
 local Object = {}\
 \
@@ -11367,11 +11367,11 @@ function Object.fromEntries(entries)\
 end\
 \
 return Object\
-", '@'.."Orca.include.node_modules.object-utils")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.object-utils")) return fn() end)
+", '@'.."Orca.include.node_modules.object-utils")) setfenv(fn, newEnv("Orca.include.node_modules.object-utils")) return fn() end)
 
-createInstance("roact", "Folder", "Orca.include.node_modules.roact", "Orca.include.node_modules")
+newInstance("roact", "Folder", "Orca.include.node_modules.roact", "Orca.include.node_modules")
 
-createModule("src", "ModuleScript", "Orca.include.node_modules.roact.src", "Orca.include.node_modules.roact", function () local fn = assert(loadstring("--[[\
+newModule("src", "ModuleScript", "Orca.include.node_modules.roact.src", "Orca.include.node_modules.roact", function () local fn = assert(loadstring("--[[\
 \9Packages up the internals of Roact and exposes a public API for it.\
 ]]\
 \
@@ -11419,9 +11419,9 @@ local Roact = strict {\
 \9},\
 }\
 \
-return Roact", '@'.."Orca.include.node_modules.roact.src")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.roact.src")) return fn() end)
+return Roact", '@'.."Orca.include.node_modules.roact.src")) setfenv(fn, newEnv("Orca.include.node_modules.roact.src")) return fn() end)
 
-createModule("Binding", "ModuleScript", "Orca.include.node_modules.roact.src.Binding", "Orca.include.node_modules.roact.src", function () local fn = assert(loadstring("local createSignal = require(script.Parent.createSignal)\
+newModule("Binding", "ModuleScript", "Orca.include.node_modules.roact.src.Binding", "Orca.include.node_modules.roact.src", function () local fn = assert(loadstring("local createSignal = require(script.Parent.createSignal)\
 local Symbol = require(script.Parent.Symbol)\
 local Type = require(script.Parent.Type)\
 \
@@ -11577,9 +11577,9 @@ function BindingInternalApi.join(upstreamBindings)\
 \9}, BindingPublicMeta)\
 end\
 \
-return BindingInternalApi", '@'.."Orca.include.node_modules.roact.src.Binding")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.roact.src.Binding")) return fn() end)
+return BindingInternalApi", '@'.."Orca.include.node_modules.roact.src.Binding")) setfenv(fn, newEnv("Orca.include.node_modules.roact.src.Binding")) return fn() end)
 
-createModule("Component", "ModuleScript", "Orca.include.node_modules.roact.src.Component", "Orca.include.node_modules.roact.src", function () local fn = assert(loadstring("local assign = require(script.Parent.assign)\
+newModule("Component", "ModuleScript", "Orca.include.node_modules.roact.src.Component", "Orca.include.node_modules.roact.src", function () local fn = assert(loadstring("local assign = require(script.Parent.assign)\
 local ComponentLifecyclePhase = require(script.Parent.ComponentLifecyclePhase)\
 local Type = require(script.Parent.Type)\
 local Symbol = require(script.Parent.Symbol)\
@@ -12099,9 +12099,9 @@ function Component:__resolveUpdate(incomingProps, incomingState)\
 \9return true\
 end\
 \
-return Component", '@'.."Orca.include.node_modules.roact.src.Component")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.roact.src.Component")) return fn() end)
+return Component", '@'.."Orca.include.node_modules.roact.src.Component")) setfenv(fn, newEnv("Orca.include.node_modules.roact.src.Component")) return fn() end)
 
-createModule("ComponentLifecyclePhase", "ModuleScript", "Orca.include.node_modules.roact.src.ComponentLifecyclePhase", "Orca.include.node_modules.roact.src", function () local fn = assert(loadstring("local Symbol = require(script.Parent.Symbol)\
+newModule("ComponentLifecyclePhase", "ModuleScript", "Orca.include.node_modules.roact.src.ComponentLifecyclePhase", "Orca.include.node_modules.roact.src", function () local fn = assert(loadstring("local Symbol = require(script.Parent.Symbol)\
 local strict = require(script.Parent.strict)\
 \
 local ComponentLifecyclePhase = strict({\
@@ -12119,9 +12119,9 @@ local ComponentLifecyclePhase = strict({\
 \9Idle = Symbol.named(\"idle\"),\
 }, \"ComponentLifecyclePhase\")\
 \
-return ComponentLifecyclePhase", '@'.."Orca.include.node_modules.roact.src.ComponentLifecyclePhase")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.roact.src.ComponentLifecyclePhase")) return fn() end)
+return ComponentLifecyclePhase", '@'.."Orca.include.node_modules.roact.src.ComponentLifecyclePhase")) setfenv(fn, newEnv("Orca.include.node_modules.roact.src.ComponentLifecyclePhase")) return fn() end)
 
-createModule("Config", "ModuleScript", "Orca.include.node_modules.roact.src.Config", "Orca.include.node_modules.roact.src", function () local fn = assert(loadstring("--[[\
+newModule("Config", "ModuleScript", "Orca.include.node_modules.roact.src.Config", "Orca.include.node_modules.roact.src", function () local fn = assert(loadstring("--[[\
 \9Exposes an interface to set global configuration values for Roact.\
 \
 \9Configuration can only occur once, and should only be done by an application\
@@ -12247,9 +12247,9 @@ function Config:scoped(configValues, callback)\
 \9assert(success, result)\
 end\
 \
-return Config", '@'.."Orca.include.node_modules.roact.src.Config")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.roact.src.Config")) return fn() end)
+return Config", '@'.."Orca.include.node_modules.roact.src.Config")) setfenv(fn, newEnv("Orca.include.node_modules.roact.src.Config")) return fn() end)
 
-createModule("ElementKind", "ModuleScript", "Orca.include.node_modules.roact.src.ElementKind", "Orca.include.node_modules.roact.src", function () local fn = assert(loadstring("--[[\
+newModule("ElementKind", "ModuleScript", "Orca.include.node_modules.roact.src.ElementKind", "Orca.include.node_modules.roact.src", function () local fn = assert(loadstring("--[[\
 \9Contains markers for annotating the type of an element.\
 \
 \9Use `ElementKind` as a key, and values from it as the value.\
@@ -12299,9 +12299,9 @@ getmetatable(ElementKind).__index = ElementKindInternal\
 \
 strict(ElementKindInternal, \"ElementKind\")\
 \
-return ElementKind", '@'.."Orca.include.node_modules.roact.src.ElementKind")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.roact.src.ElementKind")) return fn() end)
+return ElementKind", '@'.."Orca.include.node_modules.roact.src.ElementKind")) setfenv(fn, newEnv("Orca.include.node_modules.roact.src.ElementKind")) return fn() end)
 
-createModule("ElementUtils", "ModuleScript", "Orca.include.node_modules.roact.src.ElementUtils", "Orca.include.node_modules.roact.src", function () local fn = assert(loadstring("local Type = require(script.Parent.Type)\
+newModule("ElementUtils", "ModuleScript", "Orca.include.node_modules.roact.src.ElementUtils", "Orca.include.node_modules.roact.src", function () local fn = assert(loadstring("local Type = require(script.Parent.Type)\
 local Symbol = require(script.Parent.Symbol)\
 \
 local function noop()\
@@ -12399,17 +12399,17 @@ function ElementUtils.getElementByKey(elements, hostKey)\
 \9error(\"Invalid elements\")\
 end\
 \
-return ElementUtils", '@'.."Orca.include.node_modules.roact.src.ElementUtils")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.roact.src.ElementUtils")) return fn() end)
+return ElementUtils", '@'.."Orca.include.node_modules.roact.src.ElementUtils")) setfenv(fn, newEnv("Orca.include.node_modules.roact.src.ElementUtils")) return fn() end)
 
-createModule("GlobalConfig", "ModuleScript", "Orca.include.node_modules.roact.src.GlobalConfig", "Orca.include.node_modules.roact.src", function () local fn = assert(loadstring("--[[\
+newModule("GlobalConfig", "ModuleScript", "Orca.include.node_modules.roact.src.GlobalConfig", "Orca.include.node_modules.roact.src", function () local fn = assert(loadstring("--[[\
 \9Exposes a single instance of a configuration as Roact's GlobalConfig.\
 ]]\
 \
 local Config = require(script.Parent.Config)\
 \
-return Config.new()", '@'.."Orca.include.node_modules.roact.src.GlobalConfig")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.roact.src.GlobalConfig")) return fn() end)
+return Config.new()", '@'.."Orca.include.node_modules.roact.src.GlobalConfig")) setfenv(fn, newEnv("Orca.include.node_modules.roact.src.GlobalConfig")) return fn() end)
 
-createModule("Logging", "ModuleScript", "Orca.include.node_modules.roact.src.Logging", "Orca.include.node_modules.roact.src", function () local fn = assert(loadstring("--[[\
+newModule("Logging", "ModuleScript", "Orca.include.node_modules.roact.src.Logging", "Orca.include.node_modules.roact.src", function () local fn = assert(loadstring("--[[\
 \9Centralized place to handle logging. Lets us:\
 \9- Unit test log output via `Logging.capture`\
 \9- Disable verbose log messages when not debugging Roact\
@@ -12567,17 +12567,17 @@ function Logging.warnOnce(messageTemplate, ...)\
 \9Logging.warn(messageTemplate, ...)\
 end\
 \
-return Logging", '@'.."Orca.include.node_modules.roact.src.Logging")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.roact.src.Logging")) return fn() end)
+return Logging", '@'.."Orca.include.node_modules.roact.src.Logging")) setfenv(fn, newEnv("Orca.include.node_modules.roact.src.Logging")) return fn() end)
 
-createModule("None", "ModuleScript", "Orca.include.node_modules.roact.src.None", "Orca.include.node_modules.roact.src", function () local fn = assert(loadstring("local Symbol = require(script.Parent.Symbol)\
+newModule("None", "ModuleScript", "Orca.include.node_modules.roact.src.None", "Orca.include.node_modules.roact.src", function () local fn = assert(loadstring("local Symbol = require(script.Parent.Symbol)\
 \
 -- Marker used to specify that the value is nothing, because nil cannot be\
 -- stored in tables.\
 local None = Symbol.named(\"None\")\
 \
-return None", '@'.."Orca.include.node_modules.roact.src.None")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.roact.src.None")) return fn() end)
+return None", '@'.."Orca.include.node_modules.roact.src.None")) setfenv(fn, newEnv("Orca.include.node_modules.roact.src.None")) return fn() end)
 
-createModule("NoopRenderer", "ModuleScript", "Orca.include.node_modules.roact.src.NoopRenderer", "Orca.include.node_modules.roact.src", function () local fn = assert(loadstring("--[[\
+newModule("NoopRenderer", "ModuleScript", "Orca.include.node_modules.roact.src.NoopRenderer", "Orca.include.node_modules.roact.src", function () local fn = assert(loadstring("--[[\
 \9Reference renderer intended for use in tests as well as for documenting the\
 \9minimum required interface for a Roact renderer.\
 ]]\
@@ -12600,17 +12600,17 @@ function NoopRenderer.updateHostNode(reconciler, node, newElement)\
 \9return node\
 end\
 \
-return NoopRenderer", '@'.."Orca.include.node_modules.roact.src.NoopRenderer")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.roact.src.NoopRenderer")) return fn() end)
+return NoopRenderer", '@'.."Orca.include.node_modules.roact.src.NoopRenderer")) setfenv(fn, newEnv("Orca.include.node_modules.roact.src.NoopRenderer")) return fn() end)
 
-createModule("Portal", "ModuleScript", "Orca.include.node_modules.roact.src.Portal", "Orca.include.node_modules.roact.src", function () local fn = assert(loadstring("local Symbol = require(script.Parent.Symbol)\
+newModule("Portal", "ModuleScript", "Orca.include.node_modules.roact.src.Portal", "Orca.include.node_modules.roact.src", function () local fn = assert(loadstring("local Symbol = require(script.Parent.Symbol)\
 \
 local Portal = Symbol.named(\"Portal\")\
 \
-return Portal", '@'.."Orca.include.node_modules.roact.src.Portal")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.roact.src.Portal")) return fn() end)
+return Portal", '@'.."Orca.include.node_modules.roact.src.Portal")) setfenv(fn, newEnv("Orca.include.node_modules.roact.src.Portal")) return fn() end)
 
-createInstance("PropMarkers", "Folder", "Orca.include.node_modules.roact.src.PropMarkers", "Orca.include.node_modules.roact.src")
+newInstance("PropMarkers", "Folder", "Orca.include.node_modules.roact.src.PropMarkers", "Orca.include.node_modules.roact.src")
 
-createModule("Change", "ModuleScript", "Orca.include.node_modules.roact.src.PropMarkers.Change", "Orca.include.node_modules.roact.src.PropMarkers", function () local fn = assert(loadstring("--[[\
+newModule("Change", "ModuleScript", "Orca.include.node_modules.roact.src.PropMarkers.Change", "Orca.include.node_modules.roact.src.PropMarkers", function () local fn = assert(loadstring("--[[\
 \9Change is used to generate special prop keys that can be used to connect to\
 \9GetPropertyChangedSignal.\
 \
@@ -12648,15 +12648,15 @@ setmetatable(Change, {\
 })\
 \
 return Change\
-", '@'.."Orca.include.node_modules.roact.src.PropMarkers.Change")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.roact.src.PropMarkers.Change")) return fn() end)
+", '@'.."Orca.include.node_modules.roact.src.PropMarkers.Change")) setfenv(fn, newEnv("Orca.include.node_modules.roact.src.PropMarkers.Change")) return fn() end)
 
-createModule("Children", "ModuleScript", "Orca.include.node_modules.roact.src.PropMarkers.Children", "Orca.include.node_modules.roact.src.PropMarkers", function () local fn = assert(loadstring("local Symbol = require(script.Parent.Parent.Symbol)\
+newModule("Children", "ModuleScript", "Orca.include.node_modules.roact.src.PropMarkers.Children", "Orca.include.node_modules.roact.src.PropMarkers", function () local fn = assert(loadstring("local Symbol = require(script.Parent.Parent.Symbol)\
 \
 local Children = Symbol.named(\"Children\")\
 \
-return Children", '@'.."Orca.include.node_modules.roact.src.PropMarkers.Children")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.roact.src.PropMarkers.Children")) return fn() end)
+return Children", '@'.."Orca.include.node_modules.roact.src.PropMarkers.Children")) setfenv(fn, newEnv("Orca.include.node_modules.roact.src.PropMarkers.Children")) return fn() end)
 
-createModule("Event", "ModuleScript", "Orca.include.node_modules.roact.src.PropMarkers.Event", "Orca.include.node_modules.roact.src.PropMarkers", function () local fn = assert(loadstring("--[[\
+newModule("Event", "ModuleScript", "Orca.include.node_modules.roact.src.PropMarkers.Event", "Orca.include.node_modules.roact.src.PropMarkers", function () local fn = assert(loadstring("--[[\
 \9Index into `Event` to get a prop key for attaching to an event on a Roblox\
 \9Instance.\
 \
@@ -12697,15 +12697,15 @@ setmetatable(Event, {\
 })\
 \
 return Event\
-", '@'.."Orca.include.node_modules.roact.src.PropMarkers.Event")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.roact.src.PropMarkers.Event")) return fn() end)
+", '@'.."Orca.include.node_modules.roact.src.PropMarkers.Event")) setfenv(fn, newEnv("Orca.include.node_modules.roact.src.PropMarkers.Event")) return fn() end)
 
-createModule("Ref", "ModuleScript", "Orca.include.node_modules.roact.src.PropMarkers.Ref", "Orca.include.node_modules.roact.src.PropMarkers", function () local fn = assert(loadstring("local Symbol = require(script.Parent.Parent.Symbol)\
+newModule("Ref", "ModuleScript", "Orca.include.node_modules.roact.src.PropMarkers.Ref", "Orca.include.node_modules.roact.src.PropMarkers", function () local fn = assert(loadstring("local Symbol = require(script.Parent.Parent.Symbol)\
 \
 local Ref = Symbol.named(\"Ref\")\
 \
-return Ref", '@'.."Orca.include.node_modules.roact.src.PropMarkers.Ref")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.roact.src.PropMarkers.Ref")) return fn() end)
+return Ref", '@'.."Orca.include.node_modules.roact.src.PropMarkers.Ref")) setfenv(fn, newEnv("Orca.include.node_modules.roact.src.PropMarkers.Ref")) return fn() end)
 
-createModule("PureComponent", "ModuleScript", "Orca.include.node_modules.roact.src.PureComponent", "Orca.include.node_modules.roact.src", function () local fn = assert(loadstring("--[[\
+newModule("PureComponent", "ModuleScript", "Orca.include.node_modules.roact.src.PureComponent", "Orca.include.node_modules.roact.src", function () local fn = assert(loadstring("--[[\
 \9A version of Component with a `shouldUpdate` method that forces the\
 \9resulting component to be pure.\
 ]]\
@@ -12745,9 +12745,9 @@ function PureComponent:shouldUpdate(newProps, newState)\
 \9return false\
 end\
 \
-return PureComponent", '@'.."Orca.include.node_modules.roact.src.PureComponent")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.roact.src.PureComponent")) return fn() end)
+return PureComponent", '@'.."Orca.include.node_modules.roact.src.PureComponent")) setfenv(fn, newEnv("Orca.include.node_modules.roact.src.PureComponent")) return fn() end)
 
-createModule("RobloxRenderer", "ModuleScript", "Orca.include.node_modules.roact.src.RobloxRenderer", "Orca.include.node_modules.roact.src", function () local fn = assert(loadstring("--[[\
+newModule("RobloxRenderer", "ModuleScript", "Orca.include.node_modules.roact.src.RobloxRenderer", "Orca.include.node_modules.roact.src", function () local fn = assert(loadstring("--[[\
 \9Renderer that deals in terms of Roblox Instances. This is the most\
 \9well-supported renderer after NoopRenderer and is currently the only\
 \9renderer that does anything.\
@@ -13030,9 +13030,9 @@ function RobloxRenderer.updateHostNode(reconciler, virtualNode, newElement)\
 end\
 \
 return RobloxRenderer\
-", '@'.."Orca.include.node_modules.roact.src.RobloxRenderer")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.roact.src.RobloxRenderer")) return fn() end)
+", '@'.."Orca.include.node_modules.roact.src.RobloxRenderer")) setfenv(fn, newEnv("Orca.include.node_modules.roact.src.RobloxRenderer")) return fn() end)
 
-createModule("SingleEventManager", "ModuleScript", "Orca.include.node_modules.roact.src.SingleEventManager", "Orca.include.node_modules.roact.src", function () local fn = assert(loadstring("--[[\
+newModule("SingleEventManager", "ModuleScript", "Orca.include.node_modules.roact.src.SingleEventManager", "Orca.include.node_modules.roact.src", function () local fn = assert(loadstring("--[[\
 \9A manager for a single host virtual node's connected events.\
 ]]\
 \
@@ -13178,9 +13178,9 @@ function SingleEventManager:resume()\
 \9self._suspendedEventQueue = {}\
 end\
 \
-return SingleEventManager", '@'.."Orca.include.node_modules.roact.src.SingleEventManager")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.roact.src.SingleEventManager")) return fn() end)
+return SingleEventManager", '@'.."Orca.include.node_modules.roact.src.SingleEventManager")) setfenv(fn, newEnv("Orca.include.node_modules.roact.src.SingleEventManager")) return fn() end)
 
-createModule("Symbol", "ModuleScript", "Orca.include.node_modules.roact.src.Symbol", "Orca.include.node_modules.roact.src", function () local fn = assert(loadstring("--[[\
+newModule("Symbol", "ModuleScript", "Orca.include.node_modules.roact.src.Symbol", "Orca.include.node_modules.roact.src", function () local fn = assert(loadstring("--[[\
 \9A 'Symbol' is an opaque marker type.\
 \
 \9Symbols have the type 'userdata', but when printed to the console, the name\
@@ -13209,9 +13209,9 @@ function Symbol.named(name)\
 \9return self\
 end\
 \
-return Symbol", '@'.."Orca.include.node_modules.roact.src.Symbol")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.roact.src.Symbol")) return fn() end)
+return Symbol", '@'.."Orca.include.node_modules.roact.src.Symbol")) setfenv(fn, newEnv("Orca.include.node_modules.roact.src.Symbol")) return fn() end)
 
-createModule("Type", "ModuleScript", "Orca.include.node_modules.roact.src.Type", "Orca.include.node_modules.roact.src", function () local fn = assert(loadstring("--[[\
+newModule("Type", "ModuleScript", "Orca.include.node_modules.roact.src.Type", "Orca.include.node_modules.roact.src", function () local fn = assert(loadstring("--[[\
 \9Contains markers for annotating objects with types.\
 \
 \9To set the type of an object, use `Type` as a key and the actual marker as\
@@ -13258,9 +13258,9 @@ end\
 \
 strict(TypeInternal, \"Type\")\
 \
-return Type", '@'.."Orca.include.node_modules.roact.src.Type")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.roact.src.Type")) return fn() end)
+return Type", '@'.."Orca.include.node_modules.roact.src.Type")) setfenv(fn, newEnv("Orca.include.node_modules.roact.src.Type")) return fn() end)
 
-createModule("assertDeepEqual", "ModuleScript", "Orca.include.node_modules.roact.src.assertDeepEqual", "Orca.include.node_modules.roact.src", function () local fn = assert(loadstring("--[[\
+newModule("assertDeepEqual", "ModuleScript", "Orca.include.node_modules.roact.src.assertDeepEqual", "Orca.include.node_modules.roact.src", function () local fn = assert(loadstring("--[[\
 \9A utility used to assert that two objects are value-equal recursively. It\
 \9outputs fairly nicely formatted messages to help diagnose why two objects\
 \9would be different.\
@@ -13332,9 +13332,9 @@ local function assertDeepEqual(a, b)\
 \9end\
 end\
 \
-return assertDeepEqual", '@'.."Orca.include.node_modules.roact.src.assertDeepEqual")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.roact.src.assertDeepEqual")) return fn() end)
+return assertDeepEqual", '@'.."Orca.include.node_modules.roact.src.assertDeepEqual")) setfenv(fn, newEnv("Orca.include.node_modules.roact.src.assertDeepEqual")) return fn() end)
 
-createModule("assign", "ModuleScript", "Orca.include.node_modules.roact.src.assign", "Orca.include.node_modules.roact.src", function () local fn = assert(loadstring("local None = require(script.Parent.None)\
+newModule("assign", "ModuleScript", "Orca.include.node_modules.roact.src.assign", "Orca.include.node_modules.roact.src", function () local fn = assert(loadstring("local None = require(script.Parent.None)\
 \
 --[[\
 \9Merges values from zero or more tables onto a target table. If a value is\
@@ -13360,9 +13360,9 @@ local function assign(target, ...)\
 \9return target\
 end\
 \
-return assign", '@'.."Orca.include.node_modules.roact.src.assign")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.roact.src.assign")) return fn() end)
+return assign", '@'.."Orca.include.node_modules.roact.src.assign")) setfenv(fn, newEnv("Orca.include.node_modules.roact.src.assign")) return fn() end)
 
-createModule("createContext", "ModuleScript", "Orca.include.node_modules.roact.src.createContext", "Orca.include.node_modules.roact.src", function () local fn = assert(loadstring("local Symbol = require(script.Parent.Symbol)\
+newModule("createContext", "ModuleScript", "Orca.include.node_modules.roact.src.createContext", "Orca.include.node_modules.roact.src", function () local fn = assert(loadstring("local Symbol = require(script.Parent.Symbol)\
 local createFragment = require(script.Parent.createFragment)\
 local createSignal = require(script.Parent.createSignal)\
 local Children = require(script.Parent.PropMarkers.Children)\
@@ -13513,9 +13513,9 @@ local function createContext(defaultValue)\
 end\
 \
 return createContext\
-", '@'.."Orca.include.node_modules.roact.src.createContext")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.roact.src.createContext")) return fn() end)
+", '@'.."Orca.include.node_modules.roact.src.createContext")) setfenv(fn, newEnv("Orca.include.node_modules.roact.src.createContext")) return fn() end)
 
-createModule("createElement", "ModuleScript", "Orca.include.node_modules.roact.src.createElement", "Orca.include.node_modules.roact.src", function () local fn = assert(loadstring("local Children = require(script.Parent.PropMarkers.Children)\
+newModule("createElement", "ModuleScript", "Orca.include.node_modules.roact.src.createElement", "Orca.include.node_modules.roact.src", function () local fn = assert(loadstring("local Children = require(script.Parent.PropMarkers.Children)\
 local ElementKind = require(script.Parent.ElementKind)\
 local Logging = require(script.Parent.Logging)\
 local Type = require(script.Parent.Type)\
@@ -13588,9 +13588,9 @@ local function createElement(component, props, children)\
 \9return element\
 end\
 \
-return createElement", '@'.."Orca.include.node_modules.roact.src.createElement")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.roact.src.createElement")) return fn() end)
+return createElement", '@'.."Orca.include.node_modules.roact.src.createElement")) setfenv(fn, newEnv("Orca.include.node_modules.roact.src.createElement")) return fn() end)
 
-createModule("createFragment", "ModuleScript", "Orca.include.node_modules.roact.src.createFragment", "Orca.include.node_modules.roact.src", function () local fn = assert(loadstring("local ElementKind = require(script.Parent.ElementKind)\
+newModule("createFragment", "ModuleScript", "Orca.include.node_modules.roact.src.createFragment", "Orca.include.node_modules.roact.src", function () local fn = assert(loadstring("local ElementKind = require(script.Parent.ElementKind)\
 local Type = require(script.Parent.Type)\
 \
 local function createFragment(elements)\
@@ -13601,9 +13601,9 @@ local function createFragment(elements)\
 \9}\
 end\
 \
-return createFragment", '@'.."Orca.include.node_modules.roact.src.createFragment")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.roact.src.createFragment")) return fn() end)
+return createFragment", '@'.."Orca.include.node_modules.roact.src.createFragment")) setfenv(fn, newEnv("Orca.include.node_modules.roact.src.createFragment")) return fn() end)
 
-createModule("createReconciler", "ModuleScript", "Orca.include.node_modules.roact.src.createReconciler", "Orca.include.node_modules.roact.src", function () local fn = assert(loadstring("local Type = require(script.Parent.Type)\
+newModule("createReconciler", "ModuleScript", "Orca.include.node_modules.roact.src.createReconciler", "Orca.include.node_modules.roact.src", function () local fn = assert(loadstring("local Type = require(script.Parent.Type)\
 local ElementKind = require(script.Parent.ElementKind)\
 local ElementUtils = require(script.Parent.ElementUtils)\
 local Children = require(script.Parent.PropMarkers.Children)\
@@ -14088,9 +14088,9 @@ local function createReconciler(renderer)\
 end\
 \
 return createReconciler\
-", '@'.."Orca.include.node_modules.roact.src.createReconciler")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.roact.src.createReconciler")) return fn() end)
+", '@'.."Orca.include.node_modules.roact.src.createReconciler")) setfenv(fn, newEnv("Orca.include.node_modules.roact.src.createReconciler")) return fn() end)
 
-createModule("createReconcilerCompat", "ModuleScript", "Orca.include.node_modules.roact.src.createReconcilerCompat", "Orca.include.node_modules.roact.src", function () local fn = assert(loadstring("--[[\
+newModule("createReconcilerCompat", "ModuleScript", "Orca.include.node_modules.roact.src.createReconcilerCompat", "Orca.include.node_modules.roact.src", function () local fn = assert(loadstring("--[[\
 \9Contains deprecated methods from Reconciler. Broken out so that removing\
 \9this shim is easy -- just delete this file and remove it from init.\
 ]]\
@@ -14136,9 +14136,9 @@ local function createReconcilerCompat(reconciler)\
 \9return compat\
 end\
 \
-return createReconcilerCompat", '@'.."Orca.include.node_modules.roact.src.createReconcilerCompat")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.roact.src.createReconcilerCompat")) return fn() end)
+return createReconcilerCompat", '@'.."Orca.include.node_modules.roact.src.createReconcilerCompat")) setfenv(fn, newEnv("Orca.include.node_modules.roact.src.createReconcilerCompat")) return fn() end)
 
-createModule("createRef", "ModuleScript", "Orca.include.node_modules.roact.src.createRef", "Orca.include.node_modules.roact.src", function () local fn = assert(loadstring("--[[\
+newModule("createRef", "ModuleScript", "Orca.include.node_modules.roact.src.createRef", "Orca.include.node_modules.roact.src", function () local fn = assert(loadstring("--[[\
 \9A ref is nothing more than a binding with a special field 'current'\
 \9that maps to the getValue method of the binding\
 ]]\
@@ -14175,9 +14175,9 @@ local function createRef()\
 \9return ref\
 end\
 \
-return createRef", '@'.."Orca.include.node_modules.roact.src.createRef")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.roact.src.createRef")) return fn() end)
+return createRef", '@'.."Orca.include.node_modules.roact.src.createRef")) setfenv(fn, newEnv("Orca.include.node_modules.roact.src.createRef")) return fn() end)
 
-createModule("createSignal", "ModuleScript", "Orca.include.node_modules.roact.src.createSignal", "Orca.include.node_modules.roact.src", function () local fn = assert(loadstring("--[[\
+newModule("createSignal", "ModuleScript", "Orca.include.node_modules.roact.src.createSignal", "Orca.include.node_modules.roact.src", function () local fn = assert(loadstring("--[[\
 \9This is a simple signal implementation that has a dead-simple API.\
 \
 \9\9local signal = createSignal()\
@@ -14245,9 +14245,9 @@ local function createSignal()\
 end\
 \
 return createSignal\
-", '@'.."Orca.include.node_modules.roact.src.createSignal")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.roact.src.createSignal")) return fn() end)
+", '@'.."Orca.include.node_modules.roact.src.createSignal")) setfenv(fn, newEnv("Orca.include.node_modules.roact.src.createSignal")) return fn() end)
 
-createModule("createSpy", "ModuleScript", "Orca.include.node_modules.roact.src.createSpy", "Orca.include.node_modules.roact.src", function () local fn = assert(loadstring("--[[\
+newModule("createSpy", "ModuleScript", "Orca.include.node_modules.roact.src.createSpy", "Orca.include.node_modules.roact.src", function () local fn = assert(loadstring("--[[\
 \9A utility used to create a function spy that can be used to robustly test\
 \9that functions are invoked the correct number of times and with the correct\
 \9number of arguments.\
@@ -14331,9 +14331,9 @@ local function createSpy(inner)\
 \9return self\
 end\
 \
-return createSpy", '@'.."Orca.include.node_modules.roact.src.createSpy")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.roact.src.createSpy")) return fn() end)
+return createSpy", '@'.."Orca.include.node_modules.roact.src.createSpy")) setfenv(fn, newEnv("Orca.include.node_modules.roact.src.createSpy")) return fn() end)
 
-createModule("forwardRef", "ModuleScript", "Orca.include.node_modules.roact.src.forwardRef", "Orca.include.node_modules.roact.src", function () local fn = assert(loadstring("local assign = require(script.Parent.assign)\
+newModule("forwardRef", "ModuleScript", "Orca.include.node_modules.roact.src.forwardRef", "Orca.include.node_modules.roact.src", function () local fn = assert(loadstring("local assign = require(script.Parent.assign)\
 local None = require(script.Parent.None)\
 local Ref = require(script.Parent.PropMarkers.Ref)\
 \
@@ -14360,9 +14360,9 @@ local function forwardRef(render)\
 \9end\
 end\
 \
-return forwardRef", '@'.."Orca.include.node_modules.roact.src.forwardRef")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.roact.src.forwardRef")) return fn() end)
+return forwardRef", '@'.."Orca.include.node_modules.roact.src.forwardRef")) setfenv(fn, newEnv("Orca.include.node_modules.roact.src.forwardRef")) return fn() end)
 
-createModule("getDefaultInstanceProperty", "ModuleScript", "Orca.include.node_modules.roact.src.getDefaultInstanceProperty", "Orca.include.node_modules.roact.src", function () local fn = assert(loadstring("--[[\
+newModule("getDefaultInstanceProperty", "ModuleScript", "Orca.include.node_modules.roact.src.getDefaultInstanceProperty", "Orca.include.node_modules.roact.src", function () local fn = assert(loadstring("--[[\
 \9Attempts to get the default value of a given property on a Roblox instance.\
 \
 \9This is used by the reconciler in cases where a prop was previously set on a\
@@ -14415,17 +14415,17 @@ local function getDefaultInstanceProperty(className, propertyName)\
 \9return ok, defaultValue\
 end\
 \
-return getDefaultInstanceProperty", '@'.."Orca.include.node_modules.roact.src.getDefaultInstanceProperty")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.roact.src.getDefaultInstanceProperty")) return fn() end)
+return getDefaultInstanceProperty", '@'.."Orca.include.node_modules.roact.src.getDefaultInstanceProperty")) setfenv(fn, newEnv("Orca.include.node_modules.roact.src.getDefaultInstanceProperty")) return fn() end)
 
-createModule("internalAssert", "ModuleScript", "Orca.include.node_modules.roact.src.internalAssert", "Orca.include.node_modules.roact.src", function () local fn = assert(loadstring("local function internalAssert(condition, message)\
+newModule("internalAssert", "ModuleScript", "Orca.include.node_modules.roact.src.internalAssert", "Orca.include.node_modules.roact.src", function () local fn = assert(loadstring("local function internalAssert(condition, message)\
 \9if not condition then\
 \9\9error(message .. \" (This is probably a bug in Roact!)\", 3)\
 \9end\
 end\
 \
-return internalAssert", '@'.."Orca.include.node_modules.roact.src.internalAssert")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.roact.src.internalAssert")) return fn() end)
+return internalAssert", '@'.."Orca.include.node_modules.roact.src.internalAssert")) setfenv(fn, newEnv("Orca.include.node_modules.roact.src.internalAssert")) return fn() end)
 
-createModule("invalidSetStateMessages", "ModuleScript", "Orca.include.node_modules.roact.src.invalidSetStateMessages", "Orca.include.node_modules.roact.src", function () local fn = assert(loadstring("--[[\
+newModule("invalidSetStateMessages", "ModuleScript", "Orca.include.node_modules.roact.src.invalidSetStateMessages", "Orca.include.node_modules.roact.src", function () local fn = assert(loadstring("--[[\
 \9These messages are used by Component to help users diagnose when they're\
 \9calling setState in inappropriate places.\
 \
@@ -14468,9 +14468,9 @@ This is a bug in Roact.\
 It was triggered by the component %q.\
 ]]\
 \
-return invalidSetStateMessages", '@'.."Orca.include.node_modules.roact.src.invalidSetStateMessages")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.roact.src.invalidSetStateMessages")) return fn() end)
+return invalidSetStateMessages", '@'.."Orca.include.node_modules.roact.src.invalidSetStateMessages")) setfenv(fn, newEnv("Orca.include.node_modules.roact.src.invalidSetStateMessages")) return fn() end)
 
-createModule("oneChild", "ModuleScript", "Orca.include.node_modules.roact.src.oneChild", "Orca.include.node_modules.roact.src", function () local fn = assert(loadstring("--[[\
+newModule("oneChild", "ModuleScript", "Orca.include.node_modules.roact.src.oneChild", "Orca.include.node_modules.roact.src", function () local fn = assert(loadstring("--[[\
 \9Retrieves at most one child from the children passed to a component.\
 \
 \9If passed nil or an empty table, will return nil.\
@@ -14497,9 +14497,9 @@ local function oneChild(children)\
 \9return child\
 end\
 \
-return oneChild", '@'.."Orca.include.node_modules.roact.src.oneChild")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.roact.src.oneChild")) return fn() end)
+return oneChild", '@'.."Orca.include.node_modules.roact.src.oneChild")) setfenv(fn, newEnv("Orca.include.node_modules.roact.src.oneChild")) return fn() end)
 
-createModule("strict", "ModuleScript", "Orca.include.node_modules.roact.src.strict", "Orca.include.node_modules.roact.src", function () local fn = assert(loadstring("local function strict(t, name)\
+newModule("strict", "ModuleScript", "Orca.include.node_modules.roact.src.strict", "Orca.include.node_modules.roact.src", function () local fn = assert(loadstring("local function strict(t, name)\
 \9name = name or tostring(t)\
 \
 \9return setmetatable(t, {\
@@ -14525,11 +14525,11 @@ createModule("strict", "ModuleScript", "Orca.include.node_modules.roact.src.stri
 \9})\
 end\
 \
-return strict", '@'.."Orca.include.node_modules.roact.src.strict")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.roact.src.strict")) return fn() end)
+return strict", '@'.."Orca.include.node_modules.roact.src.strict")) setfenv(fn, newEnv("Orca.include.node_modules.roact.src.strict")) return fn() end)
 
-createInstance("roact-hooked", "Folder", "Orca.include.node_modules.roact-hooked", "Orca.include.node_modules")
+newInstance("roact-hooked", "Folder", "Orca.include.node_modules.roact-hooked", "Orca.include.node_modules")
 
-createModule("out", "ModuleScript", "Orca.include.node_modules.roact-hooked.out", "Orca.include.node_modules.roact-hooked", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("out", "ModuleScript", "Orca.include.node_modules.roact-hooked.out", "Orca.include.node_modules.roact-hooked", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = _G[script]\
 local exports = {}\
 local _with_hooks = TS.import(script, script, \"with-hooks\")\
@@ -14581,9 +14581,9 @@ end\
 exports.hooked = hooked\
 exports.pure = pure\
 return exports\
-", '@'.."Orca.include.node_modules.roact-hooked.out")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.roact-hooked.out")) return fn() end)
+", '@'.."Orca.include.node_modules.roact-hooked.out")) setfenv(fn, newEnv("Orca.include.node_modules.roact-hooked.out")) return fn() end)
 
-createModule("hooks", "ModuleScript", "Orca.include.node_modules.roact-hooked.out.hooks", "Orca.include.node_modules.roact-hooked.out", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("hooks", "ModuleScript", "Orca.include.node_modules.roact-hooked.out.hooks", "Orca.include.node_modules.roact-hooked.out", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = _G[script]\
 local exports = {}\
 exports.useBinding = TS.import(script, script, \"use-binding\").useBinding\
@@ -14596,9 +14596,9 @@ exports.useState = TS.import(script, script, \"use-state\").useState\
 exports.useMutable = TS.import(script, script, \"use-mutable\").useMutable\
 exports.useRef = TS.import(script, script, \"use-ref\").useRef\
 return exports\
-", '@'.."Orca.include.node_modules.roact-hooked.out.hooks")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.roact-hooked.out.hooks")) return fn() end)
+", '@'.."Orca.include.node_modules.roact-hooked.out.hooks")) setfenv(fn, newEnv("Orca.include.node_modules.roact-hooked.out.hooks")) return fn() end)
 
-createModule("use-binding", "ModuleScript", "Orca.include.node_modules.roact-hooked.out.hooks.use-binding", "Orca.include.node_modules.roact-hooked.out.hooks", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("use-binding", "ModuleScript", "Orca.include.node_modules.roact-hooked.out.hooks.use-binding", "Orca.include.node_modules.roact-hooked.out.hooks", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = _G[script]\
 local createBinding = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src).createBinding\
 local memoizedHook = TS.import(script, script.Parent.Parent, \"utils\", \"memoized-hook\").memoizedHook\
@@ -14627,9 +14627,9 @@ end\
 return {\
 \9useBinding = useBinding,\
 }\
-", '@'.."Orca.include.node_modules.roact-hooked.out.hooks.use-binding")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.roact-hooked.out.hooks.use-binding")) return fn() end)
+", '@'.."Orca.include.node_modules.roact-hooked.out.hooks.use-binding")) setfenv(fn, newEnv("Orca.include.node_modules.roact-hooked.out.hooks.use-binding")) return fn() end)
 
-createModule("use-callback", "ModuleScript", "Orca.include.node_modules.roact-hooked.out.hooks.use-callback", "Orca.include.node_modules.roact-hooked.out.hooks", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("use-callback", "ModuleScript", "Orca.include.node_modules.roact-hooked.out.hooks.use-callback", "Orca.include.node_modules.roact-hooked.out.hooks", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = _G[script]\
 local useMemo = TS.import(script, script.Parent, \"use-memo\").useMemo\
 --[[\
@@ -14663,9 +14663,9 @@ end\
 return {\
 \9useCallback = useCallback,\
 }\
-", '@'.."Orca.include.node_modules.roact-hooked.out.hooks.use-callback")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.roact-hooked.out.hooks.use-callback")) return fn() end)
+", '@'.."Orca.include.node_modules.roact-hooked.out.hooks.use-callback")) setfenv(fn, newEnv("Orca.include.node_modules.roact-hooked.out.hooks.use-callback")) return fn() end)
 
-createModule("use-context", "ModuleScript", "Orca.include.node_modules.roact-hooked.out.hooks.use-context", "Orca.include.node_modules.roact-hooked.out.hooks", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("use-context", "ModuleScript", "Orca.include.node_modules.roact-hooked.out.hooks.use-context", "Orca.include.node_modules.roact-hooked.out.hooks", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = _G[script]\
 --[[\
 \9*\
@@ -14719,9 +14719,9 @@ end\
 return {\
 \9useContext = useContext,\
 }\
-", '@'.."Orca.include.node_modules.roact-hooked.out.hooks.use-context")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.roact-hooked.out.hooks.use-context")) return fn() end)
+", '@'.."Orca.include.node_modules.roact-hooked.out.hooks.use-context")) setfenv(fn, newEnv("Orca.include.node_modules.roact-hooked.out.hooks.use-context")) return fn() end)
 
-createModule("use-effect", "ModuleScript", "Orca.include.node_modules.roact-hooked.out.hooks.use-effect", "Orca.include.node_modules.roact-hooked.out.hooks", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("use-effect", "ModuleScript", "Orca.include.node_modules.roact-hooked.out.hooks.use-effect", "Orca.include.node_modules.roact-hooked.out.hooks", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = _G[script]\
 local areDepsEqual = TS.import(script, script.Parent.Parent, \"utils\", \"are-deps-equal\").areDepsEqual\
 local _memoized_hook = TS.import(script, script.Parent.Parent, \"utils\", \"memoized-hook\")\
@@ -14796,9 +14796,9 @@ end\
 return {\
 \9useEffect = useEffect,\
 }\
-", '@'.."Orca.include.node_modules.roact-hooked.out.hooks.use-effect")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.roact-hooked.out.hooks.use-effect")) return fn() end)
+", '@'.."Orca.include.node_modules.roact-hooked.out.hooks.use-effect")) setfenv(fn, newEnv("Orca.include.node_modules.roact-hooked.out.hooks.use-effect")) return fn() end)
 
-createModule("use-memo", "ModuleScript", "Orca.include.node_modules.roact-hooked.out.hooks.use-memo", "Orca.include.node_modules.roact-hooked.out.hooks", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("use-memo", "ModuleScript", "Orca.include.node_modules.roact-hooked.out.hooks.use-memo", "Orca.include.node_modules.roact-hooked.out.hooks", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = _G[script]\
 local areDepsEqual = TS.import(script, script.Parent.Parent, \"utils\", \"are-deps-equal\").areDepsEqual\
 local memoizedHook = TS.import(script, script.Parent.Parent, \"utils\", \"memoized-hook\").memoizedHook\
@@ -14839,9 +14839,9 @@ end\
 return {\
 \9useMemo = useMemo,\
 }\
-", '@'.."Orca.include.node_modules.roact-hooked.out.hooks.use-memo")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.roact-hooked.out.hooks.use-memo")) return fn() end)
+", '@'.."Orca.include.node_modules.roact-hooked.out.hooks.use-memo")) setfenv(fn, newEnv("Orca.include.node_modules.roact-hooked.out.hooks.use-memo")) return fn() end)
 
-createModule("use-mutable", "ModuleScript", "Orca.include.node_modules.roact-hooked.out.hooks.use-mutable", "Orca.include.node_modules.roact-hooked.out.hooks", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("use-mutable", "ModuleScript", "Orca.include.node_modules.roact-hooked.out.hooks.use-mutable", "Orca.include.node_modules.roact-hooked.out.hooks", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = _G[script]\
 local memoizedHook = TS.import(script, script.Parent.Parent, \"utils\", \"memoized-hook\").memoizedHook\
 -- Function overloads from https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/react/index.d.ts#L1061\
@@ -14941,9 +14941,9 @@ end\
 return {\
 \9useMutable = useMutable,\
 }\
-", '@'.."Orca.include.node_modules.roact-hooked.out.hooks.use-mutable")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.roact-hooked.out.hooks.use-mutable")) return fn() end)
+", '@'.."Orca.include.node_modules.roact-hooked.out.hooks.use-mutable")) setfenv(fn, newEnv("Orca.include.node_modules.roact-hooked.out.hooks.use-mutable")) return fn() end)
 
-createModule("use-reducer", "ModuleScript", "Orca.include.node_modules.roact-hooked.out.hooks.use-reducer", "Orca.include.node_modules.roact-hooked.out.hooks", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("use-reducer", "ModuleScript", "Orca.include.node_modules.roact-hooked.out.hooks.use-reducer", "Orca.include.node_modules.roact-hooked.out.hooks", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = _G[script]\
 local _memoized_hook = TS.import(script, script.Parent.Parent, \"utils\", \"memoized-hook\")\
 local memoizedHook = _memoized_hook.memoizedHook\
@@ -15089,9 +15089,9 @@ end\
 return {\
 \9useReducer = useReducer,\
 }\
-", '@'.."Orca.include.node_modules.roact-hooked.out.hooks.use-reducer")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.roact-hooked.out.hooks.use-reducer")) return fn() end)
+", '@'.."Orca.include.node_modules.roact-hooked.out.hooks.use-reducer")) setfenv(fn, newEnv("Orca.include.node_modules.roact-hooked.out.hooks.use-reducer")) return fn() end)
 
-createModule("use-ref", "ModuleScript", "Orca.include.node_modules.roact-hooked.out.hooks.use-ref", "Orca.include.node_modules.roact-hooked.out.hooks", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("use-ref", "ModuleScript", "Orca.include.node_modules.roact-hooked.out.hooks.use-ref", "Orca.include.node_modules.roact-hooked.out.hooks", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = _G[script]\
 local createRef = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src).createRef\
 local memoizedHook = TS.import(script, script.Parent.Parent, \"utils\", \"memoized-hook\").memoizedHook\
@@ -15128,9 +15128,9 @@ end\
 return {\
 \9useRef = useRef,\
 }\
-", '@'.."Orca.include.node_modules.roact-hooked.out.hooks.use-ref")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.roact-hooked.out.hooks.use-ref")) return fn() end)
+", '@'.."Orca.include.node_modules.roact-hooked.out.hooks.use-ref")) setfenv(fn, newEnv("Orca.include.node_modules.roact-hooked.out.hooks.use-ref")) return fn() end)
 
-createModule("use-state", "ModuleScript", "Orca.include.node_modules.roact-hooked.out.hooks.use-state", "Orca.include.node_modules.roact-hooked.out.hooks", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("use-state", "ModuleScript", "Orca.include.node_modules.roact-hooked.out.hooks.use-state", "Orca.include.node_modules.roact-hooked.out.hooks", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = _G[script]\
 local useReducer = TS.import(script, script.Parent, \"use-reducer\").useReducer\
 --[[\
@@ -15230,19 +15230,19 @@ end\
 return {\
 \9useState = useState,\
 }\
-", '@'.."Orca.include.node_modules.roact-hooked.out.hooks.use-state")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.roact-hooked.out.hooks.use-state")) return fn() end)
+", '@'.."Orca.include.node_modules.roact-hooked.out.hooks.use-state")) setfenv(fn, newEnv("Orca.include.node_modules.roact-hooked.out.hooks.use-state")) return fn() end)
 
-createModule("types", "ModuleScript", "Orca.include.node_modules.roact-hooked.out.types", "Orca.include.node_modules.roact-hooked.out", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("types", "ModuleScript", "Orca.include.node_modules.roact-hooked.out.types", "Orca.include.node_modules.roact-hooked.out", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 -- Roact\
 -- Reducers\
 -- Utility types\
 -- Hooks\
 return nil\
-", '@'.."Orca.include.node_modules.roact-hooked.out.types")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.roact-hooked.out.types")) return fn() end)
+", '@'.."Orca.include.node_modules.roact-hooked.out.types")) setfenv(fn, newEnv("Orca.include.node_modules.roact-hooked.out.types")) return fn() end)
 
-createInstance("utils", "Folder", "Orca.include.node_modules.roact-hooked.out.utils", "Orca.include.node_modules.roact-hooked.out")
+newInstance("utils", "Folder", "Orca.include.node_modules.roact-hooked.out.utils", "Orca.include.node_modules.roact-hooked.out")
 
-createModule("are-deps-equal", "ModuleScript", "Orca.include.node_modules.roact-hooked.out.utils.are-deps-equal", "Orca.include.node_modules.roact-hooked.out.utils", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("are-deps-equal", "ModuleScript", "Orca.include.node_modules.roact-hooked.out.utils.are-deps-equal", "Orca.include.node_modules.roact-hooked.out.utils", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local function areDepsEqual(nextDeps, prevDeps)\
 \9if prevDeps == nil then\
 \9\9return false\
@@ -15273,9 +15273,9 @@ end\
 return {\
 \9areDepsEqual = areDepsEqual,\
 }\
-", '@'.."Orca.include.node_modules.roact-hooked.out.utils.are-deps-equal")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.roact-hooked.out.utils.are-deps-equal")) return fn() end)
+", '@'.."Orca.include.node_modules.roact-hooked.out.utils.are-deps-equal")) setfenv(fn, newEnv("Orca.include.node_modules.roact-hooked.out.utils.are-deps-equal")) return fn() end)
 
-createModule("memoized-hook", "ModuleScript", "Orca.include.node_modules.roact-hooked.out.utils.memoized-hook", "Orca.include.node_modules.roact-hooked.out.utils", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("memoized-hook", "ModuleScript", "Orca.include.node_modules.roact-hooked.out.utils.memoized-hook", "Orca.include.node_modules.roact-hooked.out.utils", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local EXCEPTION_INVALID_HOOK_CALL = table.concat({ \"Invalid hook call. Hooks can only be called inside of the body of a function component.\", \"This is usually the result of conflicting versions of roact-hooked.\", \"See https://reactjs.org/link/invalid-hook-call for tips about how to debug and fix this problem.\" }, \"\\n\")\
 local EXCEPTION_RENDER_NOT_DONE = \"Failed to render hook! (Another hooked component is rendering)\"\
 local EXCEPTION_RENDER_OVERLAP = \"Failed to render hook! (Another hooked component rendered during this one)\"\
@@ -15358,18 +15358,18 @@ return {\
 \9resolveCurrentComponent = resolveCurrentComponent,\
 \9memoizedHook = memoizedHook,\
 }\
-", '@'.."Orca.include.node_modules.roact-hooked.out.utils.memoized-hook")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.roact-hooked.out.utils.memoized-hook")) return fn() end)
+", '@'.."Orca.include.node_modules.roact-hooked.out.utils.memoized-hook")) setfenv(fn, newEnv("Orca.include.node_modules.roact-hooked.out.utils.memoized-hook")) return fn() end)
 
-createModule("with-hooks", "ModuleScript", "Orca.include.node_modules.roact-hooked.out.with-hooks", "Orca.include.node_modules.roact-hooked.out", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("with-hooks", "ModuleScript", "Orca.include.node_modules.roact-hooked.out.with-hooks", "Orca.include.node_modules.roact-hooked.out", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = _G[script]\
 local exports = {}\
 local _with_hooks = TS.import(script, script, \"with-hooks\")\
 exports.withHooks = _with_hooks.withHooks\
 exports.withHooksPure = _with_hooks.withHooksPure\
 return exports\
-", '@'.."Orca.include.node_modules.roact-hooked.out.with-hooks")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.roact-hooked.out.with-hooks")) return fn() end)
+", '@'.."Orca.include.node_modules.roact-hooked.out.with-hooks")) setfenv(fn, newEnv("Orca.include.node_modules.roact-hooked.out.with-hooks")) return fn() end)
 
-createModule("component-with-hooks", "ModuleScript", "Orca.include.node_modules.roact-hooked.out.with-hooks.component-with-hooks", "Orca.include.node_modules.roact-hooked.out.with-hooks", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("component-with-hooks", "ModuleScript", "Orca.include.node_modules.roact-hooked.out.with-hooks.component-with-hooks", "Orca.include.node_modules.roact-hooked.out.with-hooks", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = _G[script]\
 local _memoized_hook = TS.import(script, script.Parent.Parent, \"utils\", \"memoized-hook\")\
 local renderDone = _memoized_hook.renderDone\
@@ -15463,9 +15463,9 @@ end\
 return {\
 \9ComponentWithHooks = ComponentWithHooks,\
 }\
-", '@'.."Orca.include.node_modules.roact-hooked.out.with-hooks.component-with-hooks")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.roact-hooked.out.with-hooks.component-with-hooks")) return fn() end)
+", '@'.."Orca.include.node_modules.roact-hooked.out.with-hooks.component-with-hooks")) setfenv(fn, newEnv("Orca.include.node_modules.roact-hooked.out.with-hooks.component-with-hooks")) return fn() end)
 
-createModule("with-hooks", "ModuleScript", "Orca.include.node_modules.roact-hooked.out.with-hooks.with-hooks", "Orca.include.node_modules.roact-hooked.out.with-hooks", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("with-hooks", "ModuleScript", "Orca.include.node_modules.roact-hooked.out.with-hooks.with-hooks", "Orca.include.node_modules.roact-hooked.out.with-hooks", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = _G[script]\
 local ComponentWithHooks = TS.import(script, script.Parent, \"component-with-hooks\").ComponentWithHooks\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
@@ -15500,11 +15500,11 @@ return {\
 \9withHooks = withHooks,\
 \9withHooksPure = withHooksPure,\
 }\
-", '@'.."Orca.include.node_modules.roact-hooked.out.with-hooks.with-hooks")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.roact-hooked.out.with-hooks.with-hooks")) return fn() end)
+", '@'.."Orca.include.node_modules.roact-hooked.out.with-hooks.with-hooks")) setfenv(fn, newEnv("Orca.include.node_modules.roact-hooked.out.with-hooks.with-hooks")) return fn() end)
 
-createInstance("roact-rodux-hooked", "Folder", "Orca.include.node_modules.roact-rodux-hooked", "Orca.include.node_modules")
+newInstance("roact-rodux-hooked", "Folder", "Orca.include.node_modules.roact-rodux-hooked", "Orca.include.node_modules")
 
-createModule("out", "ModuleScript", "Orca.include.node_modules.roact-rodux-hooked.out", "Orca.include.node_modules.roact-rodux-hooked", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.3\
+newModule("out", "ModuleScript", "Orca.include.node_modules.roact-rodux-hooked.out", "Orca.include.node_modules.roact-rodux-hooked", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.3\
 local TS = _G[script]\
 local exports = {}\
 exports.Provider = TS.import(script, script, \"components\", \"provider\").Provider\
@@ -15514,20 +15514,20 @@ exports.useStore = TS.import(script, script, \"hooks\", \"use-store\").useStore\
 exports.shallowEqual = TS.import(script, script, \"helpers\", \"shallow-equal\").shallowEqual\
 exports.RoactRoduxContext = TS.import(script, script, \"components\", \"context\").RoactRoduxContext\
 return exports\
-", '@'.."Orca.include.node_modules.roact-rodux-hooked.out")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.roact-rodux-hooked.out")) return fn() end)
+", '@'.."Orca.include.node_modules.roact-rodux-hooked.out")) setfenv(fn, newEnv("Orca.include.node_modules.roact-rodux-hooked.out")) return fn() end)
 
-createInstance("components", "Folder", "Orca.include.node_modules.roact-rodux-hooked.out.components", "Orca.include.node_modules.roact-rodux-hooked.out")
+newInstance("components", "Folder", "Orca.include.node_modules.roact-rodux-hooked.out.components", "Orca.include.node_modules.roact-rodux-hooked.out")
 
-createModule("context", "ModuleScript", "Orca.include.node_modules.roact-rodux-hooked.out.components.context", "Orca.include.node_modules.roact-rodux-hooked.out.components", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.3\
+newModule("context", "ModuleScript", "Orca.include.node_modules.roact-rodux-hooked.out.components.context", "Orca.include.node_modules.roact-rodux-hooked.out.components", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.3\
 local TS = _G[script]\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
 local RoactRoduxContext = Roact.createContext(nil)\
 return {\
 \9RoactRoduxContext = RoactRoduxContext,\
 }\
-", '@'.."Orca.include.node_modules.roact-rodux-hooked.out.components.context")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.roact-rodux-hooked.out.components.context")) return fn() end)
+", '@'.."Orca.include.node_modules.roact-rodux-hooked.out.components.context")) setfenv(fn, newEnv("Orca.include.node_modules.roact-rodux-hooked.out.components.context")) return fn() end)
 
-createModule("provider", "ModuleScript", "Orca.include.node_modules.roact-rodux-hooked.out.components.provider", "Orca.include.node_modules.roact-rodux-hooked.out.components", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.3\
+newModule("provider", "ModuleScript", "Orca.include.node_modules.roact-rodux-hooked.out.components.provider", "Orca.include.node_modules.roact-rodux-hooked.out.components", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.3\
 local TS = _G[script]\
 local RoactRoduxContext = TS.import(script, script.Parent, \"context\").RoactRoduxContext\
 local _roact_hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out)\
@@ -15565,11 +15565,11 @@ end)\
 return {\
 \9Provider = Provider,\
 }\
-", '@'.."Orca.include.node_modules.roact-rodux-hooked.out.components.provider")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.roact-rodux-hooked.out.components.provider")) return fn() end)
+", '@'.."Orca.include.node_modules.roact-rodux-hooked.out.components.provider")) setfenv(fn, newEnv("Orca.include.node_modules.roact-rodux-hooked.out.components.provider")) return fn() end)
 
-createInstance("helpers", "Folder", "Orca.include.node_modules.roact-rodux-hooked.out.helpers", "Orca.include.node_modules.roact-rodux-hooked.out")
+newInstance("helpers", "Folder", "Orca.include.node_modules.roact-rodux-hooked.out.helpers", "Orca.include.node_modules.roact-rodux-hooked.out")
 
-createModule("shallow-equal", "ModuleScript", "Orca.include.node_modules.roact-rodux-hooked.out.helpers.shallow-equal", "Orca.include.node_modules.roact-rodux-hooked.out.helpers", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.3\
+newModule("shallow-equal", "ModuleScript", "Orca.include.node_modules.roact-rodux-hooked.out.helpers.shallow-equal", "Orca.include.node_modules.roact-rodux-hooked.out.helpers", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.3\
 local TS = _G[script]\
 local Object = TS.import(script, TS.getModule(script, \"@rbxts\", \"object-utils\"))\
 --[[\
@@ -15606,11 +15606,11 @@ end\
 return {\
 \9shallowEqual = shallowEqual,\
 }\
-", '@'.."Orca.include.node_modules.roact-rodux-hooked.out.helpers.shallow-equal")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.roact-rodux-hooked.out.helpers.shallow-equal")) return fn() end)
+", '@'.."Orca.include.node_modules.roact-rodux-hooked.out.helpers.shallow-equal")) setfenv(fn, newEnv("Orca.include.node_modules.roact-rodux-hooked.out.helpers.shallow-equal")) return fn() end)
 
-createInstance("hooks", "Folder", "Orca.include.node_modules.roact-rodux-hooked.out.hooks", "Orca.include.node_modules.roact-rodux-hooked.out")
+newInstance("hooks", "Folder", "Orca.include.node_modules.roact-rodux-hooked.out.hooks", "Orca.include.node_modules.roact-rodux-hooked.out")
 
-createModule("use-dispatch", "ModuleScript", "Orca.include.node_modules.roact-rodux-hooked.out.hooks.use-dispatch", "Orca.include.node_modules.roact-rodux-hooked.out.hooks", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.3\
+newModule("use-dispatch", "ModuleScript", "Orca.include.node_modules.roact-rodux-hooked.out.hooks.use-dispatch", "Orca.include.node_modules.roact-rodux-hooked.out.hooks", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.3\
 local TS = _G[script]\
 local useMutable = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out).useMutable\
 local useStore = TS.import(script, script.Parent, \"use-store\").useStore\
@@ -15647,9 +15647,9 @@ end\
 return {\
 \9useDispatch = useDispatch,\
 }\
-", '@'.."Orca.include.node_modules.roact-rodux-hooked.out.hooks.use-dispatch")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.roact-rodux-hooked.out.hooks.use-dispatch")) return fn() end)
+", '@'.."Orca.include.node_modules.roact-rodux-hooked.out.hooks.use-dispatch")) setfenv(fn, newEnv("Orca.include.node_modules.roact-rodux-hooked.out.hooks.use-dispatch")) return fn() end)
 
-createModule("use-selector", "ModuleScript", "Orca.include.node_modules.roact-rodux-hooked.out.hooks.use-selector", "Orca.include.node_modules.roact-rodux-hooked.out.hooks", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.3\
+newModule("use-selector", "ModuleScript", "Orca.include.node_modules.roact-rodux-hooked.out.hooks.use-selector", "Orca.include.node_modules.roact-rodux-hooked.out.hooks", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.3\
 local TS = _G[script]\
 local _roact_hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out)\
 local useEffect = _roact_hooked.useEffect\
@@ -15769,9 +15769,9 @@ end\
 return {\
 \9useSelector = useSelector,\
 }\
-", '@'.."Orca.include.node_modules.roact-rodux-hooked.out.hooks.use-selector")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.roact-rodux-hooked.out.hooks.use-selector")) return fn() end)
+", '@'.."Orca.include.node_modules.roact-rodux-hooked.out.hooks.use-selector")) setfenv(fn, newEnv("Orca.include.node_modules.roact-rodux-hooked.out.hooks.use-selector")) return fn() end)
 
-createModule("use-store", "ModuleScript", "Orca.include.node_modules.roact-rodux-hooked.out.hooks.use-store", "Orca.include.node_modules.roact-rodux-hooked.out.hooks", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.3\
+newModule("use-store", "ModuleScript", "Orca.include.node_modules.roact-rodux-hooked.out.hooks.use-store", "Orca.include.node_modules.roact-rodux-hooked.out.hooks", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.3\
 local TS = _G[script]\
 local RoactRoduxContext = TS.import(script, script.Parent.Parent, \"components\", \"context\").RoactRoduxContext\
 local useContext = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out).useContext\
@@ -15798,19 +15798,19 @@ end\
 return {\
 \9useStore = useStore,\
 }\
-", '@'.."Orca.include.node_modules.roact-rodux-hooked.out.hooks.use-store")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.roact-rodux-hooked.out.hooks.use-store")) return fn() end)
+", '@'.."Orca.include.node_modules.roact-rodux-hooked.out.hooks.use-store")) setfenv(fn, newEnv("Orca.include.node_modules.roact-rodux-hooked.out.hooks.use-store")) return fn() end)
 
-createModule("types", "ModuleScript", "Orca.include.node_modules.roact-rodux-hooked.out.types", "Orca.include.node_modules.roact-rodux-hooked.out", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.3\
+newModule("types", "ModuleScript", "Orca.include.node_modules.roact-rodux-hooked.out.types", "Orca.include.node_modules.roact-rodux-hooked.out", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.3\
 --[[\
 \9*\
 \9* A Roact Context\
 ]]\
 return nil\
-", '@'.."Orca.include.node_modules.roact-rodux-hooked.out.types")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.roact-rodux-hooked.out.types")) return fn() end)
+", '@'.."Orca.include.node_modules.roact-rodux-hooked.out.types")) setfenv(fn, newEnv("Orca.include.node_modules.roact-rodux-hooked.out.types")) return fn() end)
 
-createInstance("rodux", "Folder", "Orca.include.node_modules.rodux", "Orca.include.node_modules")
+newInstance("rodux", "Folder", "Orca.include.node_modules.rodux", "Orca.include.node_modules")
 
-createModule("src", "ModuleScript", "Orca.include.node_modules.rodux.src", "Orca.include.node_modules.rodux", function () local fn = assert(loadstring("local Store = require(script.Store)\
+newModule("src", "ModuleScript", "Orca.include.node_modules.rodux.src", "Orca.include.node_modules.rodux", function () local fn = assert(loadstring("local Store = require(script.Store)\
 local createReducer = require(script.createReducer)\
 local combineReducers = require(script.combineReducers)\
 local makeActionCreator = require(script.makeActionCreator)\
@@ -15825,9 +15825,9 @@ return {\
 \9loggerMiddleware = loggerMiddleware.middleware,\
 \9thunkMiddleware = thunkMiddleware,\
 }\
-", '@'.."Orca.include.node_modules.rodux.src")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.rodux.src")) return fn() end)
+", '@'.."Orca.include.node_modules.rodux.src")) setfenv(fn, newEnv("Orca.include.node_modules.rodux.src")) return fn() end)
 
-createModule("NoYield", "ModuleScript", "Orca.include.node_modules.rodux.src.NoYield", "Orca.include.node_modules.rodux.src", function () local fn = assert(loadstring("--!nocheck\
+newModule("NoYield", "ModuleScript", "Orca.include.node_modules.rodux.src.NoYield", "Orca.include.node_modules.rodux.src", function () local fn = assert(loadstring("--!nocheck\
 \
 --[[\
 \9Calls a function and throws an error if it attempts to yield.\
@@ -15858,9 +15858,9 @@ local function NoYield(callback, ...)\
 end\
 \
 return NoYield\
-", '@'.."Orca.include.node_modules.rodux.src.NoYield")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.rodux.src.NoYield")) return fn() end)
+", '@'.."Orca.include.node_modules.rodux.src.NoYield")) setfenv(fn, newEnv("Orca.include.node_modules.rodux.src.NoYield")) return fn() end)
 
-createModule("Signal", "ModuleScript", "Orca.include.node_modules.rodux.src.Signal", "Orca.include.node_modules.rodux.src", function () local fn = assert(loadstring("--[[\
+newModule("Signal", "ModuleScript", "Orca.include.node_modules.rodux.src.Signal", "Orca.include.node_modules.rodux.src", function () local fn = assert(loadstring("--[[\
 \9A limited, simple implementation of a Signal.\
 \
 \9Handlers are fired in order, and (dis)connections are properly handled when\
@@ -15963,9 +15963,9 @@ function Signal:fire(...)\
 \9end\
 end\
 \
-return Signal", '@'.."Orca.include.node_modules.rodux.src.Signal")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.rodux.src.Signal")) return fn() end)
+return Signal", '@'.."Orca.include.node_modules.rodux.src.Signal")) setfenv(fn, newEnv("Orca.include.node_modules.rodux.src.Signal")) return fn() end)
 
-createModule("Store", "ModuleScript", "Orca.include.node_modules.rodux.src.Store", "Orca.include.node_modules.rodux.src", function () local fn = assert(loadstring("local RunService = game:GetService(\"RunService\")\
+newModule("Store", "ModuleScript", "Orca.include.node_modules.rodux.src.Store", "Orca.include.node_modules.rodux.src", function () local fn = assert(loadstring("local RunService = game:GetService(\"RunService\")\
 \
 local Signal = require(script.Parent.Signal)\
 local NoYield = require(script.Parent.NoYield)\
@@ -16182,9 +16182,9 @@ function Store:flush()\
 end\
 \
 return Store\
-", '@'.."Orca.include.node_modules.rodux.src.Store")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.rodux.src.Store")) return fn() end)
+", '@'.."Orca.include.node_modules.rodux.src.Store")) setfenv(fn, newEnv("Orca.include.node_modules.rodux.src.Store")) return fn() end)
 
-createModule("combineReducers", "ModuleScript", "Orca.include.node_modules.rodux.src.combineReducers", "Orca.include.node_modules.rodux.src", function () local fn = assert(loadstring("--[[\
+newModule("combineReducers", "ModuleScript", "Orca.include.node_modules.rodux.src.combineReducers", "Orca.include.node_modules.rodux.src", function () local fn = assert(loadstring("--[[\
 \9Create a composite reducer from a map of keys and sub-reducers.\
 ]]\
 local function combineReducers(map)\
@@ -16206,9 +16206,9 @@ local function combineReducers(map)\
 end\
 \
 return combineReducers\
-", '@'.."Orca.include.node_modules.rodux.src.combineReducers")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.rodux.src.combineReducers")) return fn() end)
+", '@'.."Orca.include.node_modules.rodux.src.combineReducers")) setfenv(fn, newEnv("Orca.include.node_modules.rodux.src.combineReducers")) return fn() end)
 
-createModule("createReducer", "ModuleScript", "Orca.include.node_modules.rodux.src.createReducer", "Orca.include.node_modules.rodux.src", function () local fn = assert(loadstring("return function(initialState, handlers)\
+newModule("createReducer", "ModuleScript", "Orca.include.node_modules.rodux.src.createReducer", "Orca.include.node_modules.rodux.src", function () local fn = assert(loadstring("return function(initialState, handlers)\
 \9return function(state, action)\
 \9\9if state == nil then\
 \9\9\9state = initialState\
@@ -16223,9 +16223,9 @@ createModule("createReducer", "ModuleScript", "Orca.include.node_modules.rodux.s
 \9\9return state\
 \9end\
 end\
-", '@'.."Orca.include.node_modules.rodux.src.createReducer")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.rodux.src.createReducer")) return fn() end)
+", '@'.."Orca.include.node_modules.rodux.src.createReducer")) setfenv(fn, newEnv("Orca.include.node_modules.rodux.src.createReducer")) return fn() end)
 
-createModule("loggerMiddleware", "ModuleScript", "Orca.include.node_modules.rodux.src.loggerMiddleware", "Orca.include.node_modules.rodux.src", function () local fn = assert(loadstring("-- We want to be able to override outputFunction in tests, so the shape of this\
+newModule("loggerMiddleware", "ModuleScript", "Orca.include.node_modules.rodux.src.loggerMiddleware", "Orca.include.node_modules.rodux.src", function () local fn = assert(loadstring("-- We want to be able to override outputFunction in tests, so the shape of this\
 -- module is kind of unconventional.\
 --\
 -- We fix it this weird shape in init.lua.\
@@ -16248,9 +16248,9 @@ function loggerMiddleware.middleware(nextDispatch, store)\
 end\
 \
 return loggerMiddleware\
-", '@'.."Orca.include.node_modules.rodux.src.loggerMiddleware")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.rodux.src.loggerMiddleware")) return fn() end)
+", '@'.."Orca.include.node_modules.rodux.src.loggerMiddleware")) setfenv(fn, newEnv("Orca.include.node_modules.rodux.src.loggerMiddleware")) return fn() end)
 
-createModule("makeActionCreator", "ModuleScript", "Orca.include.node_modules.rodux.src.makeActionCreator", "Orca.include.node_modules.rodux.src", function () local fn = assert(loadstring("--[[\13\
+newModule("makeActionCreator", "ModuleScript", "Orca.include.node_modules.rodux.src.makeActionCreator", "Orca.include.node_modules.rodux.src", function () local fn = assert(loadstring("--[[\13\
 \9A helper function to define a Rodux action creator with an associated name.\13\
 ]]\13\
 local function makeActionCreator(name, fn)\13\
@@ -16274,9 +16274,9 @@ local function makeActionCreator(name, fn)\13\
 end\13\
 \13\
 return makeActionCreator\13\
-", '@'.."Orca.include.node_modules.rodux.src.makeActionCreator")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.rodux.src.makeActionCreator")) return fn() end)
+", '@'.."Orca.include.node_modules.rodux.src.makeActionCreator")) setfenv(fn, newEnv("Orca.include.node_modules.rodux.src.makeActionCreator")) return fn() end)
 
-createModule("prettyPrint", "ModuleScript", "Orca.include.node_modules.rodux.src.prettyPrint", "Orca.include.node_modules.rodux.src", function () local fn = assert(loadstring("local indent = \"    \"\
+newModule("prettyPrint", "ModuleScript", "Orca.include.node_modules.rodux.src.prettyPrint", "Orca.include.node_modules.rodux.src", function () local fn = assert(loadstring("local indent = \"    \"\
 \
 local function prettyPrint(value, indentLevel)\
 \9indentLevel = indentLevel or 0\
@@ -16309,9 +16309,9 @@ local function prettyPrint(value, indentLevel)\
 \9return table.concat(output, \"\")\
 end\
 \
-return prettyPrint", '@'.."Orca.include.node_modules.rodux.src.prettyPrint")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.rodux.src.prettyPrint")) return fn() end)
+return prettyPrint", '@'.."Orca.include.node_modules.rodux.src.prettyPrint")) setfenv(fn, newEnv("Orca.include.node_modules.rodux.src.prettyPrint")) return fn() end)
 
-createModule("thunkMiddleware", "ModuleScript", "Orca.include.node_modules.rodux.src.thunkMiddleware", "Orca.include.node_modules.rodux.src", function () local fn = assert(loadstring("--[[\
+newModule("thunkMiddleware", "ModuleScript", "Orca.include.node_modules.rodux.src.thunkMiddleware", "Orca.include.node_modules.rodux.src", function () local fn = assert(loadstring("--[[\
 \9A middleware that allows for functions to be dispatched.\
 \9Functions will receive a single argument, the store itself.\
 \9This middleware consumes the function; middleware further down the chain\
@@ -16345,21 +16345,21 @@ local function thunkMiddleware(nextDispatch, store)\
 end\
 \
 return thunkMiddleware\
-", '@'.."Orca.include.node_modules.rodux.src.thunkMiddleware")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.rodux.src.thunkMiddleware")) return fn() end)
+", '@'.."Orca.include.node_modules.rodux.src.thunkMiddleware")) setfenv(fn, newEnv("Orca.include.node_modules.rodux.src.thunkMiddleware")) return fn() end)
 
-createModule("services", "ModuleScript", "Orca.include.node_modules.services", "Orca.include.node_modules", function () local fn = assert(loadstring("return setmetatable({}, {\
+newModule("services", "ModuleScript", "Orca.include.node_modules.services", "Orca.include.node_modules", function () local fn = assert(loadstring("return setmetatable({}, {\
 \9__index = function(self, serviceName)\
 \9\9local service = game:GetService(serviceName)\
 \9\9self[serviceName] = service\
 \9\9return service\
 \9end,\
 })\
-", '@'.."Orca.include.node_modules.services")) setfenv(fn, createModuleEnvironment("Orca.include.node_modules.services")) return fn() end)
+", '@'.."Orca.include.node_modules.services")) setfenv(fn, newEnv("Orca.include.node_modules.services")) return fn() end)
 
-createInstance("types", "Folder", "Orca.include.node_modules.types", "Orca.include.node_modules")
+newInstance("types", "Folder", "Orca.include.node_modules.types", "Orca.include.node_modules")
 
-createInstance("include", "Folder", "Orca.include.node_modules.types.include", "Orca.include.node_modules.types")
+newInstance("include", "Folder", "Orca.include.node_modules.types.include", "Orca.include.node_modules.types")
 
-createInstance("generated", "Folder", "Orca.include.node_modules.types.include.generated", "Orca.include.node_modules.types.include")
+newInstance("generated", "Folder", "Orca.include.node_modules.types.include.generated", "Orca.include.node_modules.types.include")
 
 init()
