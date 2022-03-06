@@ -1,5 +1,5 @@
 import Roact from "@rbxts/roact";
-import { hooked, pure, useMemo, useReducer, useState } from "@rbxts/roact-hooked";
+import { hooked, pure, useEffect, useMemo, useReducer, useState } from "@rbxts/roact-hooked";
 import { Players, TeleportService } from "@rbxts/services";
 
 import Border from "components/Border";
@@ -21,7 +21,15 @@ const GAME_PADDING = 48;
 function FriendActivityCard() {
 	const theme = useTheme("home").friendActivity;
 	const [update, forceUpdate] = useReducer((state: number) => state + 1, 0);
-	const [games, , status] = useFriendActivity([update]);
+	const [currentGames, , status] = useFriendActivity([update]);
+
+	// Update games state with currentGames if not empty, also do some sorting
+	const [games, setGames] = useState(currentGames);
+	useEffect(() => {
+		if (currentGames.size() > 0) {
+			setGames(currentGames.sort((a, b) => a.friends.size() > b.friends.size()));
+		}
+	}, [currentGames]);
 
 	// Force a re-render every 10 seconds. If the games list is empty, retry the
 	// request if it's not pending.
@@ -78,8 +86,7 @@ function GameEntryComponent(props: { game: GameActivity; index: number }) {
 			Image={props.game.thumbnail}
 			ScaleType="Crop"
 			Size={px(278, 156)}
-			Position={px(24, props.index * (GAME_PADDING + 156))}
-			LayoutOrder={-props.game.friends.size()}
+			Position={useSpring(px(24, props.index * (GAME_PADDING + 156)), {})}
 			BackgroundTransparency={1}
 		>
 			<Border color={theme.foreground} radius={8} transparency={0.8} />
