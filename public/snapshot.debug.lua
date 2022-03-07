@@ -5,7 +5,7 @@
 --
 -- Author: 0866
 -- License: MIT
--- Version: "22d065a-dbg"
+-- Version: "22d066a-dbg"
 -- GitHub: https://github.com/richie0866/orca
 --]]
 
@@ -106,7 +106,7 @@ end
 ---@return table<string, any> environment
 local function newEnv(id)
 	return setmetatable({
-		VERSION = "22d065a-dbg",
+		VERSION = "22d066a-dbg",
 		script = instanceFromId[id],
 		require = function (module)
 			return requireModuleInternal(module, instanceFromId[id])
@@ -6980,6 +6980,7 @@ local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)
 local _roact_hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out)\
 local hooked = _roact_hooked.hooked\
 local pure = _roact_hooked.pure\
+local useEffect = _roact_hooked.useEffect\
 local useMemo = _roact_hooked.useMemo\
 local useReducer = _roact_hooked.useReducer\
 local useState = _roact_hooked.useState\
@@ -7012,8 +7013,22 @@ local function FriendActivityCard()\
 \9local update = _binding[1]\
 \9local forceUpdate = _binding[2]\
 \9local _binding_1 = useFriendActivity({ update })\
-\9local games = _binding_1[1]\
+\9local currentGames = _binding_1[1]\
 \9local status = _binding_1[3]\
+\9local _binding_2 = useState(currentGames)\
+\9local games = _binding_2[1]\
+\9local setGames = _binding_2[2]\
+\9useEffect(function()\
+\9\9if #currentGames > 0 then\
+\9\9\9local _arg0 = function(a, b)\
+\9\9\9\9return #a.friends > #b.friends\
+\9\9\9end\
+\9\9\9-- ▼ Array.sort ▼\
+\9\9\9table.sort(currentGames, _arg0)\
+\9\9\9-- ▲ Array.sort ▲\
+\9\9\9setGames(currentGames)\
+\9\9end\
+\9end, { currentGames })\
 \9useInterval(function()\
 \9\9return forceUpdate()\
 \9end, #games == 0 and status ~= \"pending\" and 3000 or 30000)\
@@ -7078,8 +7093,7 @@ local function GameEntryComponent(props)\
 \9\9Image = props.game.thumbnail,\
 \9\9ScaleType = \"Crop\",\
 \9\9Size = px(278, 156),\
-\9\9Position = px(24, props.index * (GAME_PADDING + 156)),\
-\9\9LayoutOrder = -#props.game.friends,\
+\9\9Position = useSpring(px(24, props.index * (GAME_PADDING + 156)), {}),\
 \9\9BackgroundTransparency = 1,\
 \9}\
 \9local _children = {\
