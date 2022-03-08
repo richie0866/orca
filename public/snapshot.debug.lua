@@ -5,7 +5,7 @@
 --
 -- Author: 0866
 -- License: MIT
--- Version: "22d066a-dbg"
+-- Version: "22d067a-dbg"
 -- GitHub: https://github.com/richie0866/orca
 --]]
 
@@ -106,7 +106,7 @@ end
 ---@return table<string, any> environment
 local function newEnv(id)
 	return setmetatable({
-		VERSION = "22d066a-dbg",
+		VERSION = "22d067a-dbg",
 		script = instanceFromId[id],
 		require = function (module)
 			return requireModuleInternal(module, instanceFromId[id])
@@ -167,11 +167,13 @@ newModule("App", "ModuleScript", "Orca.App", "Orca", function () local fn = asse
 local TS = require(script.Parent.include.RuntimeLib)\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
 local Dashboard = TS.import(script, script.Parent, \"views\", \"Dashboard\").default\
+local DISPLAY_ORDER = 7\
 local function App()\
 \9return Roact.createElement(\"ScreenGui\", {\
 \9\9IgnoreGuiInset = true,\
 \9\9ResetOnSpawn = false,\
 \9\9ZIndexBehavior = \"Sibling\",\
+\9\9DisplayOrder = DISPLAY_ORDER,\
 \9}, {\
 \9\9Roact.createElement(Dashboard),\
 \9})\
