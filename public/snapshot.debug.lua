@@ -153,6 +153,9 @@ end
 -- Runtime
 
 local function init()
+	if not game:IsLoaded() then
+		game.Loaded:Wait()
+	end
 	for object in pairs(modules) do
 		if object:IsA("LocalScript") and not object.Disabled then
 			task.spawn(loadModule, object)
@@ -222,7 +225,7 @@ local function Acrylic(_param)\
 \9local radius = _param.radius\
 \9local distance = _param.distance\
 \9local isAcrylicBlurEnabled = useAppSelector(function(state)\
-\9\9return state.options.acrylicBlurEnabled\
+\9\9return state.options.config.acrylicBlur\
 \9end)\
 \9return isAcrylicBlurEnabled and (Roact.createElement(AcrylicBlur, {\
 \9\9radius = radius,\
@@ -294,18 +297,18 @@ local function AcrylicBlurComponent(_param)\
 \9\9\9acrylic.Horizontal.Mesh.Scale = Vector3.new(width, height, 0)\
 \9\9end\
 \9\9if radius ~= nil and radius > 0 then\
-\9\9\9acrylic.TopLeft.Mesh.Scale = Vector3.new(0, cornerRadius * 2, cornerRadius * 2)\
-\9\9\9acrylic.TopRight.Mesh.Scale = Vector3.new(0, cornerRadius * 2, cornerRadius * 2)\
-\9\9\9acrylic.BottomLeft.Mesh.Scale = Vector3.new(0, cornerRadius * 2, cornerRadius * 2)\
-\9\9\9acrylic.BottomRight.Mesh.Scale = Vector3.new(0, cornerRadius * 2, cornerRadius * 2)\
 \9\9\9local _cFrame = CFrame.new(-width / 2 + cornerRadius, height / 2 - cornerRadius, 0)\
 \9\9\9acrylic.TopLeft.CFrame = center * _cFrame * cylinderAngleOffset\
+\9\9\9acrylic.TopLeft.Mesh.Scale = Vector3.new(0, cornerRadius * 2, cornerRadius * 2)\
 \9\9\9local _cFrame_1 = CFrame.new(width / 2 - cornerRadius, height / 2 - cornerRadius, 0)\
 \9\9\9acrylic.TopRight.CFrame = center * _cFrame_1 * cylinderAngleOffset\
+\9\9\9acrylic.TopRight.Mesh.Scale = Vector3.new(0, cornerRadius * 2, cornerRadius * 2)\
 \9\9\9local _cFrame_2 = CFrame.new(-width / 2 + cornerRadius, -height / 2 + cornerRadius, 0)\
 \9\9\9acrylic.BottomLeft.CFrame = center * _cFrame_2 * cylinderAngleOffset\
+\9\9\9acrylic.BottomLeft.Mesh.Scale = Vector3.new(0, cornerRadius * 2, cornerRadius * 2)\
 \9\9\9local _cFrame_3 = CFrame.new(width / 2 - cornerRadius, -height / 2 + cornerRadius, 0)\
 \9\9\9acrylic.BottomRight.CFrame = center * _cFrame_3 * cylinderAngleOffset\
+\9\9\9acrylic.BottomRight.Mesh.Scale = Vector3.new(0, cornerRadius * 2, cornerRadius * 2)\
 \9\9end\
 \9end, { radius, distance })\
 \9useEffect(function()\
@@ -1075,7 +1078,7 @@ local Fill = TS.import(script, script.Parent, \"Fill\").default\
 local _Glow = TS.import(script, script.Parent, \"Glow\")\
 local Glow = _Glow.default\
 local GlowRadius = _Glow.GlowRadius\
-local useDelayedState = TS.import(script, script.Parent.Parent, \"hooks\", \"common\", \"use-delayed-state\").useDelayedState\
+local useDelayedUpdate = TS.import(script, script.Parent.Parent, \"hooks\", \"common\", \"use-delayed-update\").useDelayedUpdate\
 local useSpring = TS.import(script, script.Parent.Parent, \"hooks\", \"common\", \"use-spring\").useSpring\
 local useIsPageOpen = TS.import(script, script.Parent.Parent, \"hooks\", \"use-current-page\").useIsPageOpen\
 local px = TS.import(script, script.Parent.Parent, \"utils\", \"udim2\").px\
@@ -1087,7 +1090,7 @@ local function Card(_param)\
 \9local position = _param.position\
 \9local children = _param[Roact.Children]\
 \9local isOpen = useIsPageOpen(page)\
-\9local isActive = useDelayedState(isOpen, index * 40)\
+\9local isActive = useDelayedUpdate(isOpen, index * 40)\
 \9local _uDim2 = UDim2.new(UDim.new(), position.Y)\
 \9local _arg0 = px((size.X.Offset + 48) * 2 - position.X.Offset, 0)\
 \9local _arg0_1 = px(size.X.Offset + 48 * 2, 0)\
@@ -1579,7 +1582,7 @@ return {\
 }\
 ", '@'.."Orca.hooks.common.rodux-hooks")) setfenv(fn, newEnv("Orca.hooks.common.rodux-hooks")) return fn() end)
 
-newModule("use-delayed-state", "ModuleScript", "Orca.hooks.common.use-delayed-state", "Orca.hooks.common", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("use-delayed-update", "ModuleScript", "Orca.hooks.common.use-delayed-update", "Orca.hooks.common", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.include.RuntimeLib)\
 local _roact_hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out)\
 local useEffect = _roact_hooked.useEffect\
@@ -1588,52 +1591,60 @@ local useState = _roact_hooked.useState\
 local _timeout = TS.import(script, script.Parent.Parent.Parent, \"utils\", \"timeout\")\
 local clearTimeout = _timeout.clearTimeout\
 local setTimeout = _timeout.setTimeout\
-local function clearTimeoutRef(timeoutRef)\
-\9for _, timeout in ipairs(timeoutRef.current) do\
-\9\9clearTimeout(timeout)\
+local nextId = 0\
+local function clearUpdates(updates, laterThan)\
+\9for id, update in pairs(updates) do\
+\9\9if laterThan == nil or update.resolveTime >= laterThan then\
+\9\9\9-- ▼ Map.delete ▼\
+\9\9\9updates[id] = nil\
+\9\9\9-- ▲ Map.delete ▲\
+\9\9\9clearTimeout(update.timeout)\
+\9\9end\
 \9end\
-\9-- ▼ Array.clear ▼\
-\9table.clear(timeoutRef.current)\
-\9-- ▲ Array.clear ▲\
 end\
-local function useDelayedState(value, delay, isImmediate)\
+local function useDelayedUpdate(value, delay, isImmediate)\
 \9local _binding = useState(value)\
 \9local delayedValue = _binding[1]\
 \9local setDelayedValue = _binding[2]\
-\9local timeoutRef = useMutable({})\
+\9local updates = useMutable({})\
 \9useEffect(function()\
 \9\9local _result = isImmediate\
 \9\9if _result ~= nil then\
 \9\9\9_result = _result(value)\
 \9\9end\
 \9\9if _result then\
-\9\9\9clearTimeoutRef(timeoutRef)\
+\9\9\9clearUpdates(updates.current)\
 \9\9\9setDelayedValue(value)\
 \9\9\9return nil\
 \9\9end\
-\9\9local timeout\
-\9\9timeout = setTimeout(function()\
-\9\9\9setDelayedValue(value)\
-\9\9\9local _current = timeoutRef.current\
-\9\9\9local _arg0 = (table.find(timeoutRef.current, timeout) or 0) - 1\
-\9\9\9table.remove(_current, _arg0 + 1)\
-\9\9end, delay)\
-\9\9local _current = timeoutRef.current\
-\9\9-- ▼ Array.push ▼\
-\9\9_current[#_current + 1] = timeout\
-\9\9-- ▲ Array.push ▲\
+\9\9local _original = nextId\
+\9\9nextId += 1\
+\9\9local id = _original\
+\9\9local update = {\
+\9\9\9timeout = setTimeout(function()\
+\9\9\9\9setDelayedValue(value)\
+\9\9\9\9-- ▼ Map.delete ▼\
+\9\9\9\9updates.current[id] = nil\
+\9\9\9\9-- ▲ Map.delete ▲\
+\9\9\9end, delay),\
+\9\9\9resolveTime = time() + delay,\
+\9\9}\
+\9\9clearUpdates(updates.current, update.resolveTime)\
+\9\9-- ▼ Map.set ▼\
+\9\9updates.current[id] = update\
+\9\9-- ▲ Map.set ▲\
 \9end, { value })\
 \9useEffect(function()\
 \9\9return function()\
-\9\9\9return clearTimeoutRef(timeoutRef)\
+\9\9\9return clearUpdates(updates.current)\
 \9\9end\
 \9end, {})\
 \9return delayedValue\
 end\
 return {\
-\9useDelayedState = useDelayedState,\
+\9useDelayedUpdate = useDelayedUpdate,\
 }\
-", '@'.."Orca.hooks.common.use-delayed-state")) setfenv(fn, newEnv("Orca.hooks.common.use-delayed-state")) return fn() end)
+", '@'.."Orca.hooks.common.use-delayed-update")) setfenv(fn, newEnv("Orca.hooks.common.use-delayed-update")) return fn() end)
 
 newModule("use-did-mount", "ModuleScript", "Orca.hooks.common.use-did-mount", "Orca.hooks.common", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.include.RuntimeLib)\
@@ -1683,26 +1694,27 @@ return {\
 
 newModule("use-interval", "ModuleScript", "Orca.hooks.common.use-interval", "Orca.hooks.common", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.include.RuntimeLib)\
-local _roact_hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out)\
-local useEffect = _roact_hooked.useEffect\
-local useMutable = _roact_hooked.useMutable\
+local useEffect = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out).useEffect\
 local _timeout = TS.import(script, script.Parent.Parent.Parent, \"utils\", \"timeout\")\
 local clearInterval = _timeout.clearInterval\
 local setInterval = _timeout.setInterval\
-local function useInterval(callback, delay)\
-\9local savedCallback = useMutable(callback)\
-\9savedCallback.current = callback\
-\9useEffect(function()\
-\9\9if delay == nil then\
-\9\9\9return nil\
+local function useInterval(callback, delay, deps)\
+\9if deps == nil then\
+\9\9deps = {}\
+\9end\
+\9local _exp = function()\
+\9\9if delay ~= nil then\
+\9\9\9local interval = setInterval(callback, delay)\
+\9\9\9return function()\
+\9\9\9\9return clearInterval(interval)\
+\9\9\9end\
 \9\9end\
-\9\9local id = setInterval(function()\
-\9\9\9return savedCallback.current()\
-\9\9end, delay)\
-\9\9return function()\
-\9\9\9return clearInterval(id)\
-\9\9end\
-\9end, { delay })\
+\9end\
+\9local _array = { callback, delay }\
+\9local _length = #_array\
+\9table.move(deps, 1, #deps, _length + 1, _array)\
+\9useEffect(_exp, _array)\
+\9return setInterval\
 end\
 return {\
 \9useInterval = useInterval,\
@@ -2106,9 +2118,25 @@ return {\
 newModule("use-theme", "ModuleScript", "Orca.hooks.use-theme", "Orca.hooks", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.include.RuntimeLib)\
 local useAppSelector = TS.import(script, script.Parent, \"common\", \"rodux-hooks\").useAppSelector\
+local getThemes = TS.import(script, script.Parent.Parent, \"themes\").getThemes\
+local darkTheme = TS.import(script, script.Parent.Parent, \"themes\", \"dark-theme\").darkTheme\
 local function useTheme(key)\
 \9return useAppSelector(function(state)\
-\9\9return state.theme.current[key]\
+\9\9local _exp = getThemes()\
+\9\9local _arg0 = function(t)\
+\9\9\9return t.name == state.options.currentTheme\
+\9\9end\
+\9\9-- ▼ ReadonlyArray.find ▼\
+\9\9local _result = nil\
+\9\9for _i, _v in ipairs(_exp) do\
+\9\9\9if _arg0(_v, _i - 1, _exp) == true then\
+\9\9\9\9_result = _v\
+\9\9\9\9break\
+\9\9\9end\
+\9\9end\
+\9\9-- ▲ ReadonlyArray.find ▲\
+\9\9local theme = _result\
+\9\9return theme and theme[key] or darkTheme[key]\
 \9end)\
 end\
 return {\
@@ -2170,7 +2198,7 @@ local main = TS.async(function()\
 \9\9\9timeout = setTimeout(disableAcrylic, 500)\
 \9\9\9return nil\
 \9\9end\
-\9\9if newState.options.acrylicBlurEnabled then\
+\9\9if newState.options.config.acrylicBlur then\
 \9\9\9enableAcrylic()\
 \9\9else\
 \9\9\9disableAcrylic()\
@@ -3760,35 +3788,48 @@ local setStore = TS.import(script, script.Parent, \"jobs\").setStore\
 local toggleDashboard = TS.import(script, script.Parent, \"store\", \"actions\", \"dashboard.action\").toggleDashboard\
 local configureStore = TS.import(script, script.Parent, \"store\", \"store\").configureStore\
 local App = TS.import(script, script.Parent, \"App\").default\
-if getgenv()._ORCA_IS_LOADED ~= nil then\
-\9error(\"Orca is already loaded!\")\
-end\
 local store = configureStore()\
 setStore(store)\
-local container = Make(\"Folder\", {})\
-Roact.mount(Roact.createElement(Provider, {\
-\9store = store,\
-}, {\
-\9Roact.createElement(App),\
-}), container)\
-local app = container:WaitForChild(\"1\")\
-local protect = syn and syn.protect_gui or protect_gui\
-if protect then\
-\9protect(app)\
+local mount = TS.async(function()\
+\9local container = Make(\"Folder\", {})\
+\9Roact.mount(Roact.createElement(Provider, {\
+\9\9store = store,\
+\9}, {\
+\9\9Roact.createElement(App),\
+\9}), container)\
+\9return container:WaitForChild(1)\
+end)\
+local function render(app)\
+\9local protect = syn and syn.protect_gui or protect_gui\
+\9if protect then\
+\9\9protect(app)\
+\9end\
+\9if IS_DEV then\
+\9\9app.Parent = Players.LocalPlayer:WaitForChild(\"PlayerGui\")\
+\9elseif gethui then\
+\9\9app.Parent = gethui()\
+\9else\
+\9\9app.Parent = game:GetService(\"CoreGui\")\
+\9end\
 end\
-if IS_DEV then\
-\9app.Parent = Players.LocalPlayer:WaitForChild(\"PlayerGui\")\
-elseif gethui then\
-\9app.Parent = gethui()\
-else\
-\9app.Parent = game:GetService(\"CoreGui\")\
-end\
-getgenv()._ORCA_IS_LOADED = true\
-if time() > 3 then\
-\9task.defer(function()\
-\9\9return store:dispatch(toggleDashboard())\
-\9end)\
-end\
+local main = TS.async(function()\
+\9if getgenv and getgenv()._ORCA_IS_LOADED ~= nil then\
+\9\9error(\"Orca is already loaded!\")\
+\9end\
+\9local app = TS.await(mount())\
+\9render(app)\
+\9if time() > 3 then\
+\9\9task.defer(function()\
+\9\9\9return store:dispatch(toggleDashboard())\
+\9\9end)\
+\9end\
+\9if getgenv then\
+\9\9getgenv()._ORCA_IS_LOADED = true\
+\9end\
+end)\
+main():catch(function(err)\
+\9warn(\"Orca failed to load: \" .. tostring(err))\
+end)\
 ", '@'.."Orca.main")) setfenv(fn, newEnv("Orca.main")) return fn() end)
 
 newInstance("store", "Folder", "Orca.store", "Orca")
@@ -3856,28 +3897,35 @@ return {\
 newModule("options.action", "ModuleScript", "Orca.store.actions.options.action", "Orca.store.actions", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.include.RuntimeLib)\
 local Rodux = TS.import(script, TS.getModule(script, \"@rbxts\", \"rodux\").src)\
-local setAcrylicBlurEnabled = Rodux.makeActionCreator(\"options/setAcrylicBlurEnabled\", function(active)\
+local setConfig = Rodux.makeActionCreator(\"options/setConfig\", function(name, active)\
 \9return {\
+\9\9name = name,\
 \9\9active = active,\
 \9}\
 end)\
-return {\
-\9setAcrylicBlurEnabled = setAcrylicBlurEnabled,\
-}\
-", '@'.."Orca.store.actions.options.action")) setfenv(fn, newEnv("Orca.store.actions.options.action")) return fn() end)
-
-newModule("theme.action", "ModuleScript", "Orca.store.actions.theme.action", "Orca.store.actions", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
-local TS = require(script.Parent.Parent.Parent.include.RuntimeLib)\
-local Rodux = TS.import(script, TS.getModule(script, \"@rbxts\", \"rodux\").src)\
-local setTheme = Rodux.makeActionCreator(\"theme/setTheme\", function(theme)\
+local setShortcut = Rodux.makeActionCreator(\"options/setShortcut\", function(shortcut, keycode)\
+\9return {\
+\9\9shortcut = shortcut,\
+\9\9keycode = keycode,\
+\9}\
+end)\
+local removeShortcut = Rodux.makeActionCreator(\"options/removeShortcut\", function(shortcut)\
+\9return {\
+\9\9shortcut = shortcut,\
+\9}\
+end)\
+local setTheme = Rodux.makeActionCreator(\"options/setTheme\", function(theme)\
 \9return {\
 \9\9theme = theme,\
 \9}\
 end)\
 return {\
+\9setConfig = setConfig,\
+\9setShortcut = setShortcut,\
+\9removeShortcut = removeShortcut,\
 \9setTheme = setTheme,\
 }\
-", '@'.."Orca.store.actions.theme.action")) setfenv(fn, newEnv("Orca.store.actions.theme.action")) return fn() end)
+", '@'.."Orca.store.actions.options.action")) setfenv(fn, newEnv("Orca.store.actions.options.action")) return fn() end)
 
 newInstance("models", "Folder", "Orca.store.models", "Orca.store")
 
@@ -3922,8 +3970,72 @@ newModule("jobs.model", "ModuleScript", "Orca.store.models.jobs.model", "Orca.st
 newModule("options.model", "ModuleScript", "Orca.store.models.options.model", "Orca.store.models", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 ", '@'.."Orca.store.models.options.model")) setfenv(fn, newEnv("Orca.store.models.options.model")) return fn() end)
 
-newModule("theme.model", "ModuleScript", "Orca.store.models.theme.model", "Orca.store.models", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
-", '@'.."Orca.store.models.theme.model")) setfenv(fn, newEnv("Orca.store.models.theme.model")) return fn() end)
+newModule("persistent-state", "ModuleScript", "Orca.store.persistent-state", "Orca.store", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+local TS = require(script.Parent.Parent.include.RuntimeLib)\
+local _services = TS.import(script, TS.getModule(script, \"@rbxts\", \"services\"))\
+local HttpService = _services.HttpService\
+local Players = _services.Players\
+local getStore = TS.import(script, script.Parent.Parent, \"jobs\", \"helpers\", \"job-store\").getStore\
+local setInterval = TS.import(script, script.Parent.Parent, \"utils\", \"timeout\").setInterval\
+if makefolder and not isfolder(\"_orca\") then\
+\9makefolder(\"_orca\")\
+end\
+local function read(file)\
+\9if readfile then\
+\9\9return isfile(file) and readfile(file) or nil\
+\9else\
+\9\9print(\"READ   \" .. file)\
+\9\9return nil\
+\9end\
+end\
+local function write(file, content)\
+\9if writefile then\
+\9\9return writefile(file, content)\
+\9else\
+\9\9print(\"WRITE  \" .. (file .. (\" => \\n\" .. content)))\
+\9\9return nil\
+\9end\
+end\
+local autosave\
+local function persistentState(name, selector, defaultValue)\
+\9local _exitType, _returns = TS.try(function()\
+\9\9local serializedState = read(\"_orca/\" .. (name .. \".json\"))\
+\9\9if serializedState == nil then\
+\9\9\9write(\"_orca/\" .. (name .. \".json\"), HttpService:JSONEncode(defaultValue))\
+\9\9\9return TS.TRY_RETURN, { defaultValue }\
+\9\9end\
+\9\9local value = HttpService:JSONDecode(serializedState)\
+\9\9autosave(name, selector):catch(function()\
+\9\9\9warn(\"Autosave failed\")\
+\9\9end)\
+\9\9return TS.TRY_RETURN, { value }\
+\9end, function(err)\
+\9\9warn(\"Failed to load \" .. (name .. (\".json: \" .. tostring(err))))\
+\9\9return TS.TRY_RETURN, { defaultValue }\
+\9end)\
+\9if _exitType then\
+\9\9return unpack(_returns)\
+\9end\
+end\
+autosave = TS.async(function(name, selector)\
+\9local store = TS.await(getStore())\
+\9local function save()\
+\9\9local state = selector(store:getState())\
+\9\9write(\"_orca/\" .. (name .. \".json\"), HttpService:JSONEncode(state))\
+\9end\
+\9setInterval(function()\
+\9\9return save\
+\9end, 60000)\
+\9Players.PlayerRemoving:Connect(function(player)\
+\9\9if player == Players.LocalPlayer then\
+\9\9\9save()\
+\9\9end\
+\9end)\
+end)\
+return {\
+\9persistentState = persistentState,\
+}\
+", '@'.."Orca.store.persistent-state")) setfenv(fn, newEnv("Orca.store.persistent-state")) return fn() end)
 
 newInstance("reducers", "Folder", "Orca.store.reducers", "Orca.store")
 
@@ -4091,16 +4203,67 @@ return {\
 newModule("options.reducer", "ModuleScript", "Orca.store.reducers.options.reducer", "Orca.store.reducers", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.include.RuntimeLib)\
 local Rodux = TS.import(script, TS.getModule(script, \"@rbxts\", \"rodux\").src)\
-local initialState = {\
-\9acrylicBlurEnabled = true,\
-}\
+local persistentState = TS.import(script, script.Parent.Parent, \"persistent-state\").persistentState\
+local initialState = persistentState(\"options\", function(state)\
+\9return state.options\
+end, {\
+\9currentTheme = \"Sorbet\",\
+\9config = {\
+\9\9acrylicBlur = true,\
+\9},\
+\9shortcuts = {\
+\9\9toggleDashboard = Enum.KeyCode.K.Value,\
+\9},\
+})\
 local optionsReducer = Rodux.createReducer(initialState, {\
-\9[\"options/setAcrylicBlurEnabled\"] = function(state, action)\
+\9[\"options/setConfig\"] = function(state, action)\
 \9\9local _object = {}\
 \9\9for _k, _v in pairs(state) do\
 \9\9\9_object[_k] = _v\
 \9\9end\
-\9\9_object.acrylicBlurEnabled = action.active\
+\9\9local _left = \"config\"\
+\9\9local _object_1 = {}\
+\9\9for _k, _v in pairs(state.config) do\
+\9\9\9_object_1[_k] = _v\
+\9\9end\
+\9\9_object_1[action.name] = action.active\
+\9\9_object[_left] = _object_1\
+\9\9return _object\
+\9end,\
+\9[\"options/setTheme\"] = function(state, action)\
+\9\9local _object = {}\
+\9\9for _k, _v in pairs(state) do\
+\9\9\9_object[_k] = _v\
+\9\9end\
+\9\9_object.currentTheme = action.theme\
+\9\9return _object\
+\9end,\
+\9[\"options/setShortcut\"] = function(state, action)\
+\9\9local _object = {}\
+\9\9for _k, _v in pairs(state) do\
+\9\9\9_object[_k] = _v\
+\9\9end\
+\9\9local _left = \"shortcuts\"\
+\9\9local _object_1 = {}\
+\9\9for _k, _v in pairs(state.shortcuts) do\
+\9\9\9_object_1[_k] = _v\
+\9\9end\
+\9\9_object_1[action.shortcut] = action.keycode\
+\9\9_object[_left] = _object_1\
+\9\9return _object\
+\9end,\
+\9[\"options/removeShortcut\"] = function(state, action)\
+\9\9local _object = {}\
+\9\9for _k, _v in pairs(state) do\
+\9\9\9_object[_k] = _v\
+\9\9end\
+\9\9local _left = \"shortcuts\"\
+\9\9local _object_1 = {}\
+\9\9for _k, _v in pairs(state.shortcuts) do\
+\9\9\9_object_1[_k] = _v\
+\9\9end\
+\9\9_object_1[action.shortcut] = nil\
+\9\9_object[_left] = _object_1\
 \9\9return _object\
 \9end,\
 })\
@@ -4109,39 +4272,15 @@ return {\
 }\
 ", '@'.."Orca.store.reducers.options.reducer")) setfenv(fn, newEnv("Orca.store.reducers.options.reducer")) return fn() end)
 
-newModule("theme.reducer", "ModuleScript", "Orca.store.reducers.theme.reducer", "Orca.store.reducers", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
-local TS = require(script.Parent.Parent.Parent.include.RuntimeLib)\
-local Rodux = TS.import(script, TS.getModule(script, \"@rbxts\", \"rodux\").src)\
-local sorbet = TS.import(script, script.Parent.Parent.Parent, \"themes\", \"sorbet\").sorbet\
-local initialState = {\
-\9current = sorbet,\
-}\
-local themeReducer = Rodux.createReducer(initialState, {\
-\9[\"theme/setTheme\"] = function(state, action)\
-\9\9local _object = {}\
-\9\9for _k, _v in pairs(state) do\
-\9\9\9_object[_k] = _v\
-\9\9end\
-\9\9_object.current = action.theme\
-\9\9return _object\
-\9end,\
-})\
-return {\
-\9themeReducer = themeReducer,\
-}\
-", '@'.."Orca.store.reducers.theme.reducer")) setfenv(fn, newEnv("Orca.store.reducers.theme.reducer")) return fn() end)
-
 newModule("store", "ModuleScript", "Orca.store.store", "Orca.store", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.include.RuntimeLib)\
 local Rodux = TS.import(script, TS.getModule(script, \"@rbxts\", \"rodux\").src)\
 local dashboardReducer = TS.import(script, script.Parent, \"reducers\", \"dashboard.reducer\").dashboardReducer\
 local jobsReducer = TS.import(script, script.Parent, \"reducers\", \"jobs.reducer\").jobsReducer\
 local optionsReducer = TS.import(script, script.Parent, \"reducers\", \"options.reducer\").optionsReducer\
-local themeReducer = TS.import(script, script.Parent, \"reducers\", \"theme.reducer\").themeReducer\
 local rootReducer = Rodux.combineReducers({\
 \9dashboard = dashboardReducer,\
 \9jobs = jobsReducer,\
-\9theme = themeReducer,\
 \9options = optionsReducer,\
 })\
 local function configureStore(initialState)\
@@ -4367,6 +4506,46 @@ local darkTheme = {\
 \9\9\9themeButton = {\
 \9\9\9\9outlined = true,\
 \9\9\9\9accent = hex(\"#37a4cc\"),\
+\9\9\9\9foreground = hex(\"#ffffff\"),\
+\9\9\9\9foregroundTransparency = 0.5,\
+\9\9\9\9background = hex(\"#1B1C20\"),\
+\9\9\9\9backgroundTransparency = 0,\
+\9\9\9\9dropshadow = hex(\"#000000\"),\
+\9\9\9\9dropshadowTransparency = 0.5,\
+\9\9\9\9glowTransparency = 0.2,\
+\9\9\9},\
+\9\9},\
+\9\9shortcuts = {\
+\9\9\9outlined = true,\
+\9\9\9acrylic = false,\
+\9\9\9foreground = hex(\"#ffffff\"),\
+\9\9\9background = hex(\"#232428\"),\
+\9\9\9transparency = 0,\
+\9\9\9dropshadow = hex(\"#232428\"),\
+\9\9\9dropshadowTransparency = 0.3,\
+\9\9\9shortcutButton = {\
+\9\9\9\9outlined = true,\
+\9\9\9\9accent = hex(\"#37CC95\"),\
+\9\9\9\9foreground = hex(\"#ffffff\"),\
+\9\9\9\9foregroundTransparency = 0.5,\
+\9\9\9\9background = hex(\"#1B1C20\"),\
+\9\9\9\9backgroundTransparency = 0,\
+\9\9\9\9dropshadow = hex(\"#000000\"),\
+\9\9\9\9dropshadowTransparency = 0.5,\
+\9\9\9\9glowTransparency = 0.2,\
+\9\9\9},\
+\9\9},\
+\9\9config = {\
+\9\9\9outlined = true,\
+\9\9\9acrylic = false,\
+\9\9\9foreground = hex(\"#ffffff\"),\
+\9\9\9background = hex(\"#232428\"),\
+\9\9\9transparency = 0,\
+\9\9\9dropshadow = hex(\"#232428\"),\
+\9\9\9dropshadowTransparency = 0.3,\
+\9\9\9configButton = {\
+\9\9\9\9outlined = true,\
+\9\9\9\9accent = hex(\"#37CC95\"),\
 \9\9\9\9foreground = hex(\"#ffffff\"),\
 \9\9\9\9foregroundTransparency = 0.5,\
 \9\9\9\9background = hex(\"#1B1C20\"),\
@@ -4608,14 +4787,14 @@ _object_13[_left_13] = _object_14\
 _object[_left_12] = _object_13\
 local _left_17 = \"options\"\
 local _object_18 = {}\
-local _left_18 = \"themes\"\
+local _left_18 = \"config\"\
 local _object_19 = {}\
 for _k, _v in pairs(view) do\
 \9_object_19[_k] = _v\
 end\
-local _left_19 = \"themeButton\"\
+local _left_19 = \"configButton\"\
 local _object_20 = {}\
-for _k, _v in pairs(darkTheme.options.themes.themeButton) do\
+for _k, _v in pairs(darkTheme.options.config.configButton) do\
 \9_object_20[_k] = _v\
 end\
 _object_20.outlined = false\
@@ -4627,6 +4806,44 @@ _object_20.backgroundTransparency = 0.8\
 _object_20.dropshadowTransparency = 0.7\
 _object_19[_left_19] = _object_20\
 _object_18[_left_18] = _object_19\
+local _left_20 = \"shortcuts\"\
+local _object_21 = {}\
+for _k, _v in pairs(view) do\
+\9_object_21[_k] = _v\
+end\
+local _left_21 = \"shortcutButton\"\
+local _object_22 = {}\
+for _k, _v in pairs(darkTheme.options.shortcuts.shortcutButton) do\
+\9_object_22[_k] = _v\
+end\
+_object_22.outlined = false\
+_object_22.foreground = hex(\"#ffffff\")\
+_object_22.background = hex(\"#ffffff\")\
+_object_22.dropshadow = hex(\"#ffffff\")\
+_object_22.accent = accent\
+_object_22.backgroundTransparency = 0.8\
+_object_22.dropshadowTransparency = 0.7\
+_object_21[_left_21] = _object_22\
+_object_18[_left_20] = _object_21\
+local _left_22 = \"themes\"\
+local _object_23 = {}\
+for _k, _v in pairs(view) do\
+\9_object_23[_k] = _v\
+end\
+local _left_23 = \"themeButton\"\
+local _object_24 = {}\
+for _k, _v in pairs(darkTheme.options.themes.themeButton) do\
+\9_object_24[_k] = _v\
+end\
+_object_24.outlined = false\
+_object_24.foreground = hex(\"#ffffff\")\
+_object_24.background = hex(\"#ffffff\")\
+_object_24.dropshadow = hex(\"#ffffff\")\
+_object_24.accent = accent\
+_object_24.backgroundTransparency = 0.8\
+_object_24.dropshadowTransparency = 0.7\
+_object_23[_left_23] = _object_24\
+_object_18[_left_22] = _object_23\
 _object[_left_17] = _object_18\
 local frostedGlass = _object\
 return {\
@@ -4810,17 +5027,17 @@ _object_14[_left_14] = _object_15\
 _object[_left_13] = _object_14\
 local _left_18 = \"options\"\
 local _object_19 = {}\
-local _left_19 = \"themes\"\
+local _left_19 = \"config\"\
 local _object_20 = {}\
-for _k, _v in pairs(darkTheme.options.themes) do\
+for _k, _v in pairs(darkTheme.options.config) do\
 \9_object_20[_k] = _v\
 end\
 _object_20.foreground = hex(\"#ffffff\")\
 _object_20.background = hex(\"#000000\")\
 _object_20.dropshadow = hex(\"#000000\")\
-local _left_20 = \"themeButton\"\
+local _left_20 = \"configButton\"\
 local _object_21 = {}\
-for _k, _v in pairs(darkTheme.options.themes.themeButton) do\
+for _k, _v in pairs(darkTheme.options.config.configButton) do\
 \9_object_21[_k] = _v\
 end\
 _object_21.foreground = hex(\"#ffffff\")\
@@ -4829,6 +5046,44 @@ _object_21.accent = hex(\"#ff3f6c\")\
 _object_21.dropshadowTransparency = 0.7\
 _object_20[_left_20] = _object_21\
 _object_19[_left_19] = _object_20\
+local _left_21 = \"shortcuts\"\
+local _object_22 = {}\
+for _k, _v in pairs(darkTheme.options.shortcuts) do\
+\9_object_22[_k] = _v\
+end\
+_object_22.foreground = hex(\"#ffffff\")\
+_object_22.background = hex(\"#000000\")\
+_object_22.dropshadow = hex(\"#000000\")\
+local _left_22 = \"shortcutButton\"\
+local _object_23 = {}\
+for _k, _v in pairs(darkTheme.options.shortcuts.shortcutButton) do\
+\9_object_23[_k] = _v\
+end\
+_object_23.foreground = hex(\"#ffffff\")\
+_object_23.background = hex(\"#000000\")\
+_object_23.accent = hex(\"#ff3f6c\")\
+_object_23.dropshadowTransparency = 0.7\
+_object_22[_left_22] = _object_23\
+_object_19[_left_21] = _object_22\
+local _left_23 = \"themes\"\
+local _object_24 = {}\
+for _k, _v in pairs(darkTheme.options.themes) do\
+\9_object_24[_k] = _v\
+end\
+_object_24.foreground = hex(\"#ffffff\")\
+_object_24.background = hex(\"#000000\")\
+_object_24.dropshadow = hex(\"#000000\")\
+local _left_24 = \"themeButton\"\
+local _object_25 = {}\
+for _k, _v in pairs(darkTheme.options.themes.themeButton) do\
+\9_object_25[_k] = _v\
+end\
+_object_25.foreground = hex(\"#ffffff\")\
+_object_25.background = hex(\"#000000\")\
+_object_25.accent = hex(\"#ff3f6c\")\
+_object_25.dropshadowTransparency = 0.7\
+_object_24[_left_24] = _object_25\
+_object_19[_left_23] = _object_24\
 _object[_left_18] = _object_19\
 local highContrast = _object\
 return {\
@@ -5005,16 +5260,16 @@ _object_14[_left_14] = _object_15\
 _object[_left_13] = _object_14\
 local _left_18 = \"options\"\
 local _object_19 = {}\
-local _left_19 = \"themes\"\
+local _left_19 = \"config\"\
 local _object_20 = {}\
-for _k, _v in pairs(darkTheme.options.themes) do\
+for _k, _v in pairs(darkTheme.options.config) do\
 \9_object_20[_k] = _v\
 end\
 _object_20.foreground = hex(\"#000000\")\
 _object_20.background = hex(\"#ffffff\")\
-local _left_20 = \"themeButton\"\
+local _left_20 = \"configButton\"\
 local _object_21 = {}\
-for _k, _v in pairs(darkTheme.options.themes.themeButton) do\
+for _k, _v in pairs(darkTheme.options.config.configButton) do\
 \9_object_21[_k] = _v\
 end\
 _object_21.foreground = hex(\"#000000\")\
@@ -5024,6 +5279,44 @@ _object_21.accent = hex(\"#3ce09b\")\
 _object_21.dropshadowTransparency = 0.7\
 _object_20[_left_20] = _object_21\
 _object_19[_left_19] = _object_20\
+local _left_21 = \"shortcuts\"\
+local _object_22 = {}\
+for _k, _v in pairs(darkTheme.options.shortcuts) do\
+\9_object_22[_k] = _v\
+end\
+_object_22.foreground = hex(\"#000000\")\
+_object_22.background = hex(\"#ffffff\")\
+local _left_22 = \"shortcutButton\"\
+local _object_23 = {}\
+for _k, _v in pairs(darkTheme.options.shortcuts.shortcutButton) do\
+\9_object_23[_k] = _v\
+end\
+_object_23.foreground = hex(\"#000000\")\
+_object_23.background = hex(\"#ffffff\")\
+_object_23.backgroundHovered = hex(\"#eeeeee\")\
+_object_23.accent = hex(\"#3ce09b\")\
+_object_23.dropshadowTransparency = 0.7\
+_object_22[_left_22] = _object_23\
+_object_19[_left_21] = _object_22\
+local _left_23 = \"themes\"\
+local _object_24 = {}\
+for _k, _v in pairs(darkTheme.options.themes) do\
+\9_object_24[_k] = _v\
+end\
+_object_24.foreground = hex(\"#000000\")\
+_object_24.background = hex(\"#ffffff\")\
+local _left_24 = \"themeButton\"\
+local _object_25 = {}\
+for _k, _v in pairs(darkTheme.options.themes.themeButton) do\
+\9_object_25[_k] = _v\
+end\
+_object_25.foreground = hex(\"#000000\")\
+_object_25.background = hex(\"#ffffff\")\
+_object_25.backgroundHovered = hex(\"#eeeeee\")\
+_object_25.accent = hex(\"#3ce09b\")\
+_object_25.dropshadowTransparency = 0.7\
+_object_24[_left_24] = _object_25\
+_object_19[_left_23] = _object_24\
 _object[_left_18] = _object_19\
 local lightTheme = _object\
 return {\
@@ -5269,9 +5562,9 @@ _object_14[_left_14] = _object_15\
 _object[_left_13] = _object_14\
 local _left_18 = \"options\"\
 local _object_19 = {}\
-local _left_19 = \"themes\"\
+local _left_19 = \"config\"\
 local _object_20 = {}\
-for _k, _v in pairs(darkTheme.options.themes) do\
+for _k, _v in pairs(darkTheme.options.config) do\
 \9_object_20[_k] = _v\
 end\
 _object_20.acrylic = true\
@@ -5281,9 +5574,9 @@ _object_20.background = hex(\"#000000\")\
 _object_20.dropshadow = hex(\"#000000\")\
 _object_20.transparency = 0.7\
 _object_20.dropshadowTransparency = 0.65\
-local _left_20 = \"themeButton\"\
+local _left_20 = \"configButton\"\
 local _object_21 = {}\
-for _k, _v in pairs(darkTheme.options.themes.themeButton) do\
+for _k, _v in pairs(darkTheme.options.config.configButton) do\
 \9_object_21[_k] = _v\
 end\
 _object_21.outlined = false\
@@ -5294,6 +5587,56 @@ _object_21.backgroundTransparency = 0.5\
 _object_21.dropshadowTransparency = 0.7\
 _object_20[_left_20] = _object_21\
 _object_19[_left_19] = _object_20\
+local _left_21 = \"shortcuts\"\
+local _object_22 = {}\
+for _k, _v in pairs(darkTheme.options.shortcuts) do\
+\9_object_22[_k] = _v\
+end\
+_object_22.acrylic = true\
+_object_22.outlined = false\
+_object_22.foreground = hex(\"#ffffff\")\
+_object_22.background = hex(\"#000000\")\
+_object_22.dropshadow = hex(\"#000000\")\
+_object_22.transparency = 0.7\
+_object_22.dropshadowTransparency = 0.65\
+local _left_22 = \"shortcutButton\"\
+local _object_23 = {}\
+for _k, _v in pairs(darkTheme.options.shortcuts.shortcutButton) do\
+\9_object_23[_k] = _v\
+end\
+_object_23.outlined = false\
+_object_23.foreground = hex(\"#ffffff\")\
+_object_23.background = hex(\"#000000\")\
+_object_23.accent = accent\
+_object_23.backgroundTransparency = 0.5\
+_object_23.dropshadowTransparency = 0.7\
+_object_22[_left_22] = _object_23\
+_object_19[_left_21] = _object_22\
+local _left_23 = \"themes\"\
+local _object_24 = {}\
+for _k, _v in pairs(darkTheme.options.themes) do\
+\9_object_24[_k] = _v\
+end\
+_object_24.acrylic = true\
+_object_24.outlined = false\
+_object_24.foreground = hex(\"#ffffff\")\
+_object_24.background = hex(\"#000000\")\
+_object_24.dropshadow = hex(\"#000000\")\
+_object_24.transparency = 0.7\
+_object_24.dropshadowTransparency = 0.65\
+local _left_24 = \"themeButton\"\
+local _object_25 = {}\
+for _k, _v in pairs(darkTheme.options.themes.themeButton) do\
+\9_object_25[_k] = _v\
+end\
+_object_25.outlined = false\
+_object_25.foreground = hex(\"#ffffff\")\
+_object_25.background = hex(\"#000000\")\
+_object_25.accent = accent\
+_object_25.backgroundTransparency = 0.5\
+_object_25.dropshadowTransparency = 0.7\
+_object_24[_left_24] = _object_25\
+_object_19[_left_23] = _object_24\
 _object[_left_18] = _object_19\
 local obsidian = _object\
 return {\
@@ -5514,23 +5857,57 @@ _object_14[_left_14] = _object_15\
 _object[_left_13] = _object_14\
 local _left_18 = \"options\"\
 local _object_19 = {}\
-local _left_19 = \"themes\"\
+local _left_19 = \"config\"\
 local _object_20 = {}\
 for _k, _v in pairs(view) do\
 \9_object_20[_k] = _v\
 end\
-local _left_20 = \"themeButton\"\
+local _left_20 = \"configButton\"\
 local _object_21 = {}\
-for _k, _v in pairs(darkTheme.options.themes.themeButton) do\
+for _k, _v in pairs(darkTheme.options.config.configButton) do\
 \9_object_21[_k] = _v\
 end\
 _object_21.outlined = false\
 _object_21.foreground = hex(\"#ffffff\")\
 _object_21.background = backgroundDark\
 _object_21.dropshadow = backgroundDark\
-_object_21.accent = blueAccent\
+_object_21.accent = redAccent\
 _object_20[_left_20] = _object_21\
 _object_19[_left_19] = _object_20\
+local _left_21 = \"shortcuts\"\
+local _object_22 = {}\
+for _k, _v in pairs(view) do\
+\9_object_22[_k] = _v\
+end\
+local _left_22 = \"shortcutButton\"\
+local _object_23 = {}\
+for _k, _v in pairs(darkTheme.options.shortcuts.shortcutButton) do\
+\9_object_23[_k] = _v\
+end\
+_object_23.outlined = false\
+_object_23.foreground = hex(\"#ffffff\")\
+_object_23.background = backgroundDark\
+_object_23.dropshadow = backgroundDark\
+_object_23.accent = mixedAccent\
+_object_22[_left_22] = _object_23\
+_object_19[_left_21] = _object_22\
+local _left_23 = \"themes\"\
+local _object_24 = {}\
+for _k, _v in pairs(view) do\
+\9_object_24[_k] = _v\
+end\
+local _left_24 = \"themeButton\"\
+local _object_25 = {}\
+for _k, _v in pairs(darkTheme.options.themes.themeButton) do\
+\9_object_25[_k] = _v\
+end\
+_object_25.outlined = false\
+_object_25.foreground = hex(\"#ffffff\")\
+_object_25.background = backgroundDark\
+_object_25.dropshadow = backgroundDark\
+_object_25.accent = blueAccent\
+_object_24[_left_24] = _object_25\
+_object_19[_left_23] = _object_24\
 _object[_left_18] = _object_19\
 local sorbet = _object\
 return {\
@@ -5955,17 +6332,12 @@ local TS = require(script.Parent.Parent.Parent.include.RuntimeLib)\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
 local _roact_hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out)\
 local hooked = _roact_hooked.hooked\
-local useEffect = _roact_hooked.useEffect\
 local useMemo = _roact_hooked.useMemo\
-local UserInputService = TS.import(script, TS.getModule(script, \"@rbxts\", \"services\")).UserInputService\
 local Canvas = TS.import(script, script.Parent.Parent.Parent, \"components\", \"Canvas\").default\
 local ScaleContext = TS.import(script, script.Parent.Parent.Parent, \"context\", \"scale-context\").ScaleContext\
-local _rodux_hooks = TS.import(script, script.Parent.Parent.Parent, \"hooks\", \"common\", \"rodux-hooks\")\
-local useAppDispatch = _rodux_hooks.useAppDispatch\
-local useAppSelector = _rodux_hooks.useAppSelector\
+local useAppSelector = TS.import(script, script.Parent.Parent.Parent, \"hooks\", \"common\", \"rodux-hooks\").useAppSelector\
 local useSpring = TS.import(script, script.Parent.Parent.Parent, \"hooks\", \"common\", \"use-spring\").useSpring\
 local useViewportSize = TS.import(script, script.Parent.Parent.Parent, \"hooks\", \"common\", \"use-viewport-size\").useViewportSize\
-local toggleDashboard = TS.import(script, script.Parent.Parent.Parent, \"store\", \"actions\", \"dashboard.action\").toggleDashboard\
 local hex = TS.import(script, script.Parent.Parent.Parent, \"utils\", \"color3\").hex\
 local map = TS.import(script, script.Parent.Parent.Parent, \"utils\", \"number-util\").map\
 local scale = TS.import(script, script.Parent.Parent.Parent, \"utils\", \"udim2\").scale\
@@ -5994,11 +6366,10 @@ local function getScale(height)\
 \9end\
 end\
 local function Dashboard()\
-\9local dispatch = useAppDispatch()\
+\9local viewportSize = useViewportSize()\
 \9local isOpen = useAppSelector(function(state)\
 \9\9return state.dashboard.isOpen\
 \9end)\
-\9local viewportSize = useViewportSize()\
 \9local _binding = useMemo(function()\
 \9\9return { viewportSize:map(function(s)\
 \9\9\9return getScale(s.Y)\
@@ -6008,19 +6379,6 @@ local function Dashboard()\
 \9end, { viewportSize })\
 \9local scaleFactor = _binding[1]\
 \9local padding = _binding[2]\
-\9useEffect(function()\
-\9\9local connection = UserInputService.InputBegan:Connect(function(input, gameProcessed)\
-\9\9\9if gameProcessed then\
-\9\9\9\9return nil\
-\9\9\9end\
-\9\9\9if input.KeyCode == Enum.KeyCode.K then\
-\9\9\9\9dispatch(toggleDashboard())\
-\9\9\9end\
-\9\9end)\
-\9\9return function()\
-\9\9\9return connection:Disconnect()\
-\9\9end\
-\9end, {})\
 \9return Roact.createElement(ScaleContext.Provider, {\
 \9\9value = scaleFactor,\
 \9}, {\
@@ -6076,7 +6434,7 @@ return function(target)\
 \9\9store = configureStore({\
 \9\9\9dashboard = {\
 \9\9\9\9isOpen = true,\
-\9\9\9\9page = DashboardPage.Home,\
+\9\9\9\9page = DashboardPage.Options,\
 \9\9\9\9hint = nil,\
 \9\9\9\9apps = {},\
 \9\9\9},\
@@ -6105,7 +6463,7 @@ local hooked = _roact_hooked.hooked\
 local useEffect = _roact_hooked.useEffect\
 local useState = _roact_hooked.useState\
 local useAppSelector = TS.import(script, script.Parent.Parent.Parent, \"hooks\", \"common\", \"rodux-hooks\").useAppSelector\
-local useDelayedState = TS.import(script, script.Parent.Parent.Parent, \"hooks\", \"common\", \"use-delayed-state\").useDelayedState\
+local useDelayedUpdate = TS.import(script, script.Parent.Parent.Parent, \"hooks\", \"common\", \"use-delayed-update\").useDelayedUpdate\
 local useSpring = TS.import(script, script.Parent.Parent.Parent, \"hooks\", \"common\", \"use-spring\").useSpring\
 local useScale = TS.import(script, script.Parent.Parent.Parent, \"hooks\", \"use-scale\").useScale\
 local hex = TS.import(script, script.Parent.Parent.Parent, \"utils\", \"color3\").hex\
@@ -6125,7 +6483,7 @@ local function Hint()\
 \9local _binding = useState(_condition)\
 \9local hintDisplay = _binding[1]\
 \9local setHintDisplay = _binding[2]\
-\9local isHintVisible = useDelayedState(hint ~= nil and isDashboardOpen, 500, function(visible)\
+\9local isHintVisible = useDelayedUpdate(hint ~= nil and isDashboardOpen, 500, function(visible)\
 \9\9return not visible\
 \9end)\
 \9useEffect(function()\
@@ -6424,7 +6782,7 @@ local pure = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\"
 local Canvas = TS.import(script, script.Parent.Parent.Parent.Parent, \"components\", \"Canvas\").default\
 local useScale = TS.import(script, script.Parent.Parent.Parent.Parent, \"hooks\", \"use-scale\").useScale\
 local scale = TS.import(script, script.Parent.Parent.Parent.Parent, \"utils\", \"udim2\").scale\
-local PlayersCard = TS.import(script, script.Parent, \"PlayersCard\").default\
+local Players = TS.import(script, script.Parent, \"Players\").default\
 local function Apps()\
 \9local scaleFactor = useScale()\
 \9return Roact.createElement(Canvas, {\
@@ -6434,7 +6792,7 @@ local function Apps()\
 \9\9Roact.createElement(\"UIScale\", {\
 \9\9\9Scale = scaleFactor,\
 \9\9}),\
-\9\9Roact.createElement(PlayersCard),\
+\9\9Roact.createElement(Players),\
 \9})\
 end\
 local default = pure(Apps)\
@@ -6443,14 +6801,14 @@ return {\
 }\
 ", '@'.."Orca.views.Pages.Apps.Apps")) setfenv(fn, newEnv("Orca.views.Pages.Apps.Apps")) return fn() end)
 
-newModule("PlayersCard", "ModuleScript", "Orca.views.Pages.Apps.PlayersCard", "Orca.views.Pages.Apps", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("Players", "ModuleScript", "Orca.views.Pages.Apps.Players", "Orca.views.Pages.Apps", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.Parent.include.RuntimeLib)\
 local exports = {}\
-exports.default = TS.import(script, script, \"PlayersCard\").default\
+exports.default = TS.import(script, script, \"Players\").default\
 return exports\
-", '@'.."Orca.views.Pages.Apps.PlayersCard")) setfenv(fn, newEnv("Orca.views.Pages.Apps.PlayersCard")) return fn() end)
+", '@'.."Orca.views.Pages.Apps.Players")) setfenv(fn, newEnv("Orca.views.Pages.Apps.Players")) return fn() end)
 
-newModule("Actions", "ModuleScript", "Orca.views.Pages.Apps.PlayersCard.Actions", "Orca.views.Pages.Apps.PlayersCard", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("Actions", "ModuleScript", "Orca.views.Pages.Apps.Players.Actions", "Orca.views.Pages.Apps.Players", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.Parent.Parent.include.RuntimeLib)\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
 local hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out).hooked\
@@ -6502,9 +6860,9 @@ local default = hooked(Actions)\
 return {\
 \9default = default,\
 }\
-", '@'.."Orca.views.Pages.Apps.PlayersCard.Actions")) setfenv(fn, newEnv("Orca.views.Pages.Apps.PlayersCard.Actions")) return fn() end)
+", '@'.."Orca.views.Pages.Apps.Players.Actions")) setfenv(fn, newEnv("Orca.views.Pages.Apps.Players.Actions")) return fn() end)
 
-newModule("Avatar", "ModuleScript", "Orca.views.Pages.Apps.PlayersCard.Avatar", "Orca.views.Pages.Apps.PlayersCard", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("Avatar", "ModuleScript", "Orca.views.Pages.Apps.Players.Avatar", "Orca.views.Pages.Apps.Players", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.Parent.Parent.include.RuntimeLib)\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
 local hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out).hooked\
@@ -6557,9 +6915,9 @@ local default = hooked(Avatar)\
 return {\
 \9default = default,\
 }\
-", '@'.."Orca.views.Pages.Apps.PlayersCard.Avatar")) setfenv(fn, newEnv("Orca.views.Pages.Apps.PlayersCard.Avatar")) return fn() end)
+", '@'.."Orca.views.Pages.Apps.Players.Avatar")) setfenv(fn, newEnv("Orca.views.Pages.Apps.Players.Avatar")) return fn() end)
 
-newModule("PlayersCard", "ModuleScript", "Orca.views.Pages.Apps.PlayersCard.PlayersCard", "Orca.views.Pages.Apps.PlayersCard", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("Players", "ModuleScript", "Orca.views.Pages.Apps.Players.Players", "Orca.views.Pages.Apps.Players", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.Parent.Parent.include.RuntimeLib)\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
 local hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out).hooked\
@@ -6571,7 +6929,7 @@ local Actions = TS.import(script, script.Parent, \"Actions\").default\
 local Avatar = TS.import(script, script.Parent, \"Avatar\").default\
 local Selection = TS.import(script, script.Parent, \"Selection\").default\
 local Username = TS.import(script, script.Parent, \"Username\").default\
-local function PlayersCard()\
+local function Players()\
 \9local theme = useTheme(\"apps\").players\
 \9return Roact.createElement(Card, {\
 \9\9index = 1,\
@@ -6586,13 +6944,13 @@ local function PlayersCard()\
 \9\9Roact.createElement(Selection),\
 \9})\
 end\
-local default = hooked(PlayersCard)\
+local default = hooked(Players)\
 return {\
 \9default = default,\
 }\
-", '@'.."Orca.views.Pages.Apps.PlayersCard.PlayersCard")) setfenv(fn, newEnv("Orca.views.Pages.Apps.PlayersCard.PlayersCard")) return fn() end)
+", '@'.."Orca.views.Pages.Apps.Players.Players")) setfenv(fn, newEnv("Orca.views.Pages.Apps.Players.Players")) return fn() end)
 
-newModule("Selection", "ModuleScript", "Orca.views.Pages.Apps.PlayersCard.Selection", "Orca.views.Pages.Apps.PlayersCard", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("Selection", "ModuleScript", "Orca.views.Pages.Apps.Players.Selection", "Orca.views.Pages.Apps.Players", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.Parent.Parent.include.RuntimeLib)\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
 local _roact_hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out)\
@@ -6911,9 +7269,9 @@ PlayerEntry = hooked(PlayerEntryComponent)\
 return {\
 \9default = default,\
 }\
-", '@'.."Orca.views.Pages.Apps.PlayersCard.Selection")) setfenv(fn, newEnv("Orca.views.Pages.Apps.PlayersCard.Selection")) return fn() end)
+", '@'.."Orca.views.Pages.Apps.Players.Selection")) setfenv(fn, newEnv("Orca.views.Pages.Apps.Players.Selection")) return fn() end)
 
-newModule("Username", "ModuleScript", "Orca.views.Pages.Apps.PlayersCard.Username", "Orca.views.Pages.Apps.PlayersCard", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("Username", "ModuleScript", "Orca.views.Pages.Apps.Players.Username", "Orca.views.Pages.Apps.Players", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.Parent.Parent.include.RuntimeLib)\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
 local hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out).hooked\
@@ -6967,7 +7325,7 @@ local default = hooked(Username)\
 return {\
 \9default = default,\
 }\
-", '@'.."Orca.views.Pages.Apps.PlayersCard.Username")) setfenv(fn, newEnv("Orca.views.Pages.Apps.PlayersCard.Username")) return fn() end)
+", '@'.."Orca.views.Pages.Apps.Players.Username")) setfenv(fn, newEnv("Orca.views.Pages.Apps.Players.Username")) return fn() end)
 
 newModule("Home", "ModuleScript", "Orca.views.Pages.Home", "Orca.views.Pages", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.include.RuntimeLib)\
@@ -6976,7 +7334,7 @@ exports.default = TS.import(script, script, \"Home\").default\
 return exports\
 ", '@'.."Orca.views.Pages.Home")) setfenv(fn, newEnv("Orca.views.Pages.Home")) return fn() end)
 
-newModule("FriendActivityCard", "ModuleScript", "Orca.views.Pages.Home.FriendActivityCard", "Orca.views.Pages.Home", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("FriendActivity", "ModuleScript", "Orca.views.Pages.Home.FriendActivity", "Orca.views.Pages.Home", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.Parent.include.RuntimeLib)\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
 local _roact_hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out)\
@@ -7007,7 +7365,7 @@ local FRIEND_SPRING_OPTIONS = {\
 }\
 local GAME_PADDING = 48\
 local GameEntry\
-local function FriendActivityCard()\
+local function FriendActivity()\
 \9local theme = useTheme(\"home\").friendActivity\
 \9local _binding = useReducer(function(state)\
 \9\9return state + 1\
@@ -7084,7 +7442,7 @@ local function FriendActivityCard()\
 \9_children[_length + 1] = Roact.createElement(Canvas, _attributes_1, _children_1)\
 \9return Roact.createElement(Card, _attributes, _children)\
 end\
-local default = hooked(FriendActivityCard)\
+local default = hooked(FriendActivity)\
 local FriendEntry\
 local function GameEntryComponent(props)\
 \9local theme = useTheme(\"home\").friendActivity\
@@ -7247,7 +7605,7 @@ FriendEntry = hooked(FriendEntryComponent)\
 return {\
 \9default = default,\
 }\
-", '@'.."Orca.views.Pages.Home.FriendActivityCard")) setfenv(fn, newEnv("Orca.views.Pages.Home.FriendActivityCard")) return fn() end)
+", '@'.."Orca.views.Pages.Home.FriendActivity")) setfenv(fn, newEnv("Orca.views.Pages.Home.FriendActivity")) return fn() end)
 
 newModule("Home", "ModuleScript", "Orca.views.Pages.Home.Home", "Orca.views.Pages.Home", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.Parent.include.RuntimeLib)\
@@ -7256,10 +7614,10 @@ local pure = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\"
 local Canvas = TS.import(script, script.Parent.Parent.Parent.Parent, \"components\", \"Canvas\").default\
 local useScale = TS.import(script, script.Parent.Parent.Parent.Parent, \"hooks\", \"use-scale\").useScale\
 local scale = TS.import(script, script.Parent.Parent.Parent.Parent, \"utils\", \"udim2\").scale\
-local ServerCard = TS.import(script, script.Parent, \"ServerCard\", \"ServerCard\").default\
-local FriendActivityCard = TS.import(script, script.Parent, \"FriendActivityCard\").default\
-local ProfileCard = TS.import(script, script.Parent, \"ProfileCard\").default\
-local TitleCard = TS.import(script, script.Parent, \"TitleCard\").default\
+local FriendActivity = TS.import(script, script.Parent, \"FriendActivity\").default\
+local Profile = TS.import(script, script.Parent, \"Profile\").default\
+local Server = TS.import(script, script.Parent, \"Server\").default\
+local Title = TS.import(script, script.Parent, \"Title\").default\
 local function Home()\
 \9local scaleFactor = useScale()\
 \9return Roact.createElement(Canvas, {\
@@ -7269,10 +7627,10 @@ local function Home()\
 \9\9Roact.createElement(\"UIScale\", {\
 \9\9\9Scale = scaleFactor,\
 \9\9}),\
-\9\9Roact.createElement(TitleCard),\
-\9\9Roact.createElement(ServerCard),\
-\9\9Roact.createElement(FriendActivityCard),\
-\9\9Roact.createElement(ProfileCard),\
+\9\9Roact.createElement(Title),\
+\9\9Roact.createElement(Server),\
+\9\9Roact.createElement(FriendActivity),\
+\9\9Roact.createElement(Profile),\
 \9})\
 end\
 local default = pure(Home)\
@@ -7281,40 +7639,14 @@ return {\
 }\
 ", '@'.."Orca.views.Pages.Home.Home")) setfenv(fn, newEnv("Orca.views.Pages.Home.Home")) return fn() end)
 
-newModule("Home.story", "ModuleScript", "Orca.views.Pages.Home.Home.story", "Orca.views.Pages.Home", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
-local TS = require(script.Parent.Parent.Parent.Parent.include.RuntimeLib)\
-local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
-local Provider = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-rodux-hooked\").out).Provider\
-local DashboardPage = TS.import(script, script.Parent.Parent.Parent.Parent, \"store\", \"models\", \"dashboard.model\").DashboardPage\
-local configureStore = TS.import(script, script.Parent.Parent.Parent.Parent, \"store\", \"store\").configureStore\
-local Home = TS.import(script, script.Parent, \"Home\").default\
-return function(target)\
-\9local handle = Roact.mount(Roact.createElement(Provider, {\
-\9\9store = configureStore({\
-\9\9\9dashboard = {\
-\9\9\9\9isOpen = true,\
-\9\9\9\9page = DashboardPage.Home,\
-\9\9\9\9hint = nil,\
-\9\9\9\9apps = {},\
-\9\9\9},\
-\9\9}),\
-\9}, {\
-\9\9Roact.createElement(Home),\
-\9}), target, \"Home\")\
-\9return function()\
-\9\9return Roact.unmount(handle)\
-\9end\
-end\
-", '@'.."Orca.views.Pages.Home.Home.story")) setfenv(fn, newEnv("Orca.views.Pages.Home.Home.story")) return fn() end)
-
-newModule("ProfileCard", "ModuleScript", "Orca.views.Pages.Home.ProfileCard", "Orca.views.Pages.Home", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("Profile", "ModuleScript", "Orca.views.Pages.Home.Profile", "Orca.views.Pages.Home", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.Parent.include.RuntimeLib)\
 local exports = {}\
-exports.default = TS.import(script, script, \"ProfileCard\").default\
+exports.default = TS.import(script, script, \"Profile\").default\
 return exports\
-", '@'.."Orca.views.Pages.Home.ProfileCard")) setfenv(fn, newEnv("Orca.views.Pages.Home.ProfileCard")) return fn() end)
+", '@'.."Orca.views.Pages.Home.Profile")) setfenv(fn, newEnv("Orca.views.Pages.Home.Profile")) return fn() end)
 
-newModule("Actions", "ModuleScript", "Orca.views.Pages.Home.ProfileCard.Actions", "Orca.views.Pages.Home.ProfileCard", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("Actions", "ModuleScript", "Orca.views.Pages.Home.Profile.Actions", "Orca.views.Pages.Home.Profile", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.Parent.Parent.include.RuntimeLib)\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
 local hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out).hooked\
@@ -7365,9 +7697,9 @@ local default = hooked(Actions)\
 return {\
 \9default = default,\
 }\
-", '@'.."Orca.views.Pages.Home.ProfileCard.Actions")) setfenv(fn, newEnv("Orca.views.Pages.Home.ProfileCard.Actions")) return fn() end)
+", '@'.."Orca.views.Pages.Home.Profile.Actions")) setfenv(fn, newEnv("Orca.views.Pages.Home.Profile.Actions")) return fn() end)
 
-newModule("Avatar", "ModuleScript", "Orca.views.Pages.Home.ProfileCard.Avatar", "Orca.views.Pages.Home.ProfileCard", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("Avatar", "ModuleScript", "Orca.views.Pages.Home.Profile.Avatar", "Orca.views.Pages.Home.Profile", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.Parent.Parent.include.RuntimeLib)\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
 local hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out).hooked\
@@ -7411,15 +7743,15 @@ local default = hooked(Avatar)\
 return {\
 \9default = default,\
 }\
-", '@'.."Orca.views.Pages.Home.ProfileCard.Avatar")) setfenv(fn, newEnv("Orca.views.Pages.Home.ProfileCard.Avatar")) return fn() end)
+", '@'.."Orca.views.Pages.Home.Profile.Avatar")) setfenv(fn, newEnv("Orca.views.Pages.Home.Profile.Avatar")) return fn() end)
 
-newModule("Info", "ModuleScript", "Orca.views.Pages.Home.ProfileCard.Info", "Orca.views.Pages.Home.ProfileCard", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("Info", "ModuleScript", "Orca.views.Pages.Home.Profile.Info", "Orca.views.Pages.Home.Profile", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.Parent.Parent.include.RuntimeLib)\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
 local hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out).hooked\
 local Players = TS.import(script, TS.getModule(script, \"@rbxts\", \"services\")).Players\
 local Canvas = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"components\", \"Canvas\").default\
-local useDelayedState = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"hooks\", \"common\", \"use-delayed-state\").useDelayedState\
+local useDelayedUpdate = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"hooks\", \"common\", \"use-delayed-update\").useDelayedUpdate\
 local useSpring = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"hooks\", \"common\", \"use-spring\").useSpring\
 local useIsPageOpen = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"hooks\", \"use-current-page\").useIsPageOpen\
 local useFriends = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"hooks\", \"use-friends\").useFriends\
@@ -7450,13 +7782,13 @@ local function Info()\
 \9end\
 \9-- ▲ ReadonlyArray.filter ▲\
 \9local friendsJoined = #_newValue\
-\9local showJoinDate = useDelayedState(isOpen, 400, function(open)\
+\9local showJoinDate = useDelayedUpdate(isOpen, 400, function(open)\
 \9\9return not open\
 \9end)\
-\9local showFriendsJoined = useDelayedState(isOpen and status ~= \"pending\", 500, function(open)\
+\9local showFriendsJoined = useDelayedUpdate(isOpen and status ~= \"pending\", 500, function(open)\
 \9\9return not open\
 \9end)\
-\9local showFriendsOnline = useDelayedState(isOpen and status ~= \"pending\", 600, function(open)\
+\9local showFriendsOnline = useDelayedUpdate(isOpen and status ~= \"pending\", 600, function(open)\
 \9\9return not open\
 \9end)\
 \9return Roact.createElement(Canvas, {\
@@ -7528,9 +7860,9 @@ local default = hooked(Info)\
 return {\
 \9default = default,\
 }\
-", '@'.."Orca.views.Pages.Home.ProfileCard.Info")) setfenv(fn, newEnv("Orca.views.Pages.Home.ProfileCard.Info")) return fn() end)
+", '@'.."Orca.views.Pages.Home.Profile.Info")) setfenv(fn, newEnv("Orca.views.Pages.Home.Profile.Info")) return fn() end)
 
-newModule("ProfileCard", "ModuleScript", "Orca.views.Pages.Home.ProfileCard.ProfileCard", "Orca.views.Pages.Home.ProfileCard", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("Profile", "ModuleScript", "Orca.views.Pages.Home.Profile.Profile", "Orca.views.Pages.Home.Profile", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.Parent.Parent.include.RuntimeLib)\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
 local hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out).hooked\
@@ -7544,7 +7876,7 @@ local Avatar = TS.import(script, script.Parent, \"Avatar\").default\
 local Info = TS.import(script, script.Parent, \"Info\").default\
 local Sliders = TS.import(script, script.Parent, \"Sliders\").default\
 local Username = TS.import(script, script.Parent, \"Username\").default\
-local function ProfileCard()\
+local function Profile()\
 \9local theme = useTheme(\"home\").profile\
 \9return Roact.createElement(Card, {\
 \9\9index = 1,\
@@ -7567,13 +7899,13 @@ local function ProfileCard()\
 \9\9}),\
 \9})\
 end\
-local default = hooked(ProfileCard)\
+local default = hooked(Profile)\
 return {\
 \9default = default,\
 }\
-", '@'.."Orca.views.Pages.Home.ProfileCard.ProfileCard")) setfenv(fn, newEnv("Orca.views.Pages.Home.ProfileCard.ProfileCard")) return fn() end)
+", '@'.."Orca.views.Pages.Home.Profile.Profile")) setfenv(fn, newEnv("Orca.views.Pages.Home.Profile.Profile")) return fn() end)
 
-newModule("Sliders", "ModuleScript", "Orca.views.Pages.Home.ProfileCard.Sliders", "Orca.views.Pages.Home.ProfileCard", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("Sliders", "ModuleScript", "Orca.views.Pages.Home.Profile.Sliders", "Orca.views.Pages.Home.Profile", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.Parent.Parent.include.RuntimeLib)\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
 local _roact_hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out)\
@@ -7742,9 +8074,9 @@ Slider = hooked(SliderComponent)\
 return {\
 \9default = default,\
 }\
-", '@'.."Orca.views.Pages.Home.ProfileCard.Sliders")) setfenv(fn, newEnv("Orca.views.Pages.Home.ProfileCard.Sliders")) return fn() end)
+", '@'.."Orca.views.Pages.Home.Profile.Sliders")) setfenv(fn, newEnv("Orca.views.Pages.Home.Profile.Sliders")) return fn() end)
 
-newModule("Username", "ModuleScript", "Orca.views.Pages.Home.ProfileCard.Username", "Orca.views.Pages.Home.ProfileCard", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("Username", "ModuleScript", "Orca.views.Pages.Home.Profile.Username", "Orca.views.Pages.Home.Profile", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.Parent.Parent.include.RuntimeLib)\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
 local hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out).hooked\
@@ -7788,16 +8120,95 @@ local default = hooked(Username)\
 return {\
 \9default = default,\
 }\
-", '@'.."Orca.views.Pages.Home.ProfileCard.Username")) setfenv(fn, newEnv("Orca.views.Pages.Home.ProfileCard.Username")) return fn() end)
+", '@'.."Orca.views.Pages.Home.Profile.Username")) setfenv(fn, newEnv("Orca.views.Pages.Home.Profile.Username")) return fn() end)
 
-newModule("ServerCard", "ModuleScript", "Orca.views.Pages.Home.ServerCard", "Orca.views.Pages.Home", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("Server", "ModuleScript", "Orca.views.Pages.Home.Server", "Orca.views.Pages.Home", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.Parent.include.RuntimeLib)\
 local exports = {}\
-exports.default = TS.import(script, script, \"ServerCard\").default\
+exports.default = TS.import(script, script, \"Server\").default\
 return exports\
-", '@'.."Orca.views.Pages.Home.ServerCard")) setfenv(fn, newEnv("Orca.views.Pages.Home.ServerCard")) return fn() end)
+", '@'.."Orca.views.Pages.Home.Server")) setfenv(fn, newEnv("Orca.views.Pages.Home.Server")) return fn() end)
 
-newModule("ServerAction", "ModuleScript", "Orca.views.Pages.Home.ServerCard.ServerAction", "Orca.views.Pages.Home.ServerCard", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("Server", "ModuleScript", "Orca.views.Pages.Home.Server.Server", "Orca.views.Pages.Home.Server", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+local TS = require(script.Parent.Parent.Parent.Parent.Parent.include.RuntimeLib)\
+local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
+local hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out).hooked\
+local Players = TS.import(script, TS.getModule(script, \"@rbxts\", \"services\")).Players\
+local Card = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"components\", \"Card\").default\
+local IS_DEV = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"constants\").IS_DEV\
+local useTheme = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"hooks\", \"use-theme\").useTheme\
+local DashboardPage = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"store\", \"models\", \"dashboard.model\").DashboardPage\
+local px = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"utils\", \"udim2\").px\
+local ServerAction = TS.import(script, script.Parent, \"ServerAction\").default\
+local StatusLabel = TS.import(script, script.Parent, \"StatusLabel\").default\
+local function Server()\
+\9local theme = useTheme(\"home\").server\
+\9return Roact.createElement(Card, {\
+\9\9index = 2,\
+\9\9page = DashboardPage.Home,\
+\9\9theme = theme,\
+\9\9size = px(326, 184),\
+\9\9position = UDim2.new(0, 374, 1, -416 - 48),\
+\9}, {\
+\9\9Roact.createElement(\"TextLabel\", {\
+\9\9\9Text = \"Server\",\
+\9\9\9Font = \"GothamBlack\",\
+\9\9\9TextSize = 20,\
+\9\9\9TextColor3 = theme.foreground,\
+\9\9\9TextXAlignment = \"Left\",\
+\9\9\9TextYAlignment = \"Top\",\
+\9\9\9Position = px(24, 24),\
+\9\9\9BackgroundTransparency = 1,\
+\9\9}),\
+\9\9Roact.createElement(StatusLabel, {\
+\9\9\9offset = 69,\
+\9\9\9units = \"players\",\
+\9\9\9getValue = function()\
+\9\9\9\9return tostring(#Players:GetPlayers()) .. (\" / \" .. tostring(Players.MaxPlayers))\
+\9\9\9end,\
+\9\9}),\
+\9\9Roact.createElement(StatusLabel, {\
+\9\9\9offset = 108,\
+\9\9\9units = \"elapsed\",\
+\9\9\9getValue = function()\
+\9\9\9\9local uptime = IS_DEV and os.clock() or time()\
+\9\9\9\9local days = math.floor(uptime / 86400)\
+\9\9\9\9local hours = math.floor((uptime - days * 86400) / 3600)\
+\9\9\9\9local minutes = math.floor((uptime - days * 86400 - hours * 3600) / 60)\
+\9\9\9\9local seconds = math.floor(uptime - days * 86400 - hours * 3600 - minutes * 60)\
+\9\9\9\9return days > 0 and tostring(days) .. \" days\" or (hours > 0 and tostring(hours) .. \" hours\" or (minutes > 0 and tostring(minutes) .. \" minutes\" or tostring(seconds) .. \" seconds\"))\
+\9\9\9end,\
+\9\9}),\
+\9\9Roact.createElement(StatusLabel, {\
+\9\9\9offset = 147,\
+\9\9\9units = \"ping\",\
+\9\9\9getValue = function()\
+\9\9\9\9return tostring(math.round(Players.LocalPlayer:GetNetworkPing() * 1000)) .. \" ms\"\
+\9\9\9end,\
+\9\9}),\
+\9\9Roact.createElement(ServerAction, {\
+\9\9\9action = \"switchServer\",\
+\9\9\9hint = \"<font face='GothamBlack'>Switch</font> to a different server\",\
+\9\9\9icon = \"rbxassetid://8992259774\",\
+\9\9\9size = px(66, 50),\
+\9\9\9position = UDim2.new(1, -66 - 24, 1, -100 - 16 - 12),\
+\9\9}),\
+\9\9Roact.createElement(ServerAction, {\
+\9\9\9action = \"rejoinServer\",\
+\9\9\9hint = \"<font face='GothamBlack'>Rejoin</font> this server\",\
+\9\9\9icon = \"rbxassetid://8992259894\",\
+\9\9\9size = px(66, 50),\
+\9\9\9position = UDim2.new(1, -66 - 24, 1, -50 - 16),\
+\9\9}),\
+\9})\
+end\
+local default = hooked(Server)\
+return {\
+\9default = default,\
+}\
+", '@'.."Orca.views.Pages.Home.Server.Server")) setfenv(fn, newEnv("Orca.views.Pages.Home.Server.Server")) return fn() end)
+
+newModule("ServerAction", "ModuleScript", "Orca.views.Pages.Home.Server.ServerAction", "Orca.views.Pages.Home.Server", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.Parent.Parent.include.RuntimeLib)\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
 local _roact_hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out)\
@@ -7884,88 +8295,9 @@ local default = hooked(ServerAction)\
 return {\
 \9default = default,\
 }\
-", '@'.."Orca.views.Pages.Home.ServerCard.ServerAction")) setfenv(fn, newEnv("Orca.views.Pages.Home.ServerCard.ServerAction")) return fn() end)
+", '@'.."Orca.views.Pages.Home.Server.ServerAction")) setfenv(fn, newEnv("Orca.views.Pages.Home.Server.ServerAction")) return fn() end)
 
-newModule("ServerCard", "ModuleScript", "Orca.views.Pages.Home.ServerCard.ServerCard", "Orca.views.Pages.Home.ServerCard", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
-local TS = require(script.Parent.Parent.Parent.Parent.Parent.include.RuntimeLib)\
-local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
-local hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out).hooked\
-local Players = TS.import(script, TS.getModule(script, \"@rbxts\", \"services\")).Players\
-local Card = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"components\", \"Card\").default\
-local IS_DEV = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"constants\").IS_DEV\
-local useTheme = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"hooks\", \"use-theme\").useTheme\
-local DashboardPage = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"store\", \"models\", \"dashboard.model\").DashboardPage\
-local px = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"utils\", \"udim2\").px\
-local ServerAction = TS.import(script, script.Parent, \"ServerAction\").default\
-local StatusLabel = TS.import(script, script.Parent, \"StatusLabel\").default\
-local function ServerCard()\
-\9local theme = useTheme(\"home\").server\
-\9return Roact.createElement(Card, {\
-\9\9index = 2,\
-\9\9page = DashboardPage.Home,\
-\9\9theme = theme,\
-\9\9size = px(326, 184),\
-\9\9position = UDim2.new(0, 374, 1, -416 - 48),\
-\9}, {\
-\9\9Roact.createElement(\"TextLabel\", {\
-\9\9\9Text = \"Server\",\
-\9\9\9Font = \"GothamBlack\",\
-\9\9\9TextSize = 20,\
-\9\9\9TextColor3 = theme.foreground,\
-\9\9\9TextXAlignment = \"Left\",\
-\9\9\9TextYAlignment = \"Top\",\
-\9\9\9Position = px(24, 24),\
-\9\9\9BackgroundTransparency = 1,\
-\9\9}),\
-\9\9Roact.createElement(StatusLabel, {\
-\9\9\9offset = 69,\
-\9\9\9units = \"players\",\
-\9\9\9getValue = function()\
-\9\9\9\9return tostring(#Players:GetPlayers()) .. (\" / \" .. tostring(Players.MaxPlayers))\
-\9\9\9end,\
-\9\9}),\
-\9\9Roact.createElement(StatusLabel, {\
-\9\9\9offset = 108,\
-\9\9\9units = \"elapsed\",\
-\9\9\9getValue = function()\
-\9\9\9\9local uptime = IS_DEV and os.clock() or time()\
-\9\9\9\9local days = math.floor(uptime / 86400)\
-\9\9\9\9local hours = math.floor((uptime - days * 86400) / 3600)\
-\9\9\9\9local minutes = math.floor((uptime - days * 86400 - hours * 3600) / 60)\
-\9\9\9\9local seconds = math.floor(uptime - days * 86400 - hours * 3600 - minutes * 60)\
-\9\9\9\9return days > 0 and tostring(days) .. \" days\" or (hours > 0 and tostring(hours) .. \" hours\" or (minutes > 0 and tostring(minutes) .. \" minutes\" or tostring(seconds) .. \" seconds\"))\
-\9\9\9end,\
-\9\9}),\
-\9\9Roact.createElement(StatusLabel, {\
-\9\9\9offset = 147,\
-\9\9\9units = \"ping\",\
-\9\9\9getValue = function()\
-\9\9\9\9return tostring(math.round(Players.LocalPlayer:GetNetworkPing() * 1000)) .. \" ms\"\
-\9\9\9end,\
-\9\9}),\
-\9\9Roact.createElement(ServerAction, {\
-\9\9\9action = \"switchServer\",\
-\9\9\9hint = \"<font face='GothamBlack'>Switch</font> to a different server\",\
-\9\9\9icon = \"rbxassetid://8992259774\",\
-\9\9\9size = px(66, 50),\
-\9\9\9position = UDim2.new(1, -66 - 24, 1, -100 - 16 - 12),\
-\9\9}),\
-\9\9Roact.createElement(ServerAction, {\
-\9\9\9action = \"rejoinServer\",\
-\9\9\9hint = \"<font face='GothamBlack'>Rejoin</font> this server\",\
-\9\9\9icon = \"rbxassetid://8992259894\",\
-\9\9\9size = px(66, 50),\
-\9\9\9position = UDim2.new(1, -66 - 24, 1, -50 - 16),\
-\9\9}),\
-\9})\
-end\
-local default = hooked(ServerCard)\
-return {\
-\9default = default,\
-}\
-", '@'.."Orca.views.Pages.Home.ServerCard.ServerCard")) setfenv(fn, newEnv("Orca.views.Pages.Home.ServerCard.ServerCard")) return fn() end)
-
-newModule("StatusLabel", "ModuleScript", "Orca.views.Pages.Home.ServerCard.StatusLabel", "Orca.views.Pages.Home.ServerCard", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("StatusLabel", "ModuleScript", "Orca.views.Pages.Home.Server.StatusLabel", "Orca.views.Pages.Home.Server", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.Parent.Parent.include.RuntimeLib)\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
 local _roact_hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out)\
@@ -8020,9 +8352,9 @@ local default = hooked(StatusLabel)\
 return {\
 \9default = default,\
 }\
-", '@'.."Orca.views.Pages.Home.ServerCard.StatusLabel")) setfenv(fn, newEnv("Orca.views.Pages.Home.ServerCard.StatusLabel")) return fn() end)
+", '@'.."Orca.views.Pages.Home.Server.StatusLabel")) setfenv(fn, newEnv("Orca.views.Pages.Home.Server.StatusLabel")) return fn() end)
 
-newModule("TitleCard", "ModuleScript", "Orca.views.Pages.Home.TitleCard", "Orca.views.Pages.Home", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("Title", "ModuleScript", "Orca.views.Pages.Home.Title", "Orca.views.Pages.Home", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.Parent.include.RuntimeLib)\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
 local hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out).hooked\
@@ -8031,14 +8363,14 @@ local Card = TS.import(script, script.Parent.Parent.Parent.Parent, \"components\
 local _constants = TS.import(script, script.Parent.Parent.Parent.Parent, \"constants\")\
 local IS_DEV = _constants.IS_DEV\
 local VERSION_TAG = _constants.VERSION_TAG\
-local useDelayedState = TS.import(script, script.Parent.Parent.Parent.Parent, \"hooks\", \"common\", \"use-delayed-state\").useDelayedState\
+local useDelayedUpdate = TS.import(script, script.Parent.Parent.Parent.Parent, \"hooks\", \"common\", \"use-delayed-update\").useDelayedUpdate\
 local useSpring = TS.import(script, script.Parent.Parent.Parent.Parent, \"hooks\", \"common\", \"use-spring\").useSpring\
 local useIsPageOpen = TS.import(script, script.Parent.Parent.Parent.Parent, \"hooks\", \"use-current-page\").useIsPageOpen\
 local useTheme = TS.import(script, script.Parent.Parent.Parent.Parent, \"hooks\", \"use-theme\").useTheme\
 local DashboardPage = TS.import(script, script.Parent.Parent.Parent.Parent, \"store\", \"models\", \"dashboard.model\").DashboardPage\
 local px = TS.import(script, script.Parent.Parent.Parent.Parent, \"utils\", \"udim2\").px\
 local Label\
-local function TitleCard()\
+local function Title()\
 \9local theme = useTheme(\"home\").title\
 \9return Roact.createElement(Card, {\
 \9\9index = 0,\
@@ -8094,7 +8426,7 @@ local function TitleCard()\
 \9\9}),\
 \9})\
 end\
-local default = hooked(TitleCard)\
+local default = hooked(Title)\
 local function LabelComponent(props)\
 \9local _binding = props\
 \9local index = _binding.index\
@@ -8114,7 +8446,7 @@ local function LabelComponent(props)\
 \9end\
 \9local theme = useTheme(\"home\").title\
 \9local isOpen = useIsPageOpen(DashboardPage.Home)\
-\9local isActive = useDelayedState(isOpen, index * 100 + 300, function(current)\
+\9local isActive = useDelayedUpdate(isOpen, index * 100 + 300, function(current)\
 \9\9return not current\
 \9end)\
 \9local _attributes = {\
@@ -8144,7 +8476,7 @@ Label = hooked(LabelComponent)\
 return {\
 \9default = default,\
 }\
-", '@'.."Orca.views.Pages.Home.TitleCard")) setfenv(fn, newEnv("Orca.views.Pages.Home.TitleCard")) return fn() end)
+", '@'.."Orca.views.Pages.Home.Title")) setfenv(fn, newEnv("Orca.views.Pages.Home.Title")) return fn() end)
 
 newModule("Options", "ModuleScript", "Orca.views.Pages.Options", "Orca.views.Pages", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.include.RuntimeLib)\
@@ -8153,6 +8485,236 @@ exports.default = TS.import(script, script, \"Options\").default\
 return exports\
 ", '@'.."Orca.views.Pages.Options")) setfenv(fn, newEnv("Orca.views.Pages.Options")) return fn() end)
 
+newModule("Config", "ModuleScript", "Orca.views.Pages.Options.Config", "Orca.views.Pages.Options", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+local TS = require(script.Parent.Parent.Parent.Parent.include.RuntimeLib)\
+local exports = {}\
+exports.default = TS.import(script, script, \"Config\").default\
+return exports\
+", '@'.."Orca.views.Pages.Options.Config")) setfenv(fn, newEnv("Orca.views.Pages.Options.Config")) return fn() end)
+
+newModule("Config", "ModuleScript", "Orca.views.Pages.Options.Config.Config", "Orca.views.Pages.Options.Config", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+local TS = require(script.Parent.Parent.Parent.Parent.Parent.include.RuntimeLib)\
+local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
+local hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out).hooked\
+local Canvas = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"components\", \"Canvas\").default\
+local Card = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"components\", \"Card\").default\
+local useTheme = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"hooks\", \"use-theme\").useTheme\
+local DashboardPage = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"store\", \"models\", \"dashboard.model\").DashboardPage\
+local _udim2 = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"utils\", \"udim2\")\
+local px = _udim2.px\
+local scale = _udim2.scale\
+local _ConfigItem = TS.import(script, script.Parent, \"ConfigItem\")\
+local ConfigItem = _ConfigItem.default\
+local ENTRY_HEIGHT = _ConfigItem.ENTRY_HEIGHT\
+local PADDING = _ConfigItem.PADDING\
+local ENTRY_COUNT = 1\
+local function Config()\
+\9local theme = useTheme(\"options\").config\
+\9return Roact.createElement(Card, {\
+\9\9index = 0,\
+\9\9page = DashboardPage.Options,\
+\9\9theme = theme,\
+\9\9size = px(326, 184),\
+\9\9position = UDim2.new(0, 0, 1, -416 - 48),\
+\9}, {\
+\9\9Roact.createElement(\"TextLabel\", {\
+\9\9\9Text = \"Configuration\",\
+\9\9\9Font = \"GothamBlack\",\
+\9\9\9TextSize = 20,\
+\9\9\9TextColor3 = theme.foreground,\
+\9\9\9TextXAlignment = \"Left\",\
+\9\9\9TextYAlignment = \"Top\",\
+\9\9\9Position = px(24, 24),\
+\9\9\9BackgroundTransparency = 1,\
+\9\9}),\
+\9\9Roact.createElement(Canvas, {\
+\9\9\9size = px(326, 348),\
+\9\9\9position = px(0, 68),\
+\9\9\9padding = {\
+\9\9\9\9left = 24,\
+\9\9\9\9right = 24,\
+\9\9\9\9top = 8,\
+\9\9\9},\
+\9\9\9clipsDescendants = true,\
+\9\9}, {\
+\9\9\9Roact.createElement(\"ScrollingFrame\", {\
+\9\9\9\9Size = scale(1, 1),\
+\9\9\9\9CanvasSize = px(0, ENTRY_COUNT * (ENTRY_HEIGHT + PADDING) + PADDING),\
+\9\9\9\9BackgroundTransparency = 1,\
+\9\9\9\9BorderSizePixel = 0,\
+\9\9\9\9ScrollBarImageTransparency = 1,\
+\9\9\9\9ScrollBarThickness = 0,\
+\9\9\9\9ClipsDescendants = false,\
+\9\9\9}, {\
+\9\9\9\9Roact.createElement(ConfigItem, {\
+\9\9\9\9\9action = \"acrylicBlur\",\
+\9\9\9\9\9description = \"Acrylic background blurring\",\
+\9\9\9\9\9hint = \"<font face='GothamBlack'>Toggle BG blur</font> in some themes. May be detectable when enabled.\",\
+\9\9\9\9\9index = 0,\
+\9\9\9\9}),\
+\9\9\9}),\
+\9\9}),\
+\9})\
+end\
+local default = hooked(Config)\
+return {\
+\9default = default,\
+}\
+", '@'.."Orca.views.Pages.Options.Config.Config")) setfenv(fn, newEnv("Orca.views.Pages.Options.Config.Config")) return fn() end)
+
+newModule("ConfigItem", "ModuleScript", "Orca.views.Pages.Options.Config.ConfigItem", "Orca.views.Pages.Options.Config", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+local TS = require(script.Parent.Parent.Parent.Parent.Parent.include.RuntimeLib)\
+local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
+local _roact_hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out)\
+local pure = _roact_hooked.pure\
+local useState = _roact_hooked.useState\
+local Border = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"components\", \"Border\").default\
+local Canvas = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"components\", \"Canvas\").default\
+local Fill = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"components\", \"Fill\").default\
+local _Glow = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"components\", \"Glow\")\
+local Glow = _Glow.default\
+local GlowRadius = _Glow.GlowRadius\
+local _rodux_hooks = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"hooks\", \"common\", \"rodux-hooks\")\
+local useAppDispatch = _rodux_hooks.useAppDispatch\
+local useAppSelector = _rodux_hooks.useAppSelector\
+local useSpring = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"hooks\", \"common\", \"use-spring\").useSpring\
+local useTheme = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"hooks\", \"use-theme\").useTheme\
+local _dashboard_action = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"store\", \"actions\", \"dashboard.action\")\
+local clearHint = _dashboard_action.clearHint\
+local setHint = _dashboard_action.setHint\
+local setConfig = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"store\", \"actions\", \"options.action\").setConfig\
+local lerp = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"utils\", \"number-util\").lerp\
+local _udim2 = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"utils\", \"udim2\")\
+local px = _udim2.px\
+local scale = _udim2.scale\
+local PADDING = 20\
+local ENTRY_HEIGHT = 60\
+local ENTRY_WIDTH = 326 - 24 * 2\
+local ENTRY_TEXT_PADDING = 16\
+local function ConfigItem(_param)\
+\9local action = _param.action\
+\9local description = _param.description\
+\9local hint = _param.hint\
+\9local index = _param.index\
+\9local dispatch = useAppDispatch()\
+\9local buttonTheme = useTheme(\"options\").config.configButton\
+\9local active = useAppSelector(function(state)\
+\9\9return state.options.config[action]\
+\9end)\
+\9local _binding = useState(false)\
+\9local hovered = _binding[1]\
+\9local setHovered = _binding[2]\
+\9local _result\
+\9if active then\
+\9\9_result = buttonTheme.accent\
+\9else\
+\9\9local _result_1\
+\9\9if hovered then\
+\9\9\9local _condition = buttonTheme.backgroundHovered\
+\9\9\9if _condition == nil then\
+\9\9\9\9_condition = buttonTheme.background:Lerp(buttonTheme.accent, 0.1)\
+\9\9\9end\
+\9\9\9_result_1 = _condition\
+\9\9else\
+\9\9\9_result_1 = buttonTheme.background\
+\9\9end\
+\9\9_result = _result_1\
+\9end\
+\9local background = useSpring(_result, {})\
+\9local _result_1\
+\9if active then\
+\9\9_result_1 = buttonTheme.accent\
+\9else\
+\9\9local _result_2\
+\9\9if hovered then\
+\9\9\9local _condition = buttonTheme.backgroundHovered\
+\9\9\9if _condition == nil then\
+\9\9\9\9_condition = buttonTheme.dropshadow:Lerp(buttonTheme.accent, 0.5)\
+\9\9\9end\
+\9\9\9_result_2 = _condition\
+\9\9else\
+\9\9\9_result_2 = buttonTheme.dropshadow\
+\9\9end\
+\9\9_result_1 = _result_2\
+\9end\
+\9local dropshadow = useSpring(_result_1, {})\
+\9local foreground = useSpring(active and buttonTheme.foregroundAccent and buttonTheme.foregroundAccent or buttonTheme.foreground, {})\
+\9local _attributes = {\
+\9\9size = px(ENTRY_WIDTH, ENTRY_HEIGHT),\
+\9\9position = px(0, (PADDING + ENTRY_HEIGHT) * index),\
+\9\9zIndex = index,\
+\9}\
+\9local _children = {\
+\9\9Roact.createElement(Glow, {\
+\9\9\9radius = GlowRadius.Size70,\
+\9\9\9color = dropshadow,\
+\9\9\9size = UDim2.new(1, 36, 1, 36),\
+\9\9\9position = px(-18, 5 - 18),\
+\9\9\9transparency = useSpring(active and buttonTheme.glowTransparency or (hovered and lerp(buttonTheme.dropshadowTransparency, buttonTheme.glowTransparency, 0.5) or buttonTheme.dropshadowTransparency), {}),\
+\9\9}),\
+\9\9Roact.createElement(Fill, {\
+\9\9\9color = background,\
+\9\9\9transparency = buttonTheme.backgroundTransparency,\
+\9\9\9radius = 8,\
+\9\9}),\
+\9\9Roact.createElement(\"TextLabel\", {\
+\9\9\9Text = description,\
+\9\9\9Font = \"GothamBold\",\
+\9\9\9TextSize = 16,\
+\9\9\9TextColor3 = foreground,\
+\9\9\9TextXAlignment = \"Left\",\
+\9\9\9TextYAlignment = \"Center\",\
+\9\9\9TextTransparency = useSpring(active and 0 or (hovered and buttonTheme.foregroundTransparency / 2 or buttonTheme.foregroundTransparency), {}),\
+\9\9\9Position = px(ENTRY_TEXT_PADDING, 1),\
+\9\9\9Size = UDim2.new(1, -ENTRY_TEXT_PADDING, 1, -1),\
+\9\9\9BackgroundTransparency = 1,\
+\9\9\9ClipsDescendants = true,\
+\9\9}),\
+\9}\
+\9local _length = #_children\
+\9local _child = buttonTheme.outlined and Roact.createElement(Border, {\
+\9\9color = foreground,\
+\9\9transparency = 0.8,\
+\9\9radius = 8,\
+\9})\
+\9if _child then\
+\9\9if _child.elements ~= nil or _child.props ~= nil and _child.component ~= nil then\
+\9\9\9_children[_length + 1] = _child\
+\9\9else\
+\9\9\9for _k, _v in ipairs(_child) do\
+\9\9\9\9_children[_length + _k] = _v\
+\9\9\9end\
+\9\9end\
+\9end\
+\9_length = #_children\
+\9_children[_length + 1] = Roact.createElement(\"TextButton\", {\
+\9\9[Roact.Event.Activated] = function()\
+\9\9\9return dispatch(setConfig(action, not active))\
+\9\9end,\
+\9\9[Roact.Event.MouseEnter] = function()\
+\9\9\9setHovered(true)\
+\9\9\9dispatch(setHint(hint))\
+\9\9end,\
+\9\9[Roact.Event.MouseLeave] = function()\
+\9\9\9setHovered(false)\
+\9\9\9dispatch(clearHint())\
+\9\9end,\
+\9\9Text = \"\",\
+\9\9Size = scale(1, 1),\
+\9\9Transparency = 1,\
+\9})\
+\9return Roact.createElement(Canvas, _attributes, _children)\
+end\
+local default = pure(ConfigItem)\
+return {\
+\9PADDING = PADDING,\
+\9ENTRY_HEIGHT = ENTRY_HEIGHT,\
+\9ENTRY_WIDTH = ENTRY_WIDTH,\
+\9ENTRY_TEXT_PADDING = ENTRY_TEXT_PADDING,\
+\9default = default,\
+}\
+", '@'.."Orca.views.Pages.Options.Config.ConfigItem")) setfenv(fn, newEnv("Orca.views.Pages.Options.Config.ConfigItem")) return fn() end)
+
 newModule("Options", "ModuleScript", "Orca.views.Pages.Options.Options", "Orca.views.Pages.Options", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.Parent.include.RuntimeLib)\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
@@ -8160,7 +8722,9 @@ local pure = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\"
 local Canvas = TS.import(script, script.Parent.Parent.Parent.Parent, \"components\", \"Canvas\").default\
 local useScale = TS.import(script, script.Parent.Parent.Parent.Parent, \"hooks\", \"use-scale\").useScale\
 local scale = TS.import(script, script.Parent.Parent.Parent.Parent, \"utils\", \"udim2\").scale\
-local ThemesCard = TS.import(script, script.Parent, \"ThemesCard\", \"ThemesCard\").default\
+local Config = TS.import(script, script.Parent, \"Config\").default\
+local Shortcuts = TS.import(script, script.Parent, \"Shortcuts\").default\
+local Themes = TS.import(script, script.Parent, \"Themes\").default\
 local function Options()\
 \9local scaleFactor = useScale()\
 \9return Roact.createElement(Canvas, {\
@@ -8170,7 +8734,9 @@ local function Options()\
 \9\9Roact.createElement(\"UIScale\", {\
 \9\9\9Scale = scaleFactor,\
 \9\9}),\
-\9\9Roact.createElement(ThemesCard),\
+\9\9Roact.createElement(Config),\
+\9\9Roact.createElement(Themes),\
+\9\9Roact.createElement(Shortcuts),\
 \9})\
 end\
 local default = pure(Options)\
@@ -8179,14 +8745,391 @@ return {\
 }\
 ", '@'.."Orca.views.Pages.Options.Options")) setfenv(fn, newEnv("Orca.views.Pages.Options.Options")) return fn() end)
 
-newModule("ThemesCard", "ModuleScript", "Orca.views.Pages.Options.ThemesCard", "Orca.views.Pages.Options", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("Shortcuts", "ModuleScript", "Orca.views.Pages.Options.Shortcuts", "Orca.views.Pages.Options", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.Parent.include.RuntimeLib)\
 local exports = {}\
-exports.default = TS.import(script, script, \"ThemesCard\").default\
+exports.default = TS.import(script, script, \"Shortcuts\").default\
 return exports\
-", '@'.."Orca.views.Pages.Options.ThemesCard")) setfenv(fn, newEnv("Orca.views.Pages.Options.ThemesCard")) return fn() end)
+", '@'.."Orca.views.Pages.Options.Shortcuts")) setfenv(fn, newEnv("Orca.views.Pages.Options.Shortcuts")) return fn() end)
 
-newModule("ThemeItem", "ModuleScript", "Orca.views.Pages.Options.ThemesCard.ThemeItem", "Orca.views.Pages.Options.ThemesCard", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("ShortcutItem", "ModuleScript", "Orca.views.Pages.Options.Shortcuts.ShortcutItem", "Orca.views.Pages.Options.Shortcuts", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+local TS = require(script.Parent.Parent.Parent.Parent.Parent.include.RuntimeLib)\
+local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
+local _roact_hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out)\
+local pure = _roact_hooked.pure\
+local useEffect = _roact_hooked.useEffect\
+local useState = _roact_hooked.useState\
+local UserInputService = TS.import(script, TS.getModule(script, \"@rbxts\", \"services\")).UserInputService\
+local Border = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"components\", \"Border\").default\
+local Canvas = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"components\", \"Canvas\").default\
+local Fill = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"components\", \"Fill\").default\
+local _Glow = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"components\", \"Glow\")\
+local Glow = _Glow.default\
+local GlowRadius = _Glow.GlowRadius\
+local _rodux_hooks = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"hooks\", \"common\", \"rodux-hooks\")\
+local useAppDispatch = _rodux_hooks.useAppDispatch\
+local useAppSelector = _rodux_hooks.useAppSelector\
+local useSpring = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"hooks\", \"common\", \"use-spring\").useSpring\
+local useTheme = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"hooks\", \"use-theme\").useTheme\
+local _options_action = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"store\", \"actions\", \"options.action\")\
+local removeShortcut = _options_action.removeShortcut\
+local setShortcut = _options_action.setShortcut\
+local lerp = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"utils\", \"number-util\").lerp\
+local _udim2 = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"utils\", \"udim2\")\
+local px = _udim2.px\
+local scale = _udim2.scale\
+local PADDING = 20\
+local ENTRY_HEIGHT = 60\
+local ENTRY_WIDTH = 326 - 24 * 2\
+local ENTRY_TEXT_PADDING = 16\
+local function ShortcutItem(_param)\
+\9local onActivate = _param.onActivate\
+\9local onSelect = _param.onSelect\
+\9local selectedItem = _param.selectedItem\
+\9local action = _param.action\
+\9local description = _param.description\
+\9local index = _param.index\
+\9local dispatch = useAppDispatch()\
+\9local buttonTheme = useTheme(\"options\").shortcuts.shortcutButton\
+\9local shortcut = useAppSelector(function(state)\
+\9\9return state.options.shortcuts[action]\
+\9end)\
+\9local _exp = Enum.KeyCode:GetEnumItems()\
+\9local _arg0 = function(item)\
+\9\9return item.Value == shortcut\
+\9end\
+\9-- ▼ ReadonlyArray.find ▼\
+\9local _result = nil\
+\9for _i, _v in ipairs(_exp) do\
+\9\9if _arg0(_v, _i - 1, _exp) == true then\
+\9\9\9_result = _v\
+\9\9\9break\
+\9\9end\
+\9end\
+\9-- ▲ ReadonlyArray.find ▲\
+\9local shortcutEnum = _result\
+\9local selected = selectedItem == action\
+\9local _binding = useState(false)\
+\9local hovered = _binding[1]\
+\9local setHovered = _binding[2]\
+\9useEffect(function()\
+\9\9if selectedItem ~= nil then\
+\9\9\9return nil\
+\9\9end\
+\9\9local handle = UserInputService.InputBegan:Connect(function(input, gameProcessed)\
+\9\9\9if not gameProcessed and input.KeyCode.Value == shortcut then\
+\9\9\9\9onActivate()\
+\9\9\9end\
+\9\9end)\
+\9\9return function()\
+\9\9\9handle:Disconnect()\
+\9\9end\
+\9end, { selectedItem, shortcut })\
+\9useEffect(function()\
+\9\9if not selected then\
+\9\9\9return nil\
+\9\9end\
+\9\9local handle = UserInputService.InputBegan:Connect(function(input, gameProcessed)\
+\9\9\9if gameProcessed then\
+\9\9\9\9return nil\
+\9\9\9end\
+\9\9\9if input.UserInputType == Enum.UserInputType.MouseButton1 then\
+\9\9\9\9onSelect(nil)\
+\9\9\9\9return nil\
+\9\9\9end\
+\9\9\9local _exp_1 = input.KeyCode\
+\9\9\9repeat\
+\9\9\9\9if _exp_1 == (Enum.KeyCode.Unknown) then\
+\9\9\9\9\9break\
+\9\9\9\9end\
+\9\9\9\9if _exp_1 == (Enum.KeyCode.Escape) then\
+\9\9\9\9\9dispatch(removeShortcut(action))\
+\9\9\9\9\9onSelect(nil)\
+\9\9\9\9\9break\
+\9\9\9\9end\
+\9\9\9\9if _exp_1 == (Enum.KeyCode.Backspace) then\
+\9\9\9\9\9dispatch(removeShortcut(action))\
+\9\9\9\9\9onSelect(nil)\
+\9\9\9\9\9break\
+\9\9\9\9end\
+\9\9\9\9if _exp_1 == (Enum.KeyCode.Return) then\
+\9\9\9\9\9onSelect(nil)\
+\9\9\9\9\9break\
+\9\9\9\9end\
+\9\9\9\9dispatch(setShortcut(action, input.KeyCode.Value))\
+\9\9\9\9onSelect(nil)\
+\9\9\9\9break\
+\9\9\9until true\
+\9\9end)\
+\9\9return function()\
+\9\9\9handle:Disconnect()\
+\9\9end\
+\9end, { selected })\
+\9local _result_1\
+\9if selected then\
+\9\9_result_1 = buttonTheme.accent\
+\9else\
+\9\9local _result_2\
+\9\9if hovered then\
+\9\9\9local _condition = buttonTheme.backgroundHovered\
+\9\9\9if _condition == nil then\
+\9\9\9\9_condition = buttonTheme.background:Lerp(buttonTheme.accent, 0.1)\
+\9\9\9end\
+\9\9\9_result_2 = _condition\
+\9\9else\
+\9\9\9_result_2 = buttonTheme.background\
+\9\9end\
+\9\9_result_1 = _result_2\
+\9end\
+\9local background = useSpring(_result_1, {})\
+\9local _result_2\
+\9if selected then\
+\9\9_result_2 = buttonTheme.accent\
+\9else\
+\9\9local _result_3\
+\9\9if hovered then\
+\9\9\9local _condition = buttonTheme.backgroundHovered\
+\9\9\9if _condition == nil then\
+\9\9\9\9_condition = buttonTheme.dropshadow:Lerp(buttonTheme.accent, 0.5)\
+\9\9\9end\
+\9\9\9_result_3 = _condition\
+\9\9else\
+\9\9\9_result_3 = buttonTheme.dropshadow\
+\9\9end\
+\9\9_result_2 = _result_3\
+\9end\
+\9local dropshadow = useSpring(_result_2, {})\
+\9local foreground = useSpring(selected and buttonTheme.foregroundAccent and buttonTheme.foregroundAccent or buttonTheme.foreground, {})\
+\9local _attributes = {\
+\9\9size = px(ENTRY_WIDTH, ENTRY_HEIGHT),\
+\9\9position = px(0, (PADDING + ENTRY_HEIGHT) * index),\
+\9\9zIndex = index,\
+\9}\
+\9local _children = {\
+\9\9Roact.createElement(Glow, {\
+\9\9\9radius = GlowRadius.Size70,\
+\9\9\9color = dropshadow,\
+\9\9\9size = UDim2.new(1, 36, 1, 36),\
+\9\9\9position = px(-18, 5 - 18),\
+\9\9\9transparency = useSpring(selected and buttonTheme.glowTransparency or (hovered and lerp(buttonTheme.dropshadowTransparency, buttonTheme.glowTransparency, 0.5) or buttonTheme.dropshadowTransparency), {}),\
+\9\9}),\
+\9\9Roact.createElement(Fill, {\
+\9\9\9color = background,\
+\9\9\9transparency = buttonTheme.backgroundTransparency,\
+\9\9\9radius = 8,\
+\9\9}),\
+\9\9Roact.createElement(\"TextLabel\", {\
+\9\9\9Text = description,\
+\9\9\9Font = \"GothamBold\",\
+\9\9\9TextSize = 16,\
+\9\9\9TextColor3 = foreground,\
+\9\9\9TextXAlignment = \"Left\",\
+\9\9\9TextYAlignment = \"Center\",\
+\9\9\9TextTransparency = useSpring(selected and 0 or (hovered and buttonTheme.foregroundTransparency / 2 or buttonTheme.foregroundTransparency), {}),\
+\9\9\9Position = px(ENTRY_TEXT_PADDING, 1),\
+\9\9\9Size = UDim2.new(1, -ENTRY_TEXT_PADDING, 1, -1),\
+\9\9\9BackgroundTransparency = 1,\
+\9\9\9ClipsDescendants = true,\
+\9\9}),\
+\9\9Roact.createElement(\"TextLabel\", {\
+\9\9\9Text = shortcutEnum and shortcutEnum.Name or \"Not bound\",\
+\9\9\9Font = \"GothamBold\",\
+\9\9\9TextSize = 16,\
+\9\9\9TextColor3 = foreground,\
+\9\9\9TextXAlignment = \"Center\",\
+\9\9\9TextYAlignment = \"Center\",\
+\9\9\9TextTransparency = useSpring(selected and 0 or (hovered and buttonTheme.foregroundTransparency / 2 or buttonTheme.foregroundTransparency), {}),\
+\9\9\9TextTruncate = \"AtEnd\",\
+\9\9\9AnchorPoint = Vector2.new(1, 0),\
+\9\9\9Position = UDim2.new(1, 0, 0, 1),\
+\9\9\9Size = UDim2.new(0, 124, 1, -1),\
+\9\9\9BackgroundTransparency = 1,\
+\9\9\9ClipsDescendants = true,\
+\9\9}),\
+\9\9Roact.createElement(\"Frame\", {\
+\9\9\9Size = buttonTheme.outlined and UDim2.new(0, 1, 1, -2) or UDim2.new(0, 1, 1, -36),\
+\9\9\9Position = buttonTheme.outlined and UDim2.new(1, -124, 0, 1) or UDim2.new(1, -124, 0, 18),\
+\9\9\9BackgroundColor3 = foreground,\
+\9\9\9BackgroundTransparency = 0.8,\
+\9\9\9BorderSizePixel = 0,\
+\9\9}),\
+\9}\
+\9local _length = #_children\
+\9local _child = buttonTheme.outlined and Roact.createElement(Border, {\
+\9\9color = foreground,\
+\9\9transparency = 0.8,\
+\9\9radius = 8,\
+\9})\
+\9if _child then\
+\9\9if _child.elements ~= nil or _child.props ~= nil and _child.component ~= nil then\
+\9\9\9_children[_length + 1] = _child\
+\9\9else\
+\9\9\9for _k, _v in ipairs(_child) do\
+\9\9\9\9_children[_length + _k] = _v\
+\9\9\9end\
+\9\9end\
+\9end\
+\9_length = #_children\
+\9_children[_length + 1] = Roact.createElement(\"TextButton\", {\
+\9\9[Roact.Event.Activated] = function()\
+\9\9\9return onSelect(action)\
+\9\9end,\
+\9\9[Roact.Event.MouseEnter] = function()\
+\9\9\9return setHovered(true)\
+\9\9end,\
+\9\9[Roact.Event.MouseLeave] = function()\
+\9\9\9return setHovered(false)\
+\9\9end,\
+\9\9Text = \"\",\
+\9\9Size = scale(1, 1),\
+\9\9Transparency = 1,\
+\9})\
+\9return Roact.createElement(Canvas, _attributes, _children)\
+end\
+local default = pure(ShortcutItem)\
+return {\
+\9PADDING = PADDING,\
+\9ENTRY_HEIGHT = ENTRY_HEIGHT,\
+\9ENTRY_WIDTH = ENTRY_WIDTH,\
+\9ENTRY_TEXT_PADDING = ENTRY_TEXT_PADDING,\
+\9default = default,\
+}\
+", '@'.."Orca.views.Pages.Options.Shortcuts.ShortcutItem")) setfenv(fn, newEnv("Orca.views.Pages.Options.Shortcuts.ShortcutItem")) return fn() end)
+
+newModule("Shortcuts", "ModuleScript", "Orca.views.Pages.Options.Shortcuts.Shortcuts", "Orca.views.Pages.Options.Shortcuts", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+local TS = require(script.Parent.Parent.Parent.Parent.Parent.include.RuntimeLib)\
+local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
+local _roact_hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out)\
+local hooked = _roact_hooked.hooked\
+local useState = _roact_hooked.useState\
+local Canvas = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"components\", \"Canvas\").default\
+local Card = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"components\", \"Card\").default\
+local _rodux_hooks = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"hooks\", \"common\", \"rodux-hooks\")\
+local useAppDispatch = _rodux_hooks.useAppDispatch\
+local useAppStore = _rodux_hooks.useAppStore\
+local useTheme = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"hooks\", \"use-theme\").useTheme\
+local toggleDashboard = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"store\", \"actions\", \"dashboard.action\").toggleDashboard\
+local setJobActive = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"store\", \"actions\", \"jobs.action\").setJobActive\
+local DashboardPage = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"store\", \"models\", \"dashboard.model\").DashboardPage\
+local _udim2 = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"utils\", \"udim2\")\
+local px = _udim2.px\
+local scale = _udim2.scale\
+local _ShortcutItem = TS.import(script, script.Parent, \"ShortcutItem\")\
+local ShortcutItem = _ShortcutItem.default\
+local ENTRY_HEIGHT = _ShortcutItem.ENTRY_HEIGHT\
+local PADDING = _ShortcutItem.PADDING\
+local ENTRY_COUNT = 5\
+local function Shortcuts()\
+\9local store = useAppStore()\
+\9local dispatch = useAppDispatch()\
+\9local theme = useTheme(\"options\").shortcuts\
+\9local _binding = useState(nil)\
+\9local selectedItem = _binding[1]\
+\9local setSelectedItem = _binding[2]\
+\9return Roact.createElement(Card, {\
+\9\9index = 1,\
+\9\9page = DashboardPage.Options,\
+\9\9theme = theme,\
+\9\9size = px(326, 416),\
+\9\9position = UDim2.new(0, 0, 1, 0),\
+\9}, {\
+\9\9Roact.createElement(\"TextLabel\", {\
+\9\9\9Text = \"Shortcuts\",\
+\9\9\9Font = \"GothamBlack\",\
+\9\9\9TextSize = 20,\
+\9\9\9TextColor3 = theme.foreground,\
+\9\9\9TextXAlignment = \"Left\",\
+\9\9\9TextYAlignment = \"Top\",\
+\9\9\9Position = px(24, 24),\
+\9\9\9BackgroundTransparency = 1,\
+\9\9}),\
+\9\9Roact.createElement(Canvas, {\
+\9\9\9size = px(326, 348),\
+\9\9\9position = px(0, 68),\
+\9\9\9padding = {\
+\9\9\9\9left = 24,\
+\9\9\9\9right = 24,\
+\9\9\9\9top = 8,\
+\9\9\9},\
+\9\9\9clipsDescendants = true,\
+\9\9}, {\
+\9\9\9Roact.createElement(\"ScrollingFrame\", {\
+\9\9\9\9Size = scale(1, 1),\
+\9\9\9\9CanvasSize = px(0, ENTRY_COUNT * (ENTRY_HEIGHT + PADDING) + PADDING),\
+\9\9\9\9BackgroundTransparency = 1,\
+\9\9\9\9BorderSizePixel = 0,\
+\9\9\9\9ScrollBarImageTransparency = 1,\
+\9\9\9\9ScrollBarThickness = 0,\
+\9\9\9\9ClipsDescendants = false,\
+\9\9\9}, {\
+\9\9\9\9Roact.createElement(ShortcutItem, {\
+\9\9\9\9\9onActivate = function()\
+\9\9\9\9\9\9dispatch(toggleDashboard())\
+\9\9\9\9\9end,\
+\9\9\9\9\9onSelect = setSelectedItem,\
+\9\9\9\9\9selectedItem = selectedItem,\
+\9\9\9\9\9action = \"toggleDashboard\",\
+\9\9\9\9\9description = \"Open Orca\",\
+\9\9\9\9\9index = 0,\
+\9\9\9\9}),\
+\9\9\9\9Roact.createElement(ShortcutItem, {\
+\9\9\9\9\9onActivate = function()\
+\9\9\9\9\9\9dispatch(setJobActive(\"flight\", not store:getState().jobs.flight.active))\
+\9\9\9\9\9end,\
+\9\9\9\9\9onSelect = setSelectedItem,\
+\9\9\9\9\9selectedItem = selectedItem,\
+\9\9\9\9\9action = \"toggleFlight\",\
+\9\9\9\9\9description = \"Toggle flight\",\
+\9\9\9\9\9index = 1,\
+\9\9\9\9}),\
+\9\9\9\9Roact.createElement(ShortcutItem, {\
+\9\9\9\9\9onActivate = function()\
+\9\9\9\9\9\9dispatch(setJobActive(\"ghost\", not store:getState().jobs.ghost.active))\
+\9\9\9\9\9end,\
+\9\9\9\9\9onSelect = setSelectedItem,\
+\9\9\9\9\9selectedItem = selectedItem,\
+\9\9\9\9\9action = \"setGhost\",\
+\9\9\9\9\9description = \"Set ghost mode\",\
+\9\9\9\9\9index = 2,\
+\9\9\9\9}),\
+\9\9\9\9Roact.createElement(ShortcutItem, {\
+\9\9\9\9\9onActivate = function()\
+\9\9\9\9\9\9dispatch(setJobActive(\"walkSpeed\", not store:getState().jobs.walkSpeed.active))\
+\9\9\9\9\9end,\
+\9\9\9\9\9onSelect = setSelectedItem,\
+\9\9\9\9\9selectedItem = selectedItem,\
+\9\9\9\9\9action = \"setSpeed\",\
+\9\9\9\9\9description = \"Set walk speed\",\
+\9\9\9\9\9index = 3,\
+\9\9\9\9}),\
+\9\9\9\9Roact.createElement(ShortcutItem, {\
+\9\9\9\9\9onActivate = function()\
+\9\9\9\9\9\9dispatch(setJobActive(\"jumpHeight\", not store:getState().jobs.jumpHeight.active))\
+\9\9\9\9\9end,\
+\9\9\9\9\9onSelect = setSelectedItem,\
+\9\9\9\9\9selectedItem = selectedItem,\
+\9\9\9\9\9action = \"setJumpHeight\",\
+\9\9\9\9\9description = \"Set jump height\",\
+\9\9\9\9\9index = 4,\
+\9\9\9\9}),\
+\9\9\9}),\
+\9\9}),\
+\9})\
+end\
+local default = hooked(Shortcuts)\
+return {\
+\9default = default,\
+}\
+", '@'.."Orca.views.Pages.Options.Shortcuts.Shortcuts")) setfenv(fn, newEnv("Orca.views.Pages.Options.Shortcuts.Shortcuts")) return fn() end)
+
+newModule("Themes", "ModuleScript", "Orca.views.Pages.Options.Themes", "Orca.views.Pages.Options", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+local TS = require(script.Parent.Parent.Parent.Parent.include.RuntimeLib)\
+local exports = {}\
+exports.default = TS.import(script, script, \"Themes\").default\
+return exports\
+", '@'.."Orca.views.Pages.Options.Themes")) setfenv(fn, newEnv("Orca.views.Pages.Options.Themes")) return fn() end)
+
+newModule("ThemeItem", "ModuleScript", "Orca.views.Pages.Options.Themes.ThemeItem", "Orca.views.Pages.Options.Themes", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.Parent.Parent.include.RuntimeLib)\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
 local _roact_hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out)\
@@ -8203,7 +9146,7 @@ local useAppDispatch = _rodux_hooks.useAppDispatch\
 local useAppSelector = _rodux_hooks.useAppSelector\
 local useSpring = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"hooks\", \"common\", \"use-spring\").useSpring\
 local useTheme = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"hooks\", \"use-theme\").useTheme\
-local setTheme = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"store\", \"actions\", \"theme.action\").setTheme\
+local setTheme = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"store\", \"actions\", \"options.action\").setTheme\
 local _color3 = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"utils\", \"color3\")\
 local getLuminance = _color3.getLuminance\
 local hex = _color3.hex\
@@ -8222,7 +9165,7 @@ local function ThemeItem(_param)\
 \9local dispatch = useAppDispatch()\
 \9local buttonTheme = useTheme(\"options\").themes.themeButton\
 \9local isSelected = useAppSelector(function(state)\
-\9\9return state.theme.current.name == theme.name\
+\9\9return state.options.currentTheme == theme.name\
 \9end)\
 \9local _binding = useState(false)\
 \9local hovered = _binding[1]\
@@ -8316,7 +9259,7 @@ local function ThemeItem(_param)\
 \9_length = #_children\
 \9_children[_length + 1] = Roact.createElement(\"TextButton\", {\
 \9\9[Roact.Event.Activated] = function()\
-\9\9\9return not isSelected and dispatch(setTheme(theme))\
+\9\9\9return not isSelected and dispatch(setTheme(theme.name))\
 \9\9end,\
 \9\9[Roact.Event.MouseEnter] = function()\
 \9\9\9return setHovered(true)\
@@ -8417,9 +9360,9 @@ return {\
 \9ENTRY_TEXT_PADDING = ENTRY_TEXT_PADDING,\
 \9default = default,\
 }\
-", '@'.."Orca.views.Pages.Options.ThemesCard.ThemeItem")) setfenv(fn, newEnv("Orca.views.Pages.Options.ThemesCard.ThemeItem")) return fn() end)
+", '@'.."Orca.views.Pages.Options.Themes.ThemeItem")) setfenv(fn, newEnv("Orca.views.Pages.Options.Themes.ThemeItem")) return fn() end)
 
-newModule("ThemesCard", "ModuleScript", "Orca.views.Pages.Options.ThemesCard.ThemesCard", "Orca.views.Pages.Options.ThemesCard", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+newModule("Themes", "ModuleScript", "Orca.views.Pages.Options.Themes.Themes", "Orca.views.Pages.Options.Themes", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.Parent.Parent.include.RuntimeLib)\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
 local _roact_hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out)\
@@ -8438,15 +9381,15 @@ local _ThemeItem = TS.import(script, script.Parent, \"ThemeItem\")\
 local ThemeItem = _ThemeItem.default\
 local ENTRY_HEIGHT = _ThemeItem.ENTRY_HEIGHT\
 local PADDING = _ThemeItem.PADDING\
-local function ThemesCard()\
+local function Themes()\
 \9local theme = useTheme(\"options\").themes\
 \9local themes = useMemo(getThemes, {})\
 \9local _attributes = {\
-\9\9index = 0,\
+\9\9index = 2,\
 \9\9page = DashboardPage.Options,\
 \9\9theme = theme,\
 \9\9size = px(326, 416),\
-\9\9position = UDim2.new(0, 0, 1, 0),\
+\9\9position = UDim2.new(0, 374, 1, 0),\
 \9}\
 \9local _children = {\
 \9\9Roact.createElement(\"TextLabel\", {\
@@ -8496,17 +9439,17 @@ local function ThemesCard()\
 \9_children[_length + 1] = Roact.createElement(Canvas, _attributes_1, _children_1)\
 \9return Roact.createElement(Card, _attributes, _children)\
 end\
-local default = hooked(ThemesCard)\
+local default = hooked(Themes)\
 return {\
 \9default = default,\
 }\
-", '@'.."Orca.views.Pages.Options.ThemesCard.ThemesCard")) setfenv(fn, newEnv("Orca.views.Pages.Options.ThemesCard.ThemesCard")) return fn() end)
+", '@'.."Orca.views.Pages.Options.Themes.Themes")) setfenv(fn, newEnv("Orca.views.Pages.Options.Themes.Themes")) return fn() end)
 
 newModule("Pages", "ModuleScript", "Orca.views.Pages.Pages", "Orca.views.Pages", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.include.RuntimeLib)\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
 local hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out).hooked\
-local useDelayedState = TS.import(script, script.Parent.Parent.Parent, \"hooks\", \"common\", \"use-delayed-state\").useDelayedState\
+local useDelayedUpdate = TS.import(script, script.Parent.Parent.Parent, \"hooks\", \"common\", \"use-delayed-update\").useDelayedUpdate\
 local useCurrentPage = TS.import(script, script.Parent.Parent.Parent, \"hooks\", \"use-current-page\").useCurrentPage\
 local DashboardPage = TS.import(script, script.Parent.Parent.Parent, \"store\", \"models\", \"dashboard.model\").DashboardPage\
 local Apps = TS.import(script, script.Parent, \"Apps\").default\
@@ -8515,7 +9458,7 @@ local Options = TS.import(script, script.Parent, \"Options\").default\
 local Scripts = TS.import(script, script.Parent, \"Scripts\").default\
 local function Pages()\
 \9local currentPage = useCurrentPage()\
-\9local isScriptsVisible = useDelayedState(currentPage == DashboardPage.Scripts, 2000, function(isVisible)\
+\9local isScriptsVisible = useDelayedUpdate(currentPage == DashboardPage.Scripts, 2000, function(isVisible)\
 \9\9return isVisible\
 \9end)\
 \9local _children = {\
@@ -8699,7 +9642,7 @@ local ParallaxImage = TS.import(script, script.Parent.Parent.Parent.Parent, \"co
 local _flipper_hooks = TS.import(script, script.Parent.Parent.Parent.Parent, \"hooks\", \"common\", \"flipper-hooks\")\
 local getBinding = _flipper_hooks.getBinding\
 local useMotor = _flipper_hooks.useMotor\
-local useDelayedState = TS.import(script, script.Parent.Parent.Parent.Parent, \"hooks\", \"common\", \"use-delayed-state\").useDelayedState\
+local useDelayedUpdate = TS.import(script, script.Parent.Parent.Parent.Parent, \"hooks\", \"common\", \"use-delayed-update\").useDelayedUpdate\
 local useIsMount = TS.import(script, script.Parent.Parent.Parent.Parent, \"hooks\", \"common\", \"use-did-mount\").useIsMount\
 local useForcedUpdate = TS.import(script, script.Parent.Parent.Parent.Parent, \"hooks\", \"common\", \"use-forced-update\").useForcedUpdate\
 local useMouseLocation = TS.import(script, script.Parent.Parent.Parent.Parent, \"hooks\", \"common\", \"use-mouse-location\").useMouseLocation\
@@ -8735,7 +9678,7 @@ local function ScriptCard(_param)\
 \9\9_result = isCurrentlyOpen\
 \9end\
 \9local isOpen = _result\
-\9local isTransitioning = useDelayedState(isOpen, index * 30)\
+\9local isTransitioning = useDelayedUpdate(isOpen, index * 30)\
 \9useEffect(function()\
 \9\9return rerender()\
 \9end, {})\
