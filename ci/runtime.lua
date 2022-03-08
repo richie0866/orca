@@ -153,6 +153,9 @@ end
 -- Runtime
 
 local function init()
+	if not game:IsLoaded() then
+		game.Loaded:Wait()
+	end
 	for object in pairs(modules) do
 		if object:IsA("LocalScript") and not object.Disabled then
 			task.spawn(loadModule, object)
