@@ -3,10 +3,10 @@ import { pure } from "@rbxts/roact-hooked";
 import Canvas from "components/Canvas";
 import { useScale } from "hooks/use-scale";
 import { scale } from "utils/udim2";
-import ServerCard from "views/Pages/Home/ServerCard/ServerCard";
-import FriendActivityCard from "./FriendActivityCard";
-import ProfileCard from "./ProfileCard";
-import TitleCard from "./TitleCard";
+import FriendActivity from "./FriendActivity";
+import Profile from "./Profile";
+import Server from "./Server";
+import Title from "./Title";
 
 function Home() {
 	const scaleFactor = useScale();
@@ -14,11 +14,10 @@ function Home() {
 	return (
 		<Canvas position={scale(0, 1)} anchor={new Vector2(0, 1)}>
 			<uiscale Scale={scaleFactor} />
-
-			<TitleCard />
-			<ServerCard />
-			<FriendActivityCard />
-			<ProfileCard />
+			<Title />
+			<Server />
+			<FriendActivity />
+			<Profile />
 		</Canvas>
 	);
 }

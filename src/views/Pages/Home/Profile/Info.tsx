@@ -2,7 +2,7 @@ import Roact from "@rbxts/roact";
 import { hooked } from "@rbxts/roact-hooked";
 import { Players } from "@rbxts/services";
 import Canvas from "components/Canvas";
-import { useDelayedState } from "hooks/common/use-delayed-state";
+import { useDelayedUpdate } from "hooks/common/use-delayed-update";
 import { useSpring } from "hooks/common/use-spring";
 import { useIsPageOpen } from "hooks/use-current-page";
 import { useFriends } from "hooks/use-friends";
@@ -20,9 +20,9 @@ function Info() {
 	const friendsJoined = friends.filter((friend) => "PlaceId" in friend && friend.PlaceId === game.PlaceId).size();
 
 	// Transition
-	const showJoinDate = useDelayedState(isOpen, 400, (open) => !open);
-	const showFriendsJoined = useDelayedState(isOpen && status !== "pending", 500, (open) => !open);
-	const showFriendsOnline = useDelayedState(isOpen && status !== "pending", 600, (open) => !open);
+	const showJoinDate = useDelayedUpdate(isOpen, 400, (open) => !open);
+	const showFriendsJoined = useDelayedUpdate(isOpen && status !== "pending", 500, (open) => !open);
+	const showFriendsOnline = useDelayedUpdate(isOpen && status !== "pending", 600, (open) => !open);
 
 	return (
 		<Canvas anchor={new Vector2(0.5, 0)} size={px(278, 48)} position={new UDim2(0.5, 0, 0, 300)}>

@@ -7,7 +7,7 @@ import Canvas from "components/Canvas";
 import Fill from "components/Fill";
 import Glow, { GlowRadius } from "components/Glow";
 
-import { useDelayedState } from "hooks/common/use-delayed-state";
+import { useDelayedUpdate } from "hooks/common/use-delayed-update";
 import { useSpring } from "hooks/common/use-spring";
 import { useIsPageOpen } from "hooks/use-current-page";
 import { DashboardPage } from "store/models/dashboard.model";
@@ -24,7 +24,7 @@ interface Props extends Roact.PropsWithChildren {
 
 function Card({ index, page, theme, size, position, [Roact.Children]: children }: Props) {
 	const isOpen = useIsPageOpen(page);
-	const isActive = useDelayedState(isOpen, index * 40);
+	const isActive = useDelayedUpdate(isOpen, index * 40);
 
 	const positionWhenHidden = new UDim2(new UDim(), position.Y)
 		.sub(px((size.X.Offset + 48) * 2 - position.X.Offset, 0))

@@ -6,7 +6,7 @@ import Canvas from "components/Canvas";
 import Fill from "components/Fill";
 import ParallaxImage from "components/ParallaxImage";
 import { getBinding, SpringOptions, useMotor } from "hooks/common/flipper-hooks";
-import { useDelayedState } from "hooks/common/use-delayed-state";
+import { useDelayedUpdate } from "hooks/common/use-delayed-update";
 import { useIsMount } from "hooks/common/use-did-mount";
 import { useForcedUpdate } from "hooks/common/use-forced-update";
 import { useMouseLocation } from "hooks/common/use-mouse-location";
@@ -53,7 +53,7 @@ function ScriptCard({
 
 	const isCurrentlyOpen = useIsPageOpen(DashboardPage.Scripts);
 	const isOpen = useIsMount() ? false : isCurrentlyOpen;
-	const isTransitioning = useDelayedState(isOpen, index * 30);
+	const isTransitioning = useDelayedUpdate(isOpen, index * 30);
 
 	// Force a rerender to start the intro transition
 	useEffect(() => rerender(), []);

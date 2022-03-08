@@ -1,12 +1,10 @@
 import Roact from "@rbxts/roact";
-import { hooked, useEffect, useMemo } from "@rbxts/roact-hooked";
-import { UserInputService } from "@rbxts/services";
+import { hooked, useMemo } from "@rbxts/roact-hooked";
 import Canvas from "components/Canvas";
 import { ScaleContext } from "context/scale-context";
-import { useAppDispatch, useAppSelector } from "hooks/common/rodux-hooks";
+import { useAppSelector } from "hooks/common/rodux-hooks";
 import { useSpring } from "hooks/common/use-spring";
 import { useViewportSize } from "hooks/common/use-viewport-size";
-import { toggleDashboard } from "store/actions/dashboard.action";
 import { hex } from "utils/color3";
 import { map } from "utils/number-util";
 import { scale } from "utils/udim2";
@@ -43,24 +41,12 @@ function getScale(height: number) {
 }
 
 function Dashboard() {
-	const dispatch = useAppDispatch();
-	const isOpen = useAppSelector((state) => state.dashboard.isOpen);
-
 	const viewportSize = useViewportSize();
+	const isOpen = useAppSelector((state) => state.dashboard.isOpen);
 
 	const [scaleFactor, padding] = useMemo(() => {
 		return [viewportSize.map((s) => getScale(s.Y)), viewportSize.map((s) => getPaddingY(s.Y))];
 	}, [viewportSize]);
-
-	useEffect(() => {
-		const connection = UserInputService.InputBegan.Connect((input, gameProcessed) => {
-			if (gameProcessed) return;
-			if (input.KeyCode === Enum.KeyCode.K) {
-				dispatch(toggleDashboard());
-			}
-		});
-		return () => connection.Disconnect();
-	}, []);
 
 	return (
 		<ScaleContext.Provider value={scaleFactor}>

@@ -18,7 +18,7 @@ import { px, scale } from "utils/udim2";
 const FRIEND_SPRING_OPTIONS = { frequency: 6 };
 const GAME_PADDING = 48;
 
-function FriendActivityCard() {
+function FriendActivity() {
 	const theme = useTheme("home").friendActivity;
 	const [update, forceUpdate] = useReducer((state: number) => state + 1, 0);
 	const [currentGames, , status] = useFriendActivity([update]);
@@ -72,7 +72,7 @@ function FriendActivityCard() {
 	);
 }
 
-export default hooked(FriendActivityCard);
+export default hooked(FriendActivity);
 
 function GameEntryComponent(props: { game: GameActivity; index: number }) {
 	const theme = useTheme("home").friendActivity;

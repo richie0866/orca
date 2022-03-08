@@ -9,7 +9,7 @@ import Avatar from "./Avatar";
 import Selection from "./Selection";
 import Username from "./Username";
 
-function PlayersCard() {
+function Players() {
 	const theme = useTheme("apps").players;
 
 	return (
@@ -22,4 +22,4 @@ function PlayersCard() {
 	);
 }
 
-export default hooked(PlayersCard);
+export default hooked(Players);

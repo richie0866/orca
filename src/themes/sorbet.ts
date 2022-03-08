@@ -170,6 +170,28 @@ export const sorbet: Theme = {
 		},
 	},
 	options: {
+		config: {
+			...view,
+			configButton: {
+				...darkTheme.options.config.configButton,
+				outlined: false,
+				foreground: hex("#ffffff"),
+				background: backgroundDark,
+				dropshadow: backgroundDark,
+				accent: redAccent,
+			},
+		},
+		shortcuts: {
+			...view,
+			shortcutButton: {
+				...darkTheme.options.shortcuts.shortcutButton,
+				outlined: false,
+				foreground: hex("#ffffff"),
+				background: backgroundDark,
+				dropshadow: backgroundDark,
+				accent: mixedAccent,
+			},
+		},
 		themes: {
 			...view,
 			themeButton: {

@@ -11,7 +11,7 @@ import Info from "./Info";
 import Sliders from "./Sliders";
 import Username from "./Username";
 
-function ProfileCard() {
+function Profile() {
 	const theme = useTheme("home").profile;
 
 	return (
@@ -27,4 +27,4 @@ function ProfileCard() {
 	);
 }
 
-export default hooked(ProfileCard);
+export default hooked(Profile);

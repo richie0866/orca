@@ -1,7 +1,7 @@
 import Roact from "@rbxts/roact";
 import { hooked, useEffect, useState } from "@rbxts/roact-hooked";
 import { useAppSelector } from "hooks/common/rodux-hooks";
-import { useDelayedState } from "hooks/common/use-delayed-state";
+import { useDelayedUpdate } from "hooks/common/use-delayed-update";
 import { useSpring } from "hooks/common/use-spring";
 import { useScale } from "hooks/use-scale";
 import { hex } from "utils/color3";
@@ -13,7 +13,7 @@ function Hint() {
 	const isDashboardOpen = useAppSelector((state) => state.dashboard.isOpen);
 
 	const [hintDisplay, setHintDisplay] = useState(hint ?? "");
-	const isHintVisible = useDelayedState(hint !== undefined && isDashboardOpen, 500, (visible) => !visible);
+	const isHintVisible = useDelayedUpdate(hint !== undefined && isDashboardOpen, 500, (visible) => !visible);
 
 	useEffect(() => {
 		if (isHintVisible && hint !== undefined) {

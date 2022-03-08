@@ -285,5 +285,61 @@ export const darkTheme: Theme = {
 				glowTransparency: 0.2,
 			},
 		},
+
+		shortcuts: {
+			outlined: true,
+			acrylic: false,
+
+			foreground: hex("#ffffff"),
+			background: hex("#232428"),
+			transparency: 0,
+
+			dropshadow: hex("#232428"),
+			dropshadowTransparency: 0.3,
+
+			shortcutButton: {
+				outlined: true,
+
+				accent: hex("#37CC95"),
+
+				foreground: hex("#ffffff"),
+				foregroundTransparency: 0.5,
+
+				background: hex("#1B1C20"),
+				backgroundTransparency: 0,
+
+				dropshadow: hex("#000000"),
+				dropshadowTransparency: 0.5,
+				glowTransparency: 0.2,
+			},
+		},
+
+		config: {
+			outlined: true,
+			acrylic: false,
+
+			foreground: hex("#ffffff"),
+			background: hex("#232428"),
+			transparency: 0,
+
+			dropshadow: hex("#232428"),
+			dropshadowTransparency: 0.3,
+
+			configButton: {
+				outlined: true,
+
+				accent: hex("#37CC95"),
+
+				foreground: hex("#ffffff"),
+				foregroundTransparency: 0.5,
+
+				background: hex("#1B1C20"),
+				backgroundTransparency: 0,
+
+				dropshadow: hex("#000000"),
+				dropshadowTransparency: 0.5,
+				glowTransparency: 0.2,
+			},
+		},
 	},
 };

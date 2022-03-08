@@ -15,13 +15,6 @@ export type JobsWithValue<T> = ExcludeMembers<
 	never
 >;
 
-export type JobsWithoutValue = ExcludeMembers<
-	{
-		[K in keyof JobsState]: JobsState[K] extends JobWithValue<defined> ? never : JobsState[K];
-	},
-	never
->;
-
 export type JobsState = {
 	flight: JobWithValue<number>;
 	walkSpeed: JobWithValue<number>;

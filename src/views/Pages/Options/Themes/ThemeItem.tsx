@@ -7,7 +7,7 @@ import Glow, { GlowRadius } from "components/Glow";
 import { useAppDispatch, useAppSelector } from "hooks/common/rodux-hooks";
 import { useSpring } from "hooks/common/use-spring";
 import { useTheme } from "hooks/use-theme";
-import { setTheme } from "store/actions/theme.action";
+import { setTheme } from "store/actions/options.action";
 import { Theme } from "themes/theme.interface";
 import { getLuminance, hex } from "utils/color3";
 import { lerp } from "utils/number-util";
@@ -27,7 +27,7 @@ function ThemeItem({ theme, index }: Props) {
 	const dispatch = useAppDispatch();
 	const buttonTheme = useTheme("options").themes.themeButton;
 
-	const isSelected = useAppSelector((state) => state.theme.current.name === theme.name);
+	const isSelected = useAppSelector((state) => state.options.currentTheme === theme.name);
 	const [hovered, setHovered] = useState(false);
 
 	const background = useSpring(
@@ -103,7 +103,7 @@ function ThemeItem({ theme, index }: Props) {
 			{/* Input capture */}
 			<textbutton
 				Event={{
-					Activated: () => !isSelected && dispatch(setTheme(theme)),
+					Activated: () => !isSelected && dispatch(setTheme(theme.name)),
 					MouseEnter: () => setHovered(true),
 					MouseLeave: () => setHovered(false),
 				}}

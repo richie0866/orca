@@ -180,6 +180,32 @@ export const frostedGlass: Theme = {
 		},
 	},
 	options: {
+		config: {
+			...view,
+			configButton: {
+				...darkTheme.options.config.configButton,
+				outlined: false,
+				foreground: hex("#ffffff"),
+				background: hex("#ffffff"),
+				dropshadow: hex("#ffffff"),
+				accent,
+				backgroundTransparency: 0.8,
+				dropshadowTransparency: 0.7,
+			},
+		},
+		shortcuts: {
+			...view,
+			shortcutButton: {
+				...darkTheme.options.shortcuts.shortcutButton,
+				outlined: false,
+				foreground: hex("#ffffff"),
+				background: hex("#ffffff"),
+				dropshadow: hex("#ffffff"),
+				accent,
+				backgroundTransparency: 0.8,
+				dropshadowTransparency: 0.7,
+			},
+		},
 		themes: {
 			...view,
 			themeButton: {

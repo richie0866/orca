@@ -123,6 +123,32 @@ export const lightTheme: Theme = {
 		},
 	},
 	options: {
+		config: {
+			...darkTheme.options.config,
+			foreground: hex("#000000"),
+			background: hex("#ffffff"),
+			configButton: {
+				...darkTheme.options.config.configButton,
+				foreground: hex("#000000"),
+				background: hex("#ffffff"),
+				backgroundHovered: hex("#eeeeee"),
+				accent: hex("#3ce09b"),
+				dropshadowTransparency: 0.7,
+			},
+		},
+		shortcuts: {
+			...darkTheme.options.shortcuts,
+			foreground: hex("#000000"),
+			background: hex("#ffffff"),
+			shortcutButton: {
+				...darkTheme.options.shortcuts.shortcutButton,
+				foreground: hex("#000000"),
+				background: hex("#ffffff"),
+				backgroundHovered: hex("#eeeeee"),
+				accent: hex("#3ce09b"),
+				dropshadowTransparency: 0.7,
+			},
+		},
 		themes: {
 			...darkTheme.options.themes,
 			foreground: hex("#000000"),

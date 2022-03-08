@@ -138,6 +138,32 @@ export const highContrast: Theme = {
 		},
 	},
 	options: {
+		config: {
+			...darkTheme.options.config,
+			foreground: hex("#ffffff"),
+			background: hex("#000000"),
+			dropshadow: hex("#000000"),
+			configButton: {
+				...darkTheme.options.config.configButton,
+				foreground: hex("#ffffff"),
+				background: hex("#000000"),
+				accent: hex("#ff3f6c"),
+				dropshadowTransparency: 0.7,
+			},
+		},
+		shortcuts: {
+			...darkTheme.options.shortcuts,
+			foreground: hex("#ffffff"),
+			background: hex("#000000"),
+			dropshadow: hex("#000000"),
+			shortcutButton: {
+				...darkTheme.options.shortcuts.shortcutButton,
+				foreground: hex("#ffffff"),
+				background: hex("#000000"),
+				accent: hex("#ff3f6c"),
+				dropshadowTransparency: 0.7,
+			},
+		},
 		themes: {
 			...darkTheme.options.themes,
 			foreground: hex("#ffffff"),

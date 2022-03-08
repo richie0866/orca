@@ -44,7 +44,7 @@ async function main() {
 			return;
 		}
 
-		if (newState.options.acrylicBlurEnabled) {
+		if (newState.options.config.acrylicBlur) {
 			enableAcrylic();
 		} else {
 			disableAcrylic();

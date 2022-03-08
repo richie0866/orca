@@ -3,14 +3,14 @@ import { hooked } from "@rbxts/roact-hooked";
 import Canvas from "components/Canvas";
 import Card from "components/Card";
 import { IS_DEV, VERSION_TAG } from "constants";
-import { useDelayedState } from "hooks/common/use-delayed-state";
+import { useDelayedUpdate } from "hooks/common/use-delayed-update";
 import { useSpring } from "hooks/common/use-spring";
 import { useIsPageOpen } from "hooks/use-current-page";
 import { useTheme } from "hooks/use-theme";
 import { DashboardPage } from "store/models/dashboard.model";
 import { px } from "utils/udim2";
 
-function TitleCard() {
+function Title() {
 	const theme = useTheme("home").title;
 
 	return (
@@ -43,7 +43,7 @@ function TitleCard() {
 	);
 }
 
-export default hooked(TitleCard);
+export default hooked(Title);
 
 // Title card info labels
 interface LabelProps {
@@ -60,7 +60,7 @@ function LabelComponent(props: LabelProps) {
 
 	const theme = useTheme("home").title;
 	const isOpen = useIsPageOpen(DashboardPage.Home);
-	const isActive = useDelayedState(isOpen, index * 100 + 300, (current) => !current);
+	const isActive = useDelayedUpdate(isOpen, index * 100 + 300, (current) => !current);
 
 	return (
 		<textlabel

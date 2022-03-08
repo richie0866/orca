@@ -102,5 +102,19 @@ export interface Theme {
 				glowTransparency: number;
 			};
 		};
+		shortcuts: ViewTheme & {
+			shortcutButton: ButtonTheme & {
+				dropshadow: Color3;
+				dropshadowTransparency: number;
+				glowTransparency: number;
+			};
+		};
+		config: ViewTheme & {
+			configButton: ButtonTheme & {
+				dropshadow: Color3;
+				dropshadowTransparency: number;
+				glowTransparency: number;
+			};
+		};
 	};
 }

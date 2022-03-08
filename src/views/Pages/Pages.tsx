@@ -1,6 +1,6 @@
 import Roact from "@rbxts/roact";
 import { hooked } from "@rbxts/roact-hooked";
-import { useDelayedState } from "hooks/common/use-delayed-state";
+import { useDelayedUpdate } from "hooks/common/use-delayed-update";
 import { useCurrentPage } from "hooks/use-current-page";
 import { DashboardPage } from "store/models/dashboard.model";
 import Apps from "./Apps";
@@ -10,8 +10,7 @@ import Scripts from "./Scripts";
 
 function Pages() {
 	const currentPage = useCurrentPage();
-	const isScriptsVisible = useDelayedState(currentPage === DashboardPage.Scripts, 2000, (isVisible) => isVisible);
-
+	const isScriptsVisible = useDelayedUpdate(currentPage === DashboardPage.Scripts, 2000, (isVisible) => isVisible);
 	return (
 		<>
 			<Home Key="home" />

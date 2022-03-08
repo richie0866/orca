@@ -9,12 +9,18 @@ import { arrayToMap } from "utils/array-util";
 import { px, scale } from "utils/udim2";
 import ThemeItem, { ENTRY_HEIGHT, PADDING } from "./ThemeItem";
 
-function ThemesCard() {
+function Themes() {
 	const theme = useTheme("options").themes;
 	const themes = useMemo(getThemes, []);
 
 	return (
-		<Card index={0} page={DashboardPage.Options} theme={theme} size={px(326, 416)} position={new UDim2(0, 0, 1, 0)}>
+		<Card
+			index={2}
+			page={DashboardPage.Options}
+			theme={theme}
+			size={px(326, 416)}
+			position={new UDim2(0, 374, 1, 0)}
+		>
 			<textlabel
 				Text="Themes"
 				Font="GothamBlack"
@@ -43,4 +49,4 @@ function ThemesCard() {
 	);
 }
 
-export default hooked(ThemesCard);
+export default hooked(Themes);

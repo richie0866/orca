@@ -1,5 +1,5 @@
 import Roact from "@rbxts/roact";
-import { hooked, useCallback, useEffect, useMemo, useMutable, useState } from "@rbxts/roact-hooked";
+import { hooked, useCallback, useEffect, useMemo, useMutable } from "@rbxts/roact-hooked";
 import { Workspace } from "@rbxts/services";
 import { acrylicInstance } from "components/Acrylic/acrylic-instance";
 import { useAppSelector } from "hooks/common/rodux-hooks";
@@ -26,7 +26,7 @@ function getOffset() {
  * Wraps `AcrylicBlur` to remove it when blurring is disabled.
  */
 function Acrylic({ radius, distance }: Props) {
-	const isAcrylicBlurEnabled = useAppSelector((state) => state.options.acrylicBlurEnabled);
+	const isAcrylicBlurEnabled = useAppSelector((state) => state.options.config.acrylicBlur);
 
 	return isAcrylicBlurEnabled ? (
 		<AcrylicBlur radius={radius} distance={distance} />
@@ -111,23 +111,25 @@ function AcrylicBlurComponent({ radius = 0, distance = 0.001 }: Props) {
 
 		// Update corners
 		if (radius !== undefined && radius > 0) {
-			acrylic.TopLeft.Mesh.Scale = new Vector3(0, cornerRadius * 2, cornerRadius * 2);
-			acrylic.TopRight.Mesh.Scale = new Vector3(0, cornerRadius * 2, cornerRadius * 2);
-			acrylic.BottomLeft.Mesh.Scale = new Vector3(0, cornerRadius * 2, cornerRadius * 2);
-			acrylic.BottomRight.Mesh.Scale = new Vector3(0, cornerRadius * 2, cornerRadius * 2);
-
 			acrylic.TopLeft.CFrame = center
 				.mul(new CFrame(-width / 2 + cornerRadius, height / 2 - cornerRadius, 0))
 				.mul(cylinderAngleOffset);
+			acrylic.TopLeft.Mesh.Scale = new Vector3(0, cornerRadius * 2, cornerRadius * 2);
+
 			acrylic.TopRight.CFrame = center
 				.mul(new CFrame(width / 2 - cornerRadius, height / 2 - cornerRadius, 0))
 				.mul(cylinderAngleOffset);
+			acrylic.TopRight.Mesh.Scale = new Vector3(0, cornerRadius * 2, cornerRadius * 2);
+
 			acrylic.BottomLeft.CFrame = center
 				.mul(new CFrame(-width / 2 + cornerRadius, -height / 2 + cornerRadius, 0))
 				.mul(cylinderAngleOffset);
+			acrylic.BottomLeft.Mesh.Scale = new Vector3(0, cornerRadius * 2, cornerRadius * 2);
+
 			acrylic.BottomRight.CFrame = center
 				.mul(new CFrame(width / 2 - cornerRadius, -height / 2 + cornerRadius, 0))
 				.mul(cylinderAngleOffset);
+			acrylic.BottomRight.Mesh.Scale = new Vector3(0, cornerRadius * 2, cornerRadius * 2);
 		}
 	}, [radius, distance]);
 
