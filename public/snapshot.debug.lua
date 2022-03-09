@@ -1627,7 +1627,7 @@ local function useDelayedUpdate(value, delay, isImmediate)\
 \9\9\9\9updates.current[id] = nil\
 \9\9\9\9-- ▲ Map.delete ▲\
 \9\9\9end, delay),\
-\9\9\9resolveTime = time() + delay,\
+\9\9\9resolveTime = os.clock() + delay,\
 \9\9}\
 \9\9clearUpdates(updates.current, update.resolveTime)\
 \9\9-- ▼ Map.set ▼\
@@ -2096,6 +2096,43 @@ return {\
 \9useFriendActivity = useFriendActivity,\
 }\
 ", '@'.."Orca.hooks.use-friends")) setfenv(fn, newEnv("Orca.hooks.use-friends")) return fn() end)
+
+newModule("use-parallax-offset", "ModuleScript", "Orca.hooks.use-parallax-offset", "Orca.hooks", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+local TS = require(script.Parent.Parent.include.RuntimeLib)\
+local Spring = TS.import(script, TS.getModule(script, \"@rbxts\", \"flipper\").src).Spring\
+local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
+local _flipper_hooks = TS.import(script, script.Parent, \"common\", \"flipper-hooks\")\
+local getBinding = _flipper_hooks.getBinding\
+local useMotor = _flipper_hooks.useMotor\
+local useMouseLocation = TS.import(script, script.Parent, \"common\", \"use-mouse-location\").useMouseLocation\
+local useViewportSize = TS.import(script, script.Parent, \"common\", \"use-viewport-size\").useViewportSize\
+local function useParallaxOffset()\
+\9local mouseLocationMotor = useMotor({ 0, 0 })\
+\9local mouseLocation = getBinding(mouseLocationMotor)\
+\9local viewportSize = useViewportSize()\
+\9local offset = Roact.joinBindings({\
+\9\9viewportSize = viewportSize,\
+\9\9mouseLocation = mouseLocation,\
+\9}):map(function(_param)\
+\9\9local viewportSize = _param.viewportSize\
+\9\9local _binding = _param.mouseLocation\
+\9\9local x = _binding[1]\
+\9\9local y = _binding[2]\
+\9\9return Vector2.new((x - viewportSize.X / 2) / viewportSize.X, (y - viewportSize.Y / 2) / viewportSize.Y)\
+\9end)\
+\9useMouseLocation(function(location)\
+\9\9mouseLocationMotor:setGoal({ Spring.new(location.X, {\
+\9\9\9dampingRatio = 5,\
+\9\9}), Spring.new(location.Y, {\
+\9\9\9dampingRatio = 5,\
+\9\9}) })\
+\9end)\
+\9return offset\
+end\
+return {\
+\9useParallaxOffset = useParallaxOffset,\
+}\
+", '@'.."Orca.hooks.use-parallax-offset")) setfenv(fn, newEnv("Orca.hooks.use-parallax-offset")) return fn() end)
 
 newModule("use-scale", "ModuleScript", "Orca.hooks.use-scale", "Orca.hooks", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.include.RuntimeLib)\
@@ -6434,7 +6471,7 @@ return function(target)\
 \9\9store = configureStore({\
 \9\9\9dashboard = {\
 \9\9\9\9isOpen = true,\
-\9\9\9\9page = DashboardPage.Options,\
+\9\9\9\9page = DashboardPage.Home,\
 \9\9\9\9hint = nil,\
 \9\9\9\9apps = {},\
 \9\9\9},\
@@ -6972,11 +7009,14 @@ local useLinear = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \
 local _rodux_hooks = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"hooks\", \"common\", \"rodux-hooks\")\
 local useAppDispatch = _rodux_hooks.useAppDispatch\
 local useAppSelector = _rodux_hooks.useAppSelector\
+local useDelayedUpdate = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"hooks\", \"common\", \"use-delayed-update\").useDelayedUpdate\
 local useSpring = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"hooks\", \"common\", \"use-spring\").useSpring\
+local useIsPageOpen = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"hooks\", \"use-current-page\").useIsPageOpen\
 local useTheme = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"hooks\", \"use-theme\").useTheme\
 local _dashboard_action = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"store\", \"actions\", \"dashboard.action\")\
 local playerDeselected = _dashboard_action.playerDeselected\
 local playerSelected = _dashboard_action.playerSelected\
+local DashboardPage = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"store\", \"models\", \"dashboard.model\").DashboardPage\
 local arrayToMap = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"utils\", \"array-util\").arrayToMap\
 local lerp = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"utils\", \"number-util\").lerp\
 local _udim2 = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"utils\", \"udim2\")\
@@ -7122,6 +7162,8 @@ local function PlayerEntryComponent(_param)\
 \9local index = _param.index\
 \9local dispatch = useAppDispatch()\
 \9local theme = useTheme(\"apps\").players.playerButton\
+\9local isOpen = useIsPageOpen(DashboardPage.Apps)\
+\9local isVisible = useDelayedUpdate(isOpen, isOpen and 170 + index * 40 or 150)\
 \9local isSelected = useAppSelector(function(state)\
 \9\9return state.dashboard.apps.playerSelected == name\
 \9end)\
@@ -7174,7 +7216,7 @@ local function PlayerEntryComponent(_param)\
 \9local foreground = useSpring(isSelected and theme.foregroundAccent and theme.foregroundAccent or theme.foreground, {})\
 \9local _attributes = {\
 \9\9size = px(ENTRY_WIDTH, ENTRY_HEIGHT),\
-\9\9position = useSpring(px(0, (PADDING + ENTRY_HEIGHT) * index), {}),\
+\9\9position = useSpring(isVisible and px(0, (PADDING + ENTRY_HEIGHT) * index) or px(-ENTRY_WIDTH - 24, (PADDING + ENTRY_HEIGHT) * index), {}),\
 \9\9zIndex = index,\
 \9}\
 \9local _children = {\
@@ -7336,35 +7378,33 @@ return exports\
 
 newModule("FriendActivity", "ModuleScript", "Orca.views.Pages.Home.FriendActivity", "Orca.views.Pages.Home", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.Parent.include.RuntimeLib)\
+local exports = {}\
+exports.default = TS.import(script, script, \"FriendActivity\").default\
+return exports\
+", '@'.."Orca.views.Pages.Home.FriendActivity")) setfenv(fn, newEnv("Orca.views.Pages.Home.FriendActivity")) return fn() end)
+
+newModule("FriendActivity", "ModuleScript", "Orca.views.Pages.Home.FriendActivity.FriendActivity", "Orca.views.Pages.Home.FriendActivity", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+local TS = require(script.Parent.Parent.Parent.Parent.Parent.include.RuntimeLib)\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
 local _roact_hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out)\
 local hooked = _roact_hooked.hooked\
-local pure = _roact_hooked.pure\
 local useEffect = _roact_hooked.useEffect\
-local useMemo = _roact_hooked.useMemo\
 local useReducer = _roact_hooked.useReducer\
 local useState = _roact_hooked.useState\
-local _services = TS.import(script, TS.getModule(script, \"@rbxts\", \"services\"))\
-local Players = _services.Players\
-local TeleportService = _services.TeleportService\
-local Border = TS.import(script, script.Parent.Parent.Parent.Parent, \"components\", \"Border\").default\
-local Canvas = TS.import(script, script.Parent.Parent.Parent.Parent, \"components\", \"Canvas\").default\
-local Card = TS.import(script, script.Parent.Parent.Parent.Parent, \"components\", \"Card\").default\
-local Fill = TS.import(script, script.Parent.Parent.Parent.Parent, \"components\", \"Fill\").default\
-local useInterval = TS.import(script, script.Parent.Parent.Parent.Parent, \"hooks\", \"common\", \"use-interval\").useInterval\
-local useSpring = TS.import(script, script.Parent.Parent.Parent.Parent, \"hooks\", \"common\", \"use-spring\").useSpring\
-local useFriendActivity = TS.import(script, script.Parent.Parent.Parent.Parent, \"hooks\", \"use-friends\").useFriendActivity\
-local useTheme = TS.import(script, script.Parent.Parent.Parent.Parent, \"hooks\", \"use-theme\").useTheme\
-local DashboardPage = TS.import(script, script.Parent.Parent.Parent.Parent, \"store\", \"models\", \"dashboard.model\").DashboardPage\
-local arrayToMap = TS.import(script, script.Parent.Parent.Parent.Parent, \"utils\", \"array-util\").arrayToMap\
-local _udim2 = TS.import(script, script.Parent.Parent.Parent.Parent, \"utils\", \"udim2\")\
+local Canvas = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"components\", \"Canvas\").default\
+local Card = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"components\", \"Card\").default\
+local useInterval = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"hooks\", \"common\", \"use-interval\").useInterval\
+local useSpring = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"hooks\", \"common\", \"use-spring\").useSpring\
+local useFriendActivity = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"hooks\", \"use-friends\").useFriendActivity\
+local useTheme = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"hooks\", \"use-theme\").useTheme\
+local DashboardPage = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"store\", \"models\", \"dashboard.model\").DashboardPage\
+local arrayToMap = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"utils\", \"array-util\").arrayToMap\
+local _udim2 = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"utils\", \"udim2\")\
 local px = _udim2.px\
 local scale = _udim2.scale\
-local FRIEND_SPRING_OPTIONS = {\
-\9frequency = 6,\
-}\
-local GAME_PADDING = 48\
-local GameEntry\
+local _GameItem = TS.import(script, script.Parent, \"GameItem\")\
+local GameItem = _GameItem.default\
+local GAME_PADDING = _GameItem.GAME_PADDING\
 local function FriendActivity()\
 \9local theme = useTheme(\"home\").friendActivity\
 \9local _binding = useReducer(function(state)\
@@ -7391,7 +7431,7 @@ local function FriendActivity()\
 \9end, { currentGames })\
 \9useInterval(function()\
 \9\9return forceUpdate()\
-\9end, #games == 0 and status ~= \"pending\" and 3000 or 30000)\
+\9end, #currentGames == 0 and status ~= \"pending\" and 5000 or 30000)\
 \9local _attributes = {\
 \9\9index = 3,\
 \9\9page = DashboardPage.Home,\
@@ -7431,8 +7471,8 @@ local function FriendActivity()\
 \9local _children_2 = {}\
 \9local _length_2 = #_children_2\
 \9for _k, _v in pairs(arrayToMap(games, function(gameActivity, index)\
-\9\9return { tostring(gameActivity.placeId), Roact.createElement(GameEntry, {\
-\9\9\9game = gameActivity,\
+\9\9return { tostring(gameActivity.placeId), Roact.createElement(GameItem, {\
+\9\9\9gameActivity = gameActivity,\
 \9\9\9index = index,\
 \9\9}) }\
 \9end)) do\
@@ -7443,17 +7483,154 @@ local function FriendActivity()\
 \9return Roact.createElement(Card, _attributes, _children)\
 end\
 local default = hooked(FriendActivity)\
-local FriendEntry\
-local function GameEntryComponent(props)\
-\9local theme = useTheme(\"home\").friendActivity\
-\9local canvasLength = useMemo(function()\
-\9\9return #props.game.friends * (48 + 10) + 96\
-\9end, { #props.game.friends })\
+return {\
+\9default = default,\
+}\
+", '@'.."Orca.views.Pages.Home.FriendActivity.FriendActivity")) setfenv(fn, newEnv("Orca.views.Pages.Home.FriendActivity.FriendActivity")) return fn() end)
+
+newModule("FriendItem", "ModuleScript", "Orca.views.Pages.Home.FriendActivity.FriendItem", "Orca.views.Pages.Home.FriendActivity", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+local TS = require(script.Parent.Parent.Parent.Parent.Parent.include.RuntimeLib)\
+local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
+local _roact_hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out)\
+local hooked = _roact_hooked.hooked\
+local useState = _roact_hooked.useState\
+local _services = TS.import(script, TS.getModule(script, \"@rbxts\", \"services\"))\
+local Players = _services.Players\
+local TeleportService = _services.TeleportService\
+local Border = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"components\", \"Border\").default\
+local Canvas = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"components\", \"Canvas\").default\
+local Fill = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"components\", \"Fill\").default\
+local useSpring = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"hooks\", \"common\", \"use-spring\").useSpring\
+local useTheme = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"hooks\", \"use-theme\").useTheme\
+local _udim2 = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"utils\", \"udim2\")\
+local px = _udim2.px\
+local scale = _udim2.scale\
+local FRIEND_SPRING_OPTIONS = {\
+\9frequency = 6,\
+}\
+local function FriendItem(_param)\
+\9local friend = _param.friend\
+\9local index = _param.index\
+\9local theme = useTheme(\"home\").friendActivity.friendButton\
+\9local _binding = useState(false)\
+\9local isHovered = _binding[1]\
+\9local setHovered = _binding[2]\
+\9local avatar = \"https://www.roblox.com/headshot-thumbnail/image?userId=\" .. (tostring(friend) .. \"&width=48&height=48&format=png\")\
 \9local _attributes = {\
-\9\9Image = props.game.thumbnail,\
+\9\9size = useSpring(isHovered and px(96, 48) or px(48, 48), FRIEND_SPRING_OPTIONS),\
+\9}\
+\9local _children = {\
+\9\9Roact.createElement(\"ImageLabel\", {\
+\9\9\9Image = \"rbxassetid://8992244272\",\
+\9\9\9ImageColor3 = useSpring(isHovered and theme.accent or theme.dropshadow, FRIEND_SPRING_OPTIONS),\
+\9\9\9ImageTransparency = useSpring(isHovered and theme.glowTransparency or theme.dropshadowTransparency, FRIEND_SPRING_OPTIONS),\
+\9\9\9Size = useSpring(isHovered and px(88 + 36, 74) or px(76, 74), FRIEND_SPRING_OPTIONS),\
+\9\9\9Position = px(-14, -10),\
+\9\9\9ScaleType = \"Slice\",\
+\9\9\9SliceCenter = Rect.new(Vector2.new(42, 42), Vector2.new(42, 42)),\
+\9\9\9BackgroundTransparency = 1,\
+\9\9}),\
+\9\9Roact.createElement(Fill, {\
+\9\9\9radius = 24,\
+\9\9\9color = useSpring(isHovered and theme.accent or theme.background, FRIEND_SPRING_OPTIONS),\
+\9\9\9transparency = theme.backgroundTransparency,\
+\9\9}),\
+\9}\
+\9local _length = #_children\
+\9local _child = theme.outlined and (Roact.createFragment({\
+\9\9border = Roact.createElement(Border, {\
+\9\9\9radius = 23,\
+\9\9\9color = isHovered and theme.foregroundAccent and theme.foregroundAccent or theme.foreground,\
+\9\9\9transparency = 0.7,\
+\9\9}),\
+\9}))\
+\9if _child then\
+\9\9if _child.elements ~= nil or _child.props ~= nil and _child.component ~= nil then\
+\9\9\9_children[_length + 1] = _child\
+\9\9else\
+\9\9\9for _k, _v in ipairs(_child) do\
+\9\9\9\9_children[_length + _k] = _v\
+\9\9\9end\
+\9\9end\
+\9end\
+\9_length = #_children\
+\9_children[_length + 1] = Roact.createElement(\"ImageLabel\", {\
+\9\9Image = avatar,\
+\9\9ScaleType = \"Crop\",\
+\9\9Size = px(48, 48),\
+\9\9LayoutOrder = index,\
+\9\9BackgroundTransparency = 1,\
+\9}, {\
+\9\9Roact.createElement(\"UICorner\", {\
+\9\9\9CornerRadius = UDim.new(1, 0),\
+\9\9}),\
+\9})\
+\9_children[_length + 2] = Roact.createElement(Canvas, {\
+\9\9clipsDescendants = true,\
+\9}, {\
+\9\9Roact.createElement(\"ImageLabel\", {\
+\9\9\9Image = \"rbxassetid://8992244380\",\
+\9\9\9ImageColor3 = isHovered and theme.foregroundAccent and theme.foregroundAccent or theme.foreground,\
+\9\9\9ImageTransparency = theme.foregroundTransparency,\
+\9\9\9Size = px(36, 36),\
+\9\9\9Position = px(48, 6),\
+\9\9\9BackgroundTransparency = 1,\
+\9\9}),\
+\9})\
+\9_children[_length + 3] = Roact.createElement(\"TextButton\", {\
+\9\9Text = \"\",\
+\9\9AutoButtonColor = false,\
+\9\9Size = scale(1, 1),\
+\9\9BackgroundTransparency = 1,\
+\9\9[Roact.Event.Activated] = function()\
+\9\9\9pcall(function()\
+\9\9\9\9TeleportService:TeleportToPlaceInstance(friend.PlaceId, friend.GameId, Players.LocalPlayer)\
+\9\9\9end)\
+\9\9end,\
+\9\9[Roact.Event.MouseEnter] = function()\
+\9\9\9return setHovered(true)\
+\9\9end,\
+\9\9[Roact.Event.MouseLeave] = function()\
+\9\9\9return setHovered(false)\
+\9\9end,\
+\9})\
+\9return Roact.createElement(Canvas, _attributes, _children)\
+end\
+local default = hooked(FriendItem)\
+return {\
+\9default = default,\
+}\
+", '@'.."Orca.views.Pages.Home.FriendActivity.FriendItem")) setfenv(fn, newEnv("Orca.views.Pages.Home.FriendActivity.FriendItem")) return fn() end)
+
+newModule("GameItem", "ModuleScript", "Orca.views.Pages.Home.FriendActivity.GameItem", "Orca.views.Pages.Home.FriendActivity", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
+local TS = require(script.Parent.Parent.Parent.Parent.Parent.include.RuntimeLib)\
+local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
+local _roact_hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out)\
+local pure = _roact_hooked.pure\
+local useMemo = _roact_hooked.useMemo\
+local Border = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"components\", \"Border\").default\
+local useDelayedUpdate = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"hooks\", \"common\", \"use-delayed-update\").useDelayedUpdate\
+local useSpring = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"hooks\", \"common\", \"use-spring\").useSpring\
+local useIsPageOpen = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"hooks\", \"use-current-page\").useIsPageOpen\
+local useTheme = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"hooks\", \"use-theme\").useTheme\
+local DashboardPage = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"store\", \"models\", \"dashboard.model\").DashboardPage\
+local px = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"utils\", \"udim2\").px\
+local FriendItem = TS.import(script, script.Parent, \"FriendItem\").default\
+local GAME_PADDING = 48\
+local function GameItem(_param)\
+\9local gameActivity = _param.gameActivity\
+\9local index = _param.index\
+\9local theme = useTheme(\"home\").friendActivity\
+\9local isOpen = useIsPageOpen(DashboardPage.Home)\
+\9local isVisible = useDelayedUpdate(isOpen, isOpen and 330 + index * 100 or 300)\
+\9local canvasLength = useMemo(function()\
+\9\9return #gameActivity.friends * (48 + 10) + 96\
+\9end, { #gameActivity.friends })\
+\9local _attributes = {\
+\9\9Image = gameActivity.thumbnail,\
 \9\9ScaleType = \"Crop\",\
 \9\9Size = px(278, 156),\
-\9\9Position = useSpring(px(24, props.index * (GAME_PADDING + 156)), {}),\
+\9\9Position = useSpring(isVisible and px(24, index * (GAME_PADDING + 156)) or px(-278, index * (GAME_PADDING + 156)), {}),\
 \9\9BackgroundTransparency = 1,\
 \9}\
 \9local _children = {\
@@ -7467,9 +7644,9 @@ local function GameEntryComponent(props)\
 \9\9}),\
 \9}\
 \9local _length = #_children\
-\9local _friends = props.game.friends\
+\9local _friends = gameActivity.friends\
 \9local _arg0 = function(friend, index)\
-\9\9return { tostring(friend.VisitorId), Roact.createElement(FriendEntry, {\
+\9\9return { tostring(friend.VisitorId), Roact.createElement(FriendItem, {\
 \9\9\9friend = friend,\
 \9\9\9index = index,\
 \9\9}) }\
@@ -7514,98 +7691,12 @@ local function GameEntryComponent(props)\
 \9_children[_length + 1] = Roact.createElement(\"ScrollingFrame\", _attributes_1, _children_1)\
 \9return Roact.createElement(\"ImageLabel\", _attributes, _children)\
 end\
-GameEntry = pure(GameEntryComponent)\
-local function FriendEntryComponent(props)\
-\9local theme = useTheme(\"home\").friendActivity.friendButton\
-\9local _binding = useState(false)\
-\9local isHovered = _binding[1]\
-\9local setHovered = _binding[2]\
-\9local avatar = \"https://www.roblox.com/headshot-thumbnail/image?userId=\" .. (tostring(props.friend.VisitorId) .. \"&width=48&height=48&format=png\")\
-\9local _attributes = {\
-\9\9size = useSpring(isHovered and px(96, 48) or px(48, 48), FRIEND_SPRING_OPTIONS),\
-\9}\
-\9local _children = {\
-\9\9Roact.createElement(\"ImageLabel\", {\
-\9\9\9Image = \"rbxassetid://8992244272\",\
-\9\9\9ImageColor3 = useSpring(isHovered and theme.accent or theme.dropshadow, FRIEND_SPRING_OPTIONS),\
-\9\9\9ImageTransparency = useSpring(isHovered and theme.glowTransparency or theme.dropshadowTransparency, FRIEND_SPRING_OPTIONS),\
-\9\9\9Size = useSpring(isHovered and px(88 + 36, 74) or px(76, 74), FRIEND_SPRING_OPTIONS),\
-\9\9\9Position = px(-14, -10),\
-\9\9\9ScaleType = \"Slice\",\
-\9\9\9SliceCenter = Rect.new(Vector2.new(42, 42), Vector2.new(42, 42)),\
-\9\9\9BackgroundTransparency = 1,\
-\9\9}),\
-\9\9Roact.createElement(Fill, {\
-\9\9\9radius = 24,\
-\9\9\9color = useSpring(isHovered and theme.accent or theme.background, FRIEND_SPRING_OPTIONS),\
-\9\9\9transparency = theme.backgroundTransparency,\
-\9\9}),\
-\9}\
-\9local _length = #_children\
-\9local _child = theme.outlined and (Roact.createFragment({\
-\9\9border = Roact.createElement(Border, {\
-\9\9\9radius = 23,\
-\9\9\9color = isHovered and theme.foregroundAccent and theme.foregroundAccent or theme.foreground,\
-\9\9\9transparency = 0.7,\
-\9\9}),\
-\9}))\
-\9if _child then\
-\9\9if _child.elements ~= nil or _child.props ~= nil and _child.component ~= nil then\
-\9\9\9_children[_length + 1] = _child\
-\9\9else\
-\9\9\9for _k, _v in ipairs(_child) do\
-\9\9\9\9_children[_length + _k] = _v\
-\9\9\9end\
-\9\9end\
-\9end\
-\9_length = #_children\
-\9_children[_length + 1] = Roact.createElement(\"ImageLabel\", {\
-\9\9Image = avatar,\
-\9\9ScaleType = \"Crop\",\
-\9\9Size = px(48, 48),\
-\9\9LayoutOrder = props.index,\
-\9\9BackgroundTransparency = 1,\
-\9}, {\
-\9\9Roact.createElement(\"UICorner\", {\
-\9\9\9CornerRadius = UDim.new(1, 0),\
-\9\9}),\
-\9})\
-\9_children[_length + 2] = Roact.createElement(Canvas, {\
-\9\9clipsDescendants = true,\
-\9}, {\
-\9\9Roact.createElement(\"ImageLabel\", {\
-\9\9\9Image = \"rbxassetid://8992244380\",\
-\9\9\9ImageColor3 = isHovered and theme.foregroundAccent and theme.foregroundAccent or theme.foreground,\
-\9\9\9ImageTransparency = theme.foregroundTransparency,\
-\9\9\9Size = px(36, 36),\
-\9\9\9Position = px(48, 6),\
-\9\9\9BackgroundTransparency = 1,\
-\9\9}),\
-\9})\
-\9_children[_length + 3] = Roact.createElement(\"TextButton\", {\
-\9\9Text = \"\",\
-\9\9AutoButtonColor = false,\
-\9\9Size = scale(1, 1),\
-\9\9BackgroundTransparency = 1,\
-\9\9[Roact.Event.Activated] = function()\
-\9\9\9pcall(function()\
-\9\9\9\9TeleportService:TeleportToPlaceInstance(props.friend.PlaceId, props.friend.GameId, Players.LocalPlayer)\
-\9\9\9end)\
-\9\9end,\
-\9\9[Roact.Event.MouseEnter] = function()\
-\9\9\9return setHovered(true)\
-\9\9end,\
-\9\9[Roact.Event.MouseLeave] = function()\
-\9\9\9return setHovered(false)\
-\9\9end,\
-\9})\
-\9return Roact.createElement(Canvas, _attributes, _children)\
-end\
-FriendEntry = hooked(FriendEntryComponent)\
+local default = pure(GameItem)\
 return {\
+\9GAME_PADDING = GAME_PADDING,\
 \9default = default,\
 }\
-", '@'.."Orca.views.Pages.Home.FriendActivity")) setfenv(fn, newEnv("Orca.views.Pages.Home.FriendActivity")) return fn() end)
+", '@'.."Orca.views.Pages.Home.FriendActivity.GameItem")) setfenv(fn, newEnv("Orca.views.Pages.Home.FriendActivity.GameItem")) return fn() end)
 
 newModule("Home", "ModuleScript", "Orca.views.Pages.Home.Home", "Orca.views.Pages.Home", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.Parent.include.RuntimeLib)\
@@ -8161,6 +8252,7 @@ local function Server()\
 \9\9\9BackgroundTransparency = 1,\
 \9\9}),\
 \9\9Roact.createElement(StatusLabel, {\
+\9\9\9index = 0,\
 \9\9\9offset = 69,\
 \9\9\9units = \"players\",\
 \9\9\9getValue = function()\
@@ -8168,6 +8260,7 @@ local function Server()\
 \9\9\9end,\
 \9\9}),\
 \9\9Roact.createElement(StatusLabel, {\
+\9\9\9index = 1,\
 \9\9\9offset = 108,\
 \9\9\9units = \"elapsed\",\
 \9\9\9getValue = function()\
@@ -8180,6 +8273,7 @@ local function Server()\
 \9\9\9end,\
 \9\9}),\
 \9\9Roact.createElement(StatusLabel, {\
+\9\9\9index = 2,\
 \9\9\9offset = 147,\
 \9\9\9units = \"ping\",\
 \9\9\9getValue = function()\
@@ -8305,17 +8399,24 @@ local hooked = _roact_hooked.hooked\
 local useMemo = _roact_hooked.useMemo\
 local useState = _roact_hooked.useState\
 local TextService = TS.import(script, TS.getModule(script, \"@rbxts\", \"services\")).TextService\
+local useDelayedUpdate = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"hooks\", \"common\", \"use-delayed-update\").useDelayedUpdate\
 local useInterval = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"hooks\", \"common\", \"use-interval\").useInterval\
+local useSpring = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"hooks\", \"common\", \"use-spring\").useSpring\
+local useIsPageOpen = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"hooks\", \"use-current-page\").useIsPageOpen\
 local useTheme = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"hooks\", \"use-theme\").useTheme\
+local DashboardPage = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"store\", \"models\", \"dashboard.model\").DashboardPage\
 local px = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"utils\", \"udim2\").px\
 local function StatusLabel(_param)\
 \9local offset = _param.offset\
+\9local index = _param.index\
 \9local units = _param.units\
 \9local getValue = _param.getValue\
 \9local theme = useTheme(\"home\").server\
 \9local _binding = useState(getValue)\
 \9local value = _binding[1]\
 \9local setValue = _binding[2]\
+\9local isOpen = useIsPageOpen(DashboardPage.Home)\
+\9local isVisible = useDelayedUpdate(isOpen, isOpen and 330 + index * 100 or 300)\
 \9local valueLength = useMemo(function()\
 \9\9return TextService:GetTextSize(value .. \" \", 16, \"GothamBold\", Vector2.new()).X\
 \9end, { value })\
@@ -8329,9 +8430,12 @@ local function StatusLabel(_param)\
 \9\9\9Font = \"GothamBold\",\
 \9\9\9TextSize = 16,\
 \9\9\9TextColor3 = theme.foreground,\
+\9\9\9TextTransparency = useSpring(isVisible and 0 or 1, {\
+\9\9\9\9frequency = 2,\
+\9\9\9}),\
 \9\9\9TextXAlignment = \"Left\",\
 \9\9\9TextYAlignment = \"Top\",\
-\9\9\9Position = px(24, offset),\
+\9\9\9Position = useSpring(isVisible and px(24, offset) or px(0, offset), {}),\
 \9\9\9BackgroundTransparency = 1,\
 \9\9}),\
 \9\9Roact.createElement(\"TextLabel\", {\
@@ -8340,10 +8444,10 @@ local function StatusLabel(_param)\
 \9\9\9Font = \"GothamBold\",\
 \9\9\9TextSize = 16,\
 \9\9\9TextColor3 = theme.foreground,\
-\9\9\9TextTransparency = 0.4,\
+\9\9\9TextTransparency = useSpring(isVisible and 0.4 or 1, {}),\
 \9\9\9TextXAlignment = \"Left\",\
 \9\9\9TextYAlignment = \"Top\",\
-\9\9\9Position = px(24 + valueLength, offset),\
+\9\9\9Position = useSpring(isVisible and px(24 + valueLength, offset) or px(0 + valueLength, offset), {}),\
 \9\9\9BackgroundTransparency = 1,\
 \9\9}),\
 \9})\
@@ -8360,18 +8464,21 @@ local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)
 local hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out).hooked\
 local Canvas = TS.import(script, script.Parent.Parent.Parent.Parent, \"components\", \"Canvas\").default\
 local Card = TS.import(script, script.Parent.Parent.Parent.Parent, \"components\", \"Card\").default\
-local _constants = TS.import(script, script.Parent.Parent.Parent.Parent, \"constants\")\
-local IS_DEV = _constants.IS_DEV\
-local VERSION_TAG = _constants.VERSION_TAG\
+local ParallaxImage = TS.import(script, script.Parent.Parent.Parent.Parent, \"components\", \"ParallaxImage\").default\
+local VERSION_TAG = TS.import(script, script.Parent.Parent.Parent.Parent, \"constants\").VERSION_TAG\
 local useDelayedUpdate = TS.import(script, script.Parent.Parent.Parent.Parent, \"hooks\", \"common\", \"use-delayed-update\").useDelayedUpdate\
 local useSpring = TS.import(script, script.Parent.Parent.Parent.Parent, \"hooks\", \"common\", \"use-spring\").useSpring\
 local useIsPageOpen = TS.import(script, script.Parent.Parent.Parent.Parent, \"hooks\", \"use-current-page\").useIsPageOpen\
+local useParallaxOffset = TS.import(script, script.Parent.Parent.Parent.Parent, \"hooks\", \"use-parallax-offset\").useParallaxOffset\
 local useTheme = TS.import(script, script.Parent.Parent.Parent.Parent, \"hooks\", \"use-theme\").useTheme\
 local DashboardPage = TS.import(script, script.Parent.Parent.Parent.Parent, \"store\", \"models\", \"dashboard.model\").DashboardPage\
-local px = TS.import(script, script.Parent.Parent.Parent.Parent, \"utils\", \"udim2\").px\
+local _udim2 = TS.import(script, script.Parent.Parent.Parent.Parent, \"utils\", \"udim2\")\
+local px = _udim2.px\
+local scale = _udim2.scale\
 local Label\
 local function Title()\
 \9local theme = useTheme(\"home\").title\
+\9local offset = useParallaxOffset()\
 \9return Roact.createElement(Card, {\
 \9\9index = 0,\
 \9\9page = DashboardPage.Home,\
@@ -8379,13 +8486,25 @@ local function Title()\
 \9\9size = px(326, 184),\
 \9\9position = UDim2.new(0, 0, 1, -648 - 48),\
 \9}, {\
+\9\9Roact.createElement(ParallaxImage, {\
+\9\9\9image = \"rbxassetid://9049308243\",\
+\9\9\9imageSize = Vector2.new(652, 368),\
+\9\9\9padding = Vector2.new(30, 30),\
+\9\9\9offset = offset,\
+\9\9}, {\
+\9\9\9Roact.createElement(\"UICorner\", {\
+\9\9\9\9CornerRadius = UDim.new(0, 12),\
+\9\9\9}),\
+\9\9}),\
 \9\9Roact.createElement(\"ImageLabel\", {\
-\9\9\9Image = \"rbxassetid://8992263675\",\
-\9\9\9Size = px(387 * 0.85, 473 * 0.85),\
-\9\9\9Position = px(75, 18),\
-\9\9\9Rotation = 5,\
+\9\9\9Image = \"rbxassetid://9048947177\",\
+\9\9\9Size = scale(1, 1),\
+\9\9\9ImageTransparency = 0.3,\
 \9\9\9BackgroundTransparency = 1,\
-\9\9\9ZIndex = IS_DEV and 1 or 2,\
+\9\9}, {\
+\9\9\9Roact.createElement(\"UICorner\", {\
+\9\9\9\9CornerRadius = UDim.new(0, 12),\
+\9\9\9}),\
 \9\9}),\
 \9\9Roact.createElement(Canvas, {\
 \9\9\9padding = {\
@@ -8413,7 +8532,7 @@ local function Title()\
 \9\9\9}),\
 \9\9\9Roact.createElement(Label, {\
 \9\9\9\9index = 3,\
-\9\9\9\9text = \"Powered by TS\",\
+\9\9\9\9text = \"Pls star repo\",\
 \9\9\9\9position = px(0, 86),\
 \9\9\9\9transparency = 0.3,\
 \9\9\9}),\
@@ -8769,11 +8888,14 @@ local GlowRadius = _Glow.GlowRadius\
 local _rodux_hooks = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"hooks\", \"common\", \"rodux-hooks\")\
 local useAppDispatch = _rodux_hooks.useAppDispatch\
 local useAppSelector = _rodux_hooks.useAppSelector\
+local useDelayedUpdate = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"hooks\", \"common\", \"use-delayed-update\").useDelayedUpdate\
 local useSpring = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"hooks\", \"common\", \"use-spring\").useSpring\
+local useIsPageOpen = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"hooks\", \"use-current-page\").useIsPageOpen\
 local useTheme = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"hooks\", \"use-theme\").useTheme\
 local _options_action = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"store\", \"actions\", \"options.action\")\
 local removeShortcut = _options_action.removeShortcut\
 local setShortcut = _options_action.setShortcut\
+local DashboardPage = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"store\", \"models\", \"dashboard.model\").DashboardPage\
 local lerp = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"utils\", \"number-util\").lerp\
 local _udim2 = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"utils\", \"udim2\")\
 local px = _udim2.px\
@@ -8791,6 +8913,8 @@ local function ShortcutItem(_param)\
 \9local index = _param.index\
 \9local dispatch = useAppDispatch()\
 \9local buttonTheme = useTheme(\"options\").shortcuts.shortcutButton\
+\9local isOpen = useIsPageOpen(DashboardPage.Options)\
+\9local isVisible = useDelayedUpdate(isOpen, isOpen and 250 + index * 40 or 230)\
 \9local shortcut = useAppSelector(function(state)\
 \9\9return state.options.shortcuts[action]\
 \9end)\
@@ -8902,7 +9026,7 @@ local function ShortcutItem(_param)\
 \9local foreground = useSpring(selected and buttonTheme.foregroundAccent and buttonTheme.foregroundAccent or buttonTheme.foreground, {})\
 \9local _attributes = {\
 \9\9size = px(ENTRY_WIDTH, ENTRY_HEIGHT),\
-\9\9position = px(0, (PADDING + ENTRY_HEIGHT) * index),\
+\9\9position = useSpring(isVisible and px(0, (PADDING + ENTRY_HEIGHT) * index) or px(-ENTRY_WIDTH - 24, (PADDING + ENTRY_HEIGHT) * index), {}),\
 \9\9zIndex = index,\
 \9}\
 \9local _children = {\
@@ -9144,9 +9268,12 @@ local GlowRadius = _Glow.GlowRadius\
 local _rodux_hooks = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"hooks\", \"common\", \"rodux-hooks\")\
 local useAppDispatch = _rodux_hooks.useAppDispatch\
 local useAppSelector = _rodux_hooks.useAppSelector\
+local useDelayedUpdate = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"hooks\", \"common\", \"use-delayed-update\").useDelayedUpdate\
 local useSpring = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"hooks\", \"common\", \"use-spring\").useSpring\
+local useIsPageOpen = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"hooks\", \"use-current-page\").useIsPageOpen\
 local useTheme = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"hooks\", \"use-theme\").useTheme\
 local setTheme = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"store\", \"actions\", \"options.action\").setTheme\
+local DashboardPage = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"store\", \"models\", \"dashboard.model\").DashboardPage\
 local _color3 = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"utils\", \"color3\")\
 local getLuminance = _color3.getLuminance\
 local hex = _color3.hex\
@@ -9164,6 +9291,8 @@ local function ThemeItem(_param)\
 \9local index = _param.index\
 \9local dispatch = useAppDispatch()\
 \9local buttonTheme = useTheme(\"options\").themes.themeButton\
+\9local isOpen = useIsPageOpen(DashboardPage.Options)\
+\9local isVisible = useDelayedUpdate(isOpen, isOpen and 300 + index * 40 or 280)\
 \9local isSelected = useAppSelector(function(state)\
 \9\9return state.options.currentTheme == theme.name\
 \9end)\
@@ -9207,7 +9336,7 @@ local function ThemeItem(_param)\
 \9local foreground = useSpring(isSelected and buttonTheme.foregroundAccent and buttonTheme.foregroundAccent or buttonTheme.foreground, {})\
 \9local _attributes = {\
 \9\9size = px(ENTRY_WIDTH, ENTRY_HEIGHT),\
-\9\9position = px(0, (PADDING + ENTRY_HEIGHT) * index),\
+\9\9position = useSpring(isVisible and px(0, (PADDING + ENTRY_HEIGHT) * index) or px(-ENTRY_WIDTH - 24, (PADDING + ENTRY_HEIGHT) * index), {}),\
 \9\9zIndex = index,\
 \9}\
 \9local _children = {\
@@ -9630,7 +9759,6 @@ return {\
 
 newModule("ScriptCard", "ModuleScript", "Orca.views.Pages.Scripts.ScriptCard", "Orca.views.Pages.Scripts", function () local fn = assert(loadstring("-- Compiled with roblox-ts v1.2.7\
 local TS = require(script.Parent.Parent.Parent.Parent.include.RuntimeLib)\
-local Spring = TS.import(script, TS.getModule(script, \"@rbxts\", \"flipper\").src).Spring\
 local Roact = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact\").src)\
 local _roact_hooked = TS.import(script, TS.getModule(script, \"@rbxts\", \"roact-hooked\").out)\
 local hooked = _roact_hooked.hooked\
@@ -9639,17 +9767,13 @@ local Border = TS.import(script, script.Parent.Parent.Parent.Parent, \"component
 local Canvas = TS.import(script, script.Parent.Parent.Parent.Parent, \"components\", \"Canvas\").default\
 local Fill = TS.import(script, script.Parent.Parent.Parent.Parent, \"components\", \"Fill\").default\
 local ParallaxImage = TS.import(script, script.Parent.Parent.Parent.Parent, \"components\", \"ParallaxImage\").default\
-local _flipper_hooks = TS.import(script, script.Parent.Parent.Parent.Parent, \"hooks\", \"common\", \"flipper-hooks\")\
-local getBinding = _flipper_hooks.getBinding\
-local useMotor = _flipper_hooks.useMotor\
 local useDelayedUpdate = TS.import(script, script.Parent.Parent.Parent.Parent, \"hooks\", \"common\", \"use-delayed-update\").useDelayedUpdate\
 local useIsMount = TS.import(script, script.Parent.Parent.Parent.Parent, \"hooks\", \"common\", \"use-did-mount\").useIsMount\
 local useForcedUpdate = TS.import(script, script.Parent.Parent.Parent.Parent, \"hooks\", \"common\", \"use-forced-update\").useForcedUpdate\
-local useMouseLocation = TS.import(script, script.Parent.Parent.Parent.Parent, \"hooks\", \"common\", \"use-mouse-location\").useMouseLocation\
 local useSetState = TS.import(script, script.Parent.Parent.Parent.Parent, \"hooks\", \"common\", \"use-set-state\").default\
 local useSpring = TS.import(script, script.Parent.Parent.Parent.Parent, \"hooks\", \"common\", \"use-spring\").useSpring\
-local useViewportSize = TS.import(script, script.Parent.Parent.Parent.Parent, \"hooks\", \"common\", \"use-viewport-size\").useViewportSize\
 local useIsPageOpen = TS.import(script, script.Parent.Parent.Parent.Parent, \"hooks\", \"use-current-page\").useIsPageOpen\
+local useParallaxOffset = TS.import(script, script.Parent.Parent.Parent.Parent, \"hooks\", \"use-parallax-offset\").useParallaxOffset\
 local DashboardPage = TS.import(script, script.Parent.Parent.Parent.Parent, \"store\", \"models\", \"dashboard.model\").DashboardPage\
 local hex = TS.import(script, script.Parent.Parent.Parent.Parent, \"utils\", \"color3\").hex\
 local scale = TS.import(script, script.Parent.Parent.Parent.Parent, \"utils\", \"udim2\").scale\
@@ -9682,26 +9806,7 @@ local function ScriptCard(_param)\
 \9useEffect(function()\
 \9\9return rerender()\
 \9end, {})\
-\9local mouseLocationMotor = useMotor({ 0, 0 })\
-\9local mouseLocation = getBinding(mouseLocationMotor)\
-\9local viewportSize = useViewportSize()\
-\9local offset = Roact.joinBindings({\
-\9\9viewportSize = viewportSize,\
-\9\9mouseLocation = mouseLocation,\
-\9}):map(function(_param_1)\
-\9\9local viewportSize = _param_1.viewportSize\
-\9\9local _binding = _param_1.mouseLocation\
-\9\9local x = _binding[1]\
-\9\9local y = _binding[2]\
-\9\9return Vector2.new((x - viewportSize.X / 2) / viewportSize.X, (y - viewportSize.Y / 2) / viewportSize.Y)\
-\9end)\
-\9useMouseLocation(function(location)\
-\9\9mouseLocationMotor:setGoal({ Spring.new(location.X, {\
-\9\9\9dampingRatio = 5,\
-\9\9}), Spring.new(location.Y, {\
-\9\9\9dampingRatio = 5,\
-\9\9}) })\
-\9end)\
+\9local offset = useParallaxOffset()\
 \9local _binding = useSetState({\
 \9\9isHovered = false,\
 \9\9isPressed = false,\
