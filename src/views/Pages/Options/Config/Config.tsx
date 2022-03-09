@@ -21,7 +21,7 @@ function Config() {
 			position={new UDim2(0, 0, 1, -416 - 48)}
 		>
 			<textlabel
-				Text="Configuration"
+				Text="Options"
 				Font="GothamBlack"
 				TextSize={20}
 				TextColor3={theme.foreground}
