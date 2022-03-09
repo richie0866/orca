@@ -19,7 +19,7 @@ function FriendItem({ friend, index }: Props) {
 	const theme = useTheme("home").friendActivity.friendButton;
 	const [isHovered, setHovered] = useState(false);
 
-	const avatar = `https://www.roblox.com/headshot-thumbnail/image?userId=${friend}&width=48&height=48&format=png`;
+	const avatar = `https://www.roblox.com/headshot-thumbnail/image?userId=${friend.VisitorId}&width=48&height=48&format=png`;
 
 	return (
 		<Canvas size={useSpring(isHovered ? px(96, 48) : px(48, 48), FRIEND_SPRING_OPTIONS)}>
