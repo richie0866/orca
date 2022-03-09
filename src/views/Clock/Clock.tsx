@@ -80,7 +80,7 @@ function Clock() {
 			/>
 
 			{/* Effects */}
-			{theme.acrylic ? <Acrylic /> : undefined}
+			{theme.acrylic && <Acrylic />}
 		</frame>
 	);
 }

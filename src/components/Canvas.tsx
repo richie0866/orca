@@ -38,14 +38,15 @@ function Canvas({
 			ZIndex={zIndex}
 			Change={onChange}
 		>
-			{padding !== undefined ? (
+			{padding !== undefined && (
 				<uipadding
+					Key="padding"
 					PaddingTop={mapBinding(padding.top, (px) => new UDim(0, px))}
 					PaddingRight={mapBinding(padding.right, (px) => new UDim(0, px))}
 					PaddingBottom={mapBinding(padding.bottom, (px) => new UDim(0, px))}
 					PaddingLeft={mapBinding(padding.left, (px) => new UDim(0, px))}
 				/>
-			) : undefined}
+			)}
 			{children}
 		</frame>
 	);

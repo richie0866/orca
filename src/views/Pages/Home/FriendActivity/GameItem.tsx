@@ -7,6 +7,7 @@ import { useIsPageOpen } from "hooks/use-current-page";
 import { GameActivity } from "hooks/use-friends";
 import { useTheme } from "hooks/use-theme";
 import { DashboardPage } from "store/models/dashboard.model";
+import { arrayToMap } from "utils/array-util";
 import { px } from "utils/udim2";
 import FriendItem from "./FriendItem";
 
@@ -61,14 +62,10 @@ function GameItem({ gameActivity, index }: Props) {
 				/>
 				<uipadding PaddingLeft={new UDim(0, 10)} />
 
-				{
-					new Map(
-						gameActivity.friends.map((friend, index) => [
-							tostring(friend.VisitorId),
-							<FriendItem friend={friend} index={index} />,
-						]),
-					)
-				}
+				{arrayToMap(gameActivity.friends, (friend, index) => [
+					tostring(friend.VisitorId),
+					<FriendItem friend={friend} index={index} />,
+				])}
 			</scrollingframe>
 		</imagelabel>
 	);

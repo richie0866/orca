@@ -15,21 +15,21 @@ interface Props extends Roact.PropsWithChildren {
 function Fill({ color = hex("#ffffff"), gradient, transparency = 0, radius = 0, [Roact.Children]: children }: Props) {
 	return (
 		<frame Size={scale(1, 1)} BackgroundColor3={color} BackgroundTransparency={transparency}>
-			{gradient ? (
+			{gradient && (
 				<uigradient
 					Key="gradient"
 					Color={gradient.color}
 					Transparency={gradient.transparency}
 					Rotation={gradient.rotation}
 				/>
-			) : undefined}
+			)}
 
-			{radius !== undefined ? (
+			{radius !== undefined && (
 				<uicorner
 					Key="corner"
 					CornerRadius={mapBinding(radius, (r) => (r === "circular" ? new UDim(1, 0) : new UDim(0, r)))}
 				/>
-			) : undefined}
+			)}
 
 			{children}
 		</frame>

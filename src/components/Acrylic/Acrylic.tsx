@@ -28,11 +28,7 @@ function getOffset() {
 function Acrylic({ radius, distance }: Props) {
 	const isAcrylicBlurEnabled = useAppSelector((state) => state.options.config.acrylicBlur);
 
-	return isAcrylicBlurEnabled ? (
-		<AcrylicBlur radius={radius} distance={distance} />
-	) : (
-		<frame BackgroundTransparency={1} />
-	);
+	return <>{isAcrylicBlurEnabled && <AcrylicBlur radius={radius} distance={distance} />}</>;
 }
 
 export default hooked(Acrylic);

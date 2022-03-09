@@ -57,7 +57,7 @@ function Card({ index, page, theme, size, position, [Roact.Children]: children }
 			{children}
 
 			{/* Effects */}
-			{theme.acrylic ? <Acrylic Key="acrylic" /> : undefined}
+			{theme.acrylic && <Acrylic Key="acrylic" />}
 
 			{/* Border overlaps children */}
 			{theme.outlined && <Border color={theme.foreground} radius={16} transparency={0.8} />}

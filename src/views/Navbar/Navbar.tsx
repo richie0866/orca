@@ -84,7 +84,7 @@ function Navbar() {
 			<NavbarTab page={DashboardPage.Options} />
 
 			{/* Effects */}
-			{theme.acrylic ? <Acrylic /> : undefined}
+			{theme.acrylic && <Acrylic />}
 		</frame>
 	);
 }

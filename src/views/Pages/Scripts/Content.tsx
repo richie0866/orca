@@ -24,11 +24,8 @@ function Content({ header, body, footer }: Props) {
 			}}
 		>
 			{/* Header, centered when body is undefined */}
-			{body !== undefined ? (
-				<HeaderTopLeft header={header} scaleFactor={scaleFactor} />
-			) : (
-				<HeaderCenter header={header} scaleFactor={scaleFactor} />
-			)}
+			{body === undefined && <HeaderCenter header={header} scaleFactor={scaleFactor} />}
+			{body !== undefined && <HeaderTopLeft header={header} scaleFactor={scaleFactor} />}
 
 			{/* Body */}
 			{body !== undefined && (

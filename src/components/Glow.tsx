@@ -95,13 +95,14 @@ function Glow({
 				Position={position}
 				BackgroundTransparency={1}
 			>
-				{gradient ? (
+				{gradient && (
 					<uigradient
+						Key="gradient"
 						Color={gradient.color}
 						Transparency={gradient.transparency}
 						Rotation={gradient.rotation}
 					/>
-				) : undefined}
+				)}
 				{children}
 			</imagelabel>
 		</Canvas>
