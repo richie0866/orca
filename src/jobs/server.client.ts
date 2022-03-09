@@ -5,7 +5,6 @@ import * as http from "utils/http";
 import { setTimeout, Timeout } from "utils/timeout";
 
 interface GameServer {
-	// There's more, but they are irrelevant to this job.
 	id: string;
 	maxPlayers: number;
 	playing: number;
