@@ -3,10 +3,30 @@ import { getStore, onJobChange } from "jobs/helpers/job-store";
 import { JobsAction } from "store/actions/jobs.action";
 
 const player = Players.LocalPlayer;
+const screenGuisWithResetOnSpawn = new Array<ScreenGui>();
 
 let originalCharacter: Model | undefined;
 let ghostCharacter: Model | undefined;
 let lastPosition: CFrame | undefined;
+
+function disableResetOnSpawn() {
+	const playerGui = player.FindFirstChildWhichIsA("PlayerGui");
+	if (playerGui) {
+		for (const object of playerGui.GetChildren()) {
+			if (object.IsA("ScreenGui") && object.ResetOnSpawn) {
+				screenGuisWithResetOnSpawn.push(object as ScreenGui);
+				object.ResetOnSpawn = false;
+			}
+		}
+	}
+}
+
+function enableResetOnSpawn() {
+	for (const screenGui of screenGuisWithResetOnSpawn) {
+		screenGui.ResetOnSpawn = true;
+	}
+	screenGuisWithResetOnSpawn.clear();
+}
 
 async function main() {
 	await onJobChange("ghost", (job, state) => {
@@ -84,9 +104,11 @@ async function activateGhost() {
 	}
 
 	// Set up fake character
+	disableResetOnSpawn();
 	ghostCharacter.Parent = character.Parent;
 	player.Character = ghostCharacter;
 	Workspace.CurrentCamera!.CameraSubject = ghostHumanoid;
+	enableResetOnSpawn();
 
 	// Start animation
 	if (animation) {
@@ -129,8 +151,11 @@ async function deactivateGhost() {
 	if (rootPart?.IsA("BasePart") && position) {
 		rootPart.CFrame = position;
 	}
+
+	disableResetOnSpawn();
 	player.Character = originalCharacter;
 	Workspace.CurrentCamera!.CameraSubject = humanoid;
+	enableResetOnSpawn();
 
 	// Restore animation
 	if (animation) {
