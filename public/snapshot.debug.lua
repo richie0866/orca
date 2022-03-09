@@ -2420,9 +2420,31 @@ local _job_store = TS.import(script, script.Parent.Parent, \"helpers\", \"job-st
 local getStore = _job_store.getStore\
 local onJobChange = _job_store.onJobChange\
 local player = Players.LocalPlayer\
+local screenGuisWithResetOnSpawn = {}\
 local originalCharacter\
 local ghostCharacter\
 local lastPosition\
+local function disableResetOnSpawn()\
+\9local playerGui = player:FindFirstChildWhichIsA(\"PlayerGui\")\
+\9if playerGui then\
+\9\9for _, object in ipairs(playerGui:GetChildren()) do\
+\9\9\9if object:IsA(\"ScreenGui\") and object.ResetOnSpawn then\
+\9\9\9\9-- ▼ Array.push ▼\
+\9\9\9\9screenGuisWithResetOnSpawn[#screenGuisWithResetOnSpawn + 1] = object\
+\9\9\9\9-- ▲ Array.push ▲\
+\9\9\9\9object.ResetOnSpawn = false\
+\9\9\9end\
+\9\9end\
+\9end\
+end\
+local function enableResetOnSpawn()\
+\9for _, screenGui in ipairs(screenGuisWithResetOnSpawn) do\
+\9\9screenGui.ResetOnSpawn = true\
+\9end\
+\9-- ▼ Array.clear ▼\
+\9table.clear(screenGuisWithResetOnSpawn)\
+\9-- ▲ Array.clear ▲\
+end\
 local deactivate, activateGhost, deactivateOnCharacterAdded, deactivateGhost\
 local main = TS.async(function()\
 \9TS.await(onJobChange(\"ghost\", function(job, state)\
@@ -2492,9 +2514,11 @@ activateGhost = TS.async(function()\
 \9\9animation.Disabled = true\
 \9\9animation.Parent = ghostCharacter\
 \9end\
+\9disableResetOnSpawn()\
 \9ghostCharacter.Parent = character.Parent\
 \9player.Character = ghostCharacter\
 \9Workspace.CurrentCamera.CameraSubject = ghostHumanoid\
+\9enableResetOnSpawn()\
 \9if animation then\
 \9\9animation.Disabled = false\
 \9end\
@@ -2546,8 +2570,10 @@ deactivateGhost = TS.async(function()\
 \9if _condition then\
 \9\9rootPart.CFrame = position\
 \9end\
+\9disableResetOnSpawn()\
 \9player.Character = originalCharacter\
 \9Workspace.CurrentCamera.CameraSubject = humanoid\
+\9enableResetOnSpawn()\
 \9if animation then\
 \9\9animation.Parent = originalCharacter\
 \9\9animation.Disabled = false\
@@ -7515,7 +7541,7 @@ local function FriendItem(_param)\
 \9local _binding = useState(false)\
 \9local isHovered = _binding[1]\
 \9local setHovered = _binding[2]\
-\9local avatar = \"https://www.roblox.com/headshot-thumbnail/image?userId=\" .. (tostring(friend) .. \"&width=48&height=48&format=png\")\
+\9local avatar = \"https://www.roblox.com/headshot-thumbnail/image?userId=\" .. (tostring(friend.VisitorId) .. \"&width=48&height=48&format=png\")\
 \9local _attributes = {\
 \9\9size = useSpring(isHovered and px(96, 48) or px(48, 48), FRIEND_SPRING_OPTIONS),\
 \9}\
@@ -8637,7 +8663,7 @@ local function Config()\
 \9\9position = UDim2.new(0, 0, 1, -416 - 48),\
 \9}, {\
 \9\9Roact.createElement(\"TextLabel\", {\
-\9\9\9Text = \"Configuration\",\
+\9\9\9Text = \"Options\",\
 \9\9\9Font = \"GothamBlack\",\
 \9\9\9TextSize = 20,\
 \9\9\9TextColor3 = theme.foreground,\
