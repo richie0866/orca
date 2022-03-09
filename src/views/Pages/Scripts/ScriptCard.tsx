@@ -1,19 +1,17 @@
-import { Spring } from "@rbxts/flipper";
 import Roact from "@rbxts/roact";
 import { hooked, useEffect } from "@rbxts/roact-hooked";
 import Border from "components/Border";
 import Canvas from "components/Canvas";
 import Fill from "components/Fill";
 import ParallaxImage from "components/ParallaxImage";
-import { getBinding, SpringOptions, useMotor } from "hooks/common/flipper-hooks";
+import { SpringOptions } from "hooks/common/flipper-hooks";
 import { useDelayedUpdate } from "hooks/common/use-delayed-update";
 import { useIsMount } from "hooks/common/use-did-mount";
 import { useForcedUpdate } from "hooks/common/use-forced-update";
-import { useMouseLocation } from "hooks/common/use-mouse-location";
 import useSetState from "hooks/common/use-set-state";
 import { useSpring } from "hooks/common/use-spring";
-import { useViewportSize } from "hooks/common/use-viewport-size";
 import { useIsPageOpen } from "hooks/use-current-page";
+import { useParallaxOffset } from "hooks/use-parallax-offset";
 import { DashboardPage } from "store/models/dashboard.model";
 import { hex } from "utils/color3";
 import { scale } from "utils/udim2";
@@ -58,25 +56,8 @@ function ScriptCard({
 	// Force a rerender to start the intro transition
 	useEffect(() => rerender(), []);
 
-	// Parallax effect
-	const mouseLocationMotor = useMotor([0, 0]);
-	const mouseLocation = getBinding(mouseLocationMotor);
-	const viewportSize = useViewportSize();
+	const offset = useParallaxOffset();
 
-	const offset = Roact.joinBindings({ viewportSize, mouseLocation }).map(
-		({ viewportSize, mouseLocation: [x, y] }) => {
-			return new Vector2((x - viewportSize.X / 2) / viewportSize.X, (y - viewportSize.Y / 2) / viewportSize.Y);
-		},
-	);
-
-	useMouseLocation((location) => {
-		mouseLocationMotor.setGoal([
-			new Spring(location.X, { dampingRatio: 5 }),
-			new Spring(location.Y, { dampingRatio: 5 }),
-		]);
-	});
-
-	// State
 	const [{ isHovered, isPressed }, setButtonState] = useSetState({ isHovered: false, isPressed: false });
 
 	return (

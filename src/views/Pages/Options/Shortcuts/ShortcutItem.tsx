@@ -6,9 +6,12 @@ import Canvas from "components/Canvas";
 import Fill from "components/Fill";
 import Glow, { GlowRadius } from "components/Glow";
 import { useAppDispatch, useAppSelector } from "hooks/common/rodux-hooks";
+import { useDelayedUpdate } from "hooks/common/use-delayed-update";
 import { useSpring } from "hooks/common/use-spring";
+import { useIsPageOpen } from "hooks/use-current-page";
 import { useTheme } from "hooks/use-theme";
 import { removeShortcut, setShortcut } from "store/actions/options.action";
+import { DashboardPage } from "store/models/dashboard.model";
 import { lerp } from "utils/number-util";
 import { px, scale } from "utils/udim2";
 
@@ -32,6 +35,8 @@ interface Props {
 function ShortcutItem({ onActivate, onSelect, selectedItem, action, description, index }: Props) {
 	const dispatch = useAppDispatch();
 	const buttonTheme = useTheme("options").shortcuts.shortcutButton;
+	const isOpen = useIsPageOpen(DashboardPage.Options);
+	const isVisible = useDelayedUpdate(isOpen, isOpen ? 250 + index * 40 : 230);
 
 	const shortcut = useAppSelector((state) => state.options.shortcuts[action]);
 	const shortcutEnum = Enum.KeyCode.GetEnumItems().find((item) => item.Value === shortcut);
@@ -114,7 +119,16 @@ function ShortcutItem({ onActivate, onSelect, selectedItem, action, description,
 	);
 
 	return (
-		<Canvas size={px(ENTRY_WIDTH, ENTRY_HEIGHT)} position={px(0, (PADDING + ENTRY_HEIGHT) * index)} zIndex={index}>
+		<Canvas
+			size={px(ENTRY_WIDTH, ENTRY_HEIGHT)}
+			position={useSpring(
+				isVisible
+					? px(0, (PADDING + ENTRY_HEIGHT) * index)
+					: px(-ENTRY_WIDTH - 24, (PADDING + ENTRY_HEIGHT) * index),
+				{},
+			)}
+			zIndex={index}
+		>
 			{/* Underglow */}
 			<Glow
 				radius={GlowRadius.Size70}

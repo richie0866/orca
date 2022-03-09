@@ -35,7 +35,7 @@ export function useDelayedUpdate<T>(value: T, delay: number, isImmediate?: (curr
 				setDelayedValue(value);
 				updates.current.delete(id);
 			}, delay),
-			resolveTime: time() + delay,
+			resolveTime: os.clock() + delay,
 		};
 
 		// Clear all updates that are later than the current one to prevent overlap

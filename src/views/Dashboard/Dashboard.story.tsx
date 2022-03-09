@@ -10,7 +10,7 @@ export = (target: Frame) => {
 			store={configureStore({
 				dashboard: {
 					isOpen: true,
-					page: DashboardPage.Options,
+					page: DashboardPage.Home,
 					hint: undefined,
 					apps: {},
 				},

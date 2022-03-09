@@ -33,11 +33,13 @@ function Server() {
 
 			{/* Server status */}
 			<StatusLabel
+				index={0}
 				offset={69}
 				units="players"
 				getValue={() => `${Players.GetPlayers().size()} / ${Players.MaxPlayers}`}
 			/>
 			<StatusLabel
+				index={1}
 				offset={108}
 				units="elapsed"
 				getValue={() => {
@@ -56,6 +58,7 @@ function Server() {
 				}}
 			/>
 			<StatusLabel
+				index={2}
 				offset={147}
 				units="ping"
 				getValue={() => `${math.round(Players.LocalPlayer.GetNetworkPing() * 1000)} ms`}

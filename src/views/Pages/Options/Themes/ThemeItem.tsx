@@ -5,9 +5,12 @@ import Canvas from "components/Canvas";
 import Fill from "components/Fill";
 import Glow, { GlowRadius } from "components/Glow";
 import { useAppDispatch, useAppSelector } from "hooks/common/rodux-hooks";
+import { useDelayedUpdate } from "hooks/common/use-delayed-update";
 import { useSpring } from "hooks/common/use-spring";
+import { useIsPageOpen } from "hooks/use-current-page";
 import { useTheme } from "hooks/use-theme";
 import { setTheme } from "store/actions/options.action";
+import { DashboardPage } from "store/models/dashboard.model";
 import { Theme } from "themes/theme.interface";
 import { getLuminance, hex } from "utils/color3";
 import { lerp } from "utils/number-util";
@@ -26,6 +29,8 @@ interface Props {
 function ThemeItem({ theme, index }: Props) {
 	const dispatch = useAppDispatch();
 	const buttonTheme = useTheme("options").themes.themeButton;
+	const isOpen = useIsPageOpen(DashboardPage.Options);
+	const isVisible = useDelayedUpdate(isOpen, isOpen ? 300 + index * 40 : 280);
 
 	const isSelected = useAppSelector((state) => state.options.currentTheme === theme.name);
 	const [hovered, setHovered] = useState(false);
@@ -52,7 +57,16 @@ function ThemeItem({ theme, index }: Props) {
 	);
 
 	return (
-		<Canvas size={px(ENTRY_WIDTH, ENTRY_HEIGHT)} position={px(0, (PADDING + ENTRY_HEIGHT) * index)} zIndex={index}>
+		<Canvas
+			size={px(ENTRY_WIDTH, ENTRY_HEIGHT)}
+			position={useSpring(
+				isVisible
+					? px(0, (PADDING + ENTRY_HEIGHT) * index)
+					: px(-ENTRY_WIDTH - 24, (PADDING + ENTRY_HEIGHT) * index),
+				{},
+			)}
+			zIndex={index}
+		>
 			{/* Underglow */}
 			<Glow
 				radius={GlowRadius.Size70}

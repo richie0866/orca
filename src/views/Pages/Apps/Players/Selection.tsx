@@ -8,9 +8,12 @@ import Glow, { GlowRadius } from "components/Glow";
 import { IS_DEV } from "constants";
 import { useLinear } from "hooks/common/flipper-hooks";
 import { useAppDispatch, useAppSelector } from "hooks/common/rodux-hooks";
+import { useDelayedUpdate } from "hooks/common/use-delayed-update";
 import { useSpring } from "hooks/common/use-spring";
+import { useIsPageOpen } from "hooks/use-current-page";
 import { useTheme } from "hooks/use-theme";
 import { playerDeselected, playerSelected } from "store/actions/dashboard.action";
+import { DashboardPage } from "store/models/dashboard.model";
 import { arrayToMap } from "utils/array-util";
 import { lerp } from "utils/number-util";
 import { px, scale } from "utils/udim2";
@@ -106,6 +109,9 @@ interface PlayerEntryProps {
 function PlayerEntryComponent({ name, userId, displayName, index }: PlayerEntryProps) {
 	const dispatch = useAppDispatch();
 	const theme = useTheme("apps").players.playerButton;
+
+	const isOpen = useIsPageOpen(DashboardPage.Apps);
+	const isVisible = useDelayedUpdate(isOpen, isOpen ? 170 + index * 40 : 150);
 	const isSelected = useAppSelector((state) => state.dashboard.apps.playerSelected === name);
 
 	const [hovered, setHovered] = useState(false);
@@ -140,7 +146,12 @@ function PlayerEntryComponent({ name, userId, displayName, index }: PlayerEntryP
 	return (
 		<Canvas
 			size={px(ENTRY_WIDTH, ENTRY_HEIGHT)}
-			position={useSpring(px(0, (PADDING + ENTRY_HEIGHT) * index), {})}
+			position={useSpring(
+				isVisible
+					? px(0, (PADDING + ENTRY_HEIGHT) * index)
+					: px(-ENTRY_WIDTH - 24, (PADDING + ENTRY_HEIGHT) * index),
+				{},
+			)}
 			zIndex={index}
 		>
 			{/* Underglow */}
