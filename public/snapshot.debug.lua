@@ -5,7 +5,7 @@
 --
 -- Author: 0866
 -- License: MIT
--- Version: "22d068a-dbg"
+-- Version: "22d069a-dbg"
 -- GitHub: https://github.com/richie0866/orca
 --]]
 
@@ -106,7 +106,7 @@ end
 ---@return table<string, any> environment
 local function newEnv(id)
 	return setmetatable({
-		VERSION = "22d068a-dbg",
+		VERSION = "22d069a-dbg",
 		script = instanceFromId[id],
 		require = function (module)
 			return requireModuleInternal(module, instanceFromId[id])
@@ -227,12 +227,22 @@ local function Acrylic(_param)\
 \9local isAcrylicBlurEnabled = useAppSelector(function(state)\
 \9\9return state.options.config.acrylicBlur\
 \9end)\
-\9return isAcrylicBlurEnabled and (Roact.createElement(AcrylicBlur, {\
+\9local _children = {}\
+\9local _length = #_children\
+\9local _child = isAcrylicBlurEnabled and Roact.createElement(AcrylicBlur, {\
 \9\9radius = radius,\
 \9\9distance = distance,\
-\9})) or (Roact.createElement(\"Frame\", {\
-\9\9BackgroundTransparency = 1,\
-\9}))\
+\9})\
+\9if _child then\
+\9\9if _child.elements ~= nil or _child.props ~= nil and _child.component ~= nil then\
+\9\9\9_children[_length + 1] = _child\
+\9\9else\
+\9\9\9for _k, _v in ipairs(_child) do\
+\9\9\9\9_children[_length + _k] = _v\
+\9\9\9end\
+\9\9end\
+\9end\
+\9return Roact.createFragment(_children)\
 end\
 local default = hooked(Acrylic)\
 local function AcrylicBlurComponent(_param)\
@@ -1026,20 +1036,22 @@ local function Canvas(_param)\
 \9end\
 \9local _children = {}\
 \9local _length = #_children\
-\9local _child = padding ~= nil and (Roact.createElement(\"UIPadding\", {\
-\9\9PaddingTop = mapBinding(padding.top, function(px)\
-\9\9\9return UDim.new(0, px)\
-\9\9end),\
-\9\9PaddingRight = mapBinding(padding.right, function(px)\
-\9\9\9return UDim.new(0, px)\
-\9\9end),\
-\9\9PaddingBottom = mapBinding(padding.bottom, function(px)\
-\9\9\9return UDim.new(0, px)\
-\9\9end),\
-\9\9PaddingLeft = mapBinding(padding.left, function(px)\
-\9\9\9return UDim.new(0, px)\
-\9\9end),\
-\9})) or nil\
+\9local _child = padding ~= nil and (Roact.createFragment({\
+\9\9padding = Roact.createElement(\"UIPadding\", {\
+\9\9\9PaddingTop = mapBinding(padding.top, function(px)\
+\9\9\9\9return UDim.new(0, px)\
+\9\9\9end),\
+\9\9\9PaddingRight = mapBinding(padding.right, function(px)\
+\9\9\9\9return UDim.new(0, px)\
+\9\9\9end),\
+\9\9\9PaddingBottom = mapBinding(padding.bottom, function(px)\
+\9\9\9\9return UDim.new(0, px)\
+\9\9\9end),\
+\9\9\9PaddingLeft = mapBinding(padding.left, function(px)\
+\9\9\9\9return UDim.new(0, px)\
+\9\9\9end),\
+\9\9}),\
+\9}))\
 \9if _child then\
 \9\9if _child.elements ~= nil or _child.props ~= nil and _child.component ~= nil then\
 \9\9\9_children[_length + 1] = _child\
@@ -1132,7 +1144,7 @@ local function Card(_param)\
 \9_length = #_children\
 \9local _child = theme.acrylic and Roact.createFragment({\
 \9\9acrylic = Roact.createElement(Acrylic),\
-\9}) or nil\
+\9})\
 \9if _child then\
 \9\9if _child.elements ~= nil or _child.props ~= nil and _child.component ~= nil then\
 \9\9\9_children[_length + 1] = _child\
@@ -1200,7 +1212,7 @@ local function Fill(_param)\
 \9\9\9Transparency = gradient.transparency,\
 \9\9\9Rotation = gradient.rotation,\
 \9\9}),\
-\9})) or nil\
+\9}))\
 \9if _child then\
 \9\9if _child.elements ~= nil or _child.props ~= nil and _child.component ~= nil then\
 \9\9\9_children[_length + 1] = _child\
@@ -1217,7 +1229,7 @@ local function Fill(_param)\
 \9\9\9\9return r == \"circular\" and UDim.new(1, 0) or UDim.new(0, r)\
 \9\9\9end),\
 \9\9}),\
-\9})) or nil\
+\9}))\
 \9if _child_1 then\
 \9\9if _child_1.elements ~= nil or _child_1.props ~= nil and _child_1.component ~= nil then\
 \9\9\9_children[_length + 1] = _child_1\
@@ -1346,11 +1358,13 @@ local function Glow(_param)\
 \9}\
 \9local _children_1 = {}\
 \9local _length_1 = #_children_1\
-\9local _child = gradient and (Roact.createElement(\"UIGradient\", {\
-\9\9Color = gradient.color,\
-\9\9Transparency = gradient.transparency,\
-\9\9Rotation = gradient.rotation,\
-\9})) or nil\
+\9local _child = gradient and (Roact.createFragment({\
+\9\9gradient = Roact.createElement(\"UIGradient\", {\
+\9\9\9Color = gradient.color,\
+\9\9\9Transparency = gradient.transparency,\
+\9\9\9Rotation = gradient.rotation,\
+\9\9}),\
+\9}))\
 \9if _child then\
 \9\9if _child.elements ~= nil or _child.props ~= nil and _child.component ~= nil then\
 \9\9\9_children_1[_length_1 + 1] = _child\
@@ -6365,7 +6379,7 @@ local function Clock()\
 \9\9Position = px(51, 27),\
 \9\9BackgroundTransparency = 1,\
 \9})\
-\9local _child_1 = theme.acrylic and Roact.createElement(Acrylic) or nil\
+\9local _child_1 = theme.acrylic and Roact.createElement(Acrylic)\
 \9if _child_1 then\
 \9\9if _child_1.elements ~= nil or _child_1.props ~= nil and _child_1.component ~= nil then\
 \9\9\9_children[_length + 3] = _child_1\
@@ -6707,7 +6721,7 @@ local function Navbar()\
 \9_children[_length + 4] = Roact.createElement(NavbarTab, {\
 \9\9page = DashboardPage.Options,\
 \9})\
-\9local _child_1 = theme.acrylic and Roact.createElement(Acrylic) or nil\
+\9local _child_1 = theme.acrylic and Roact.createElement(Acrylic)\
 \9if _child_1 then\
 \9\9if _child_1.elements ~= nil or _child_1.props ~= nil and _child_1.component ~= nil then\
 \9\9\9_children[_length + 5] = _child_1\
@@ -7640,6 +7654,7 @@ local useSpring = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \
 local useIsPageOpen = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"hooks\", \"use-current-page\").useIsPageOpen\
 local useTheme = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"hooks\", \"use-theme\").useTheme\
 local DashboardPage = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"store\", \"models\", \"dashboard.model\").DashboardPage\
+local arrayToMap = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"utils\", \"array-util\").arrayToMap\
 local px = TS.import(script, script.Parent.Parent.Parent.Parent.Parent, \"utils\", \"udim2\").px\
 local FriendItem = TS.import(script, script.Parent, \"FriendItem\").default\
 local GAME_PADDING = 48\
@@ -7670,23 +7685,6 @@ local function GameItem(_param)\
 \9\9}),\
 \9}\
 \9local _length = #_children\
-\9local _friends = gameActivity.friends\
-\9local _arg0 = function(friend, index)\
-\9\9return { tostring(friend.VisitorId), Roact.createElement(FriendItem, {\
-\9\9\9friend = friend,\
-\9\9\9index = index,\
-\9\9}) }\
-\9end\
-\9-- ▼ ReadonlyArray.map ▼\
-\9local _newValue = table.create(#_friends)\
-\9for _k, _v in ipairs(_friends) do\
-\9\9_newValue[_k] = _arg0(_v, _k - 1, _friends)\
-\9end\
-\9-- ▲ ReadonlyArray.map ▲\
-\9local _map = {}\
-\9for _, _v in ipairs(_newValue) do\
-\9\9_map[_v[1]] = _v[2]\
-\9end\
 \9local _attributes_1 = {\
 \9\9Size = UDim2.new(1, 0, 0, 64),\
 \9\9Position = UDim2.new(0, 0, 1, -24),\
@@ -7711,7 +7709,12 @@ local function GameItem(_param)\
 \9\9}),\
 \9}\
 \9local _length_1 = #_children_1\
-\9for _k, _v in pairs(_map) do\
+\9for _k, _v in pairs(arrayToMap(gameActivity.friends, function(friend, index)\
+\9\9return { tostring(friend.VisitorId), Roact.createElement(FriendItem, {\
+\9\9\9friend = friend,\
+\9\9\9index = index,\
+\9\9}) }\
+\9end)) do\
 \9\9_children_1[_k] = _v\
 \9end\
 \9_children[_length + 1] = Roact.createElement(\"ScrollingFrame\", _attributes_1, _children_1)\
@@ -9666,7 +9669,7 @@ local hex = TS.import(script, script.Parent.Parent.Parent.Parent, \"utils\", \"c
 local _udim2 = TS.import(script, script.Parent.Parent.Parent.Parent, \"utils\", \"udim2\")\
 local px = _udim2.px\
 local scale = _udim2.scale\
-local HeaderTopLeft, HeaderCenter\
+local HeaderCenter, HeaderTopLeft\
 local function Content(_param)\
 \9local header = _param.header\
 \9local body = _param.body\
@@ -9688,17 +9691,37 @@ local function Content(_param)\
 \9\9\9end),\
 \9\9},\
 \9}\
-\9local _children = {\
-\9\9body ~= nil and (Roact.createElement(HeaderTopLeft, {\
-\9\9\9header = header,\
-\9\9\9scaleFactor = scaleFactor,\
-\9\9})) or (Roact.createElement(HeaderCenter, {\
-\9\9\9header = header,\
-\9\9\9scaleFactor = scaleFactor,\
-\9\9})),\
-\9}\
+\9local _children = {}\
 \9local _length = #_children\
-\9local _child = body ~= nil and (Roact.createElement(\"TextLabel\", {\
+\9local _child = body == nil and Roact.createElement(HeaderCenter, {\
+\9\9header = header,\
+\9\9scaleFactor = scaleFactor,\
+\9})\
+\9if _child then\
+\9\9if _child.elements ~= nil or _child.props ~= nil and _child.component ~= nil then\
+\9\9\9_children[_length + 1] = _child\
+\9\9else\
+\9\9\9for _k, _v in ipairs(_child) do\
+\9\9\9\9_children[_length + _k] = _v\
+\9\9\9end\
+\9\9end\
+\9end\
+\9_length = #_children\
+\9local _child_1 = body ~= nil and Roact.createElement(HeaderTopLeft, {\
+\9\9header = header,\
+\9\9scaleFactor = scaleFactor,\
+\9})\
+\9if _child_1 then\
+\9\9if _child_1.elements ~= nil or _child_1.props ~= nil and _child_1.component ~= nil then\
+\9\9\9_children[_length + 1] = _child_1\
+\9\9else\
+\9\9\9for _k, _v in ipairs(_child_1) do\
+\9\9\9\9_children[_length + _k] = _v\
+\9\9\9end\
+\9\9end\
+\9end\
+\9_length = #_children\
+\9local _child_2 = body ~= nil and (Roact.createElement(\"TextLabel\", {\
 \9\9Text = body,\
 \9\9TextColor3 = hex(\"#FFFFFF\"),\
 \9\9Font = \"GothamBlack\",\
@@ -9715,11 +9738,11 @@ local function Content(_param)\
 \9\9\9Scale = scaleFactor,\
 \9\9}),\
 \9}))\
-\9if _child then\
-\9\9if _child.elements ~= nil or _child.props ~= nil and _child.component ~= nil then\
-\9\9\9_children[_length + 1] = _child\
+\9if _child_2 then\
+\9\9if _child_2.elements ~= nil or _child_2.props ~= nil and _child_2.component ~= nil then\
+\9\9\9_children[_length + 1] = _child_2\
 \9\9else\
-\9\9\9for _k, _v in ipairs(_child) do\
+\9\9\9for _k, _v in ipairs(_child_2) do\
 \9\9\9\9_children[_length + _k] = _v\
 \9\9\9end\
 \9\9end\
