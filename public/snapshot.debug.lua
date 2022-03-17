@@ -5,7 +5,7 @@
 --
 -- Author: 0866
 -- License: MIT
--- Version: "22d075a-dbg"
+-- Version: "22d076a-dbg"
 -- GitHub: https://github.com/richie0866/orca
 --]]
 
@@ -106,7 +106,7 @@ end
 ---@return table<string, any> environment
 local function newEnv(id)
 	return setmetatable({
-		VERSION = "22d075a-dbg",
+		VERSION = "22d076a-dbg",
 		script = instanceFromId[id],
 		require = function (module)
 			return requireModuleInternal(module, instanceFromId[id])
