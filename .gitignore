@@ -1,7 +1,8 @@
 /.idea
+/.vscode
+/public
 /node_modules
 /out
 /include
-/public/dev.lua
 *.rbxm
 *.rbxmx

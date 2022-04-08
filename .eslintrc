@@ -13,7 +13,9 @@
 	"plugins": [
 		"@typescript-eslint",
 		"roblox-ts",
-		"prettier"
+		"prettier",
+		"unused-imports",
+		"sort-imports-es6-autofix"
 	],
 	"extends": [
 		"eslint:recommended",
@@ -23,6 +25,19 @@
 	],
 	"rules": {
 		"prettier/prettier": "warn",
-		"roblox-ts/no-namespace-merging": "off"
+		"roblox-ts/no-namespace-merging": "off",
+		"unused-imports/no-unused-imports": "warn",
+		"unused-imports/no-unused-vars": [
+			"warn",
+			{ "vars": "all", "varsIgnorePattern": "^_", "args": "after-used", "argsIgnorePattern": "^_" }
+		],
+		"sort-imports-es6-autofix/sort-imports-es6": [
+			"warn",
+			{
+				"ignoreCase": false,
+				"ignoreMemberSort": false,
+				"memberSyntaxSortOrder": ["none", "all", "single", "multiple"]
+			}
+		]
 	}
 }

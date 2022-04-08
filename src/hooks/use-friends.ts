@@ -1,6 +1,6 @@
-import { useMemo } from "@rbxts/roact-hooked";
 import { Players } from "@rbxts/services";
-import { usePromise } from "hooks/common/use-promise";
+import { useMemo } from "@rbxts/roact-hooked";
+import { usePromise } from "@rbxts/roact-hooked-plus";
 
 export interface GameActivity {
 	friends: FriendOnlineInfoGame[];

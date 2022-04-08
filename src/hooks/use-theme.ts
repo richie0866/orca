@@ -1,11 +1,19 @@
-import { useAppSelector } from "hooks/common/rodux-hooks";
-import { getThemes } from "themes";
-import { darkTheme } from "themes/dark-theme";
-import { Theme } from "themes/theme.interface";
+import { useMemo } from "@rbxts/roact-hooked";
 
-export function useTheme<K extends keyof Theme>(key: K): Theme[K] {
-	return useAppSelector((state) => {
-		const theme = getThemes().find((t) => t.name === state.options.currentTheme);
-		return theme ? theme[key] : darkTheme[key];
-	});
+import { Theme, getTheme } from "store/themes";
+import { useRootSelector } from "./use-root-store";
+
+const defaultTheme = getTheme("Dark theme")!;
+
+export function useTheme<T>(selector: (theme: Theme) => T): T;
+export function useTheme(): Theme;
+export function useTheme(selector?: (theme: Theme) => unknown): unknown {
+	const themeName = useRootSelector((state) => state.themes.currentTheme);
+	const theme = useMemo(() => getTheme(themeName) || defaultTheme, [themeName]);
+
+	if (selector) {
+		return selector(theme);
+	}
+
+	return theme;
 }

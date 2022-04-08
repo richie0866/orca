@@ -1,65 +1,57 @@
 import Make from "@rbxts/make";
 import Roact from "@rbxts/roact";
-import { Provider } from "@rbxts/roact-rodux-hooked";
 import { Players } from "@rbxts/services";
-import { IS_DEV } from "constants";
-import { setStore } from "jobs";
-import { toggleDashboard } from "store/actions/dashboard.action";
-import { configureStore } from "store/store";
+import { Provider } from "@rbxts/roact-rodux-hooked";
+
 import App from "./App";
+import { IS_DEV } from "constants";
+import { configureStore, getStore } from "store";
+import { togglePagesVisible } from "store/pages";
 
-const store = configureStore();
-setStore(store);
+async function main() {
+	const globals = getgenv?.() || (_G as Record<string, unknown>);
 
-/**
- * Mounts the app and retrieve the UI instance.
- */
+	if ("_ORCA_IS_LOADED" in globals) {
+		throw "Orca is already loaded!";
+	}
+
+	const store = configureStore();
+	await mount();
+
+	// If 3 seconds passed since the game started, show the dashboard
+	if (time() > 3) {
+		store.dispatch(togglePagesVisible());
+	}
+
+	globals._ORCA_IS_LOADED = true;
+}
+
 async function mount() {
 	const container = Make("Folder", {});
+
 	Roact.mount(
-		<Provider store={store}>
+		<Provider store={getStore()}>
 			<App />
 		</Provider>,
 		container,
 	);
-	return container.WaitForChild(1) as ScreenGui;
-}
 
-/**
- * Renders the app to the screen. Protects it if possible.
- * TODO: Roact portals are a better way to do this?
- */
-function render(app: ScreenGui) {
-	const protect = syn ? syn.protect_gui : protect_gui;
-	if (protect) {
-		protect(app);
-	}
+	const renderChild = (child: Instance) => {
+		if (!child.IsA("ScreenGui")) {
+			return;
+		}
 
-	if (IS_DEV) {
-		app.Parent = Players.LocalPlayer.WaitForChild("PlayerGui");
-	} else if (gethui) {
-		app.Parent = gethui();
-	} else {
-		app.Parent = game.GetService("CoreGui");
-	}
-}
+		(syn ? syn.protect_gui : protect_gui)?.(child);
 
-async function main() {
-	if (getgenv && "_ORCA_IS_LOADED" in getgenv()) {
-		throw "Orca is already loaded!";
-	}
+		if (gethui) {
+			child.Parent = gethui();
+		} else {
+			child.Parent = IS_DEV ? game.GetService("CoreGui") : Players.LocalPlayer.WaitForChild("PlayerGui");
+		}
+	};
 
-	const app = await mount();
-	render(app);
-
-	// If 3 seconds passed since the game started, show the dashboard
-	if (time() > 3) {
-		task.defer(() => store.dispatch(toggleDashboard()));
-	}
-
-	if (getgenv) {
-		getgenv()._ORCA_IS_LOADED = true;
-	}
+	container.ChildAdded.Connect(renderChild);
+	container.GetChildren().forEach(renderChild);
 }
 
 main().catch((err) => {
