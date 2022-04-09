@@ -3,7 +3,7 @@ import { hooked } from "@rbxts/roact-hooked";
 import { useAnimation } from "@rbxts/roact-hooked-plus";
 
 import Gradient from "components/Gradient";
-import { isSolid } from "store/themes";
+import { asColor, asTransparency } from "store/themes";
 import { useButtonStyle } from "./use-button-style";
 
 interface Props extends Roact.PropsWithChildren {
@@ -20,12 +20,8 @@ function Text({ text, textSize, textFont, [Roact.Children]: children }: Props) {
 			Text={text}
 			TextSize={textSize}
 			Font={textFont}
-			TextColor3={useAnimation(
-				(isSolid(currentStyle.foreground) && currentStyle.foreground.color) || new Color3(1, 1, 1),
-			)}
-			TextTransparency={useAnimation(
-				(isSolid(currentStyle.foreground) ? currentStyle.foreground.transparency : 0) ?? 0,
-			)}
+			TextColor3={useAnimation(asColor(currentStyle.foreground))}
+			TextTransparency={useAnimation(asTransparency(currentStyle.foreground))}
 			TextXAlignment="Center"
 			TextYAlignment="Center"
 			Position={new UDim2(0.5, 0, 0.5, 0)}

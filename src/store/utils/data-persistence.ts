@@ -1,10 +1,10 @@
 import { HttpService } from "@rbxts/services";
-import { ORCA_PATH } from "constants";
-import { RootState } from "store/root.reducer";
-import { rootChanged } from "store/root.store";
 import { setInterval } from "@rbxts/roact-hooked-plus";
 
-export function persistentData<T extends keyof RootState>(key: T): RootState[T] | undefined {
+import { ORCA_PATH } from "constants";
+import { RootState } from "store/root.reducer";
+
+export function persistentData<T extends keyof RootState>(key: T, getState: () => RootState): RootState[T] | undefined {
 	try {
 		// Create orca state folder
 		if (makefolder && !isfolder(ORCA_PATH)) {
@@ -16,16 +16,15 @@ export function persistentData<T extends keyof RootState>(key: T): RootState[T] 
 		const currentData =
 			currentSave !== undefined ? (HttpService.JSONDecode(currentSave) as RootState[T]) : undefined;
 
-		let dirty: RootState[T] | undefined;
-
-		rootChanged(
-			(state: RootState) => state[key],
-			(newData) => (dirty = newData),
-		);
+		let prevState: RootState[T] | undefined;
 
 		setInterval(() => {
-			if (dirty !== undefined) {
-				write(`${ORCA_PATH}/${key}.json`, HttpService.JSONEncode(dirty));
+			const newState = getState()[key];
+
+			if (prevState !== newState) {
+				prevState = newState;
+
+				write(`${ORCA_PATH}/${key}.json`, HttpService.JSONEncode(newState));
 			}
 		}, 5000);
 

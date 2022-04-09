@@ -4,9 +4,9 @@ const pink = Color3.fromHex("#C6428E");
 const blue = Color3.fromHex("#484fd7");
 const purple = Color3.fromHex("#9a3fe5");
 
-const black = Color3.fromHex("#181818");
-const lightBlack = Color3.fromHex("#242424");
-const white = Color3.fromHex("#fafafa");
+const background = Color3.fromHex("#181818");
+const backgroundLight = Color3.fromHex("#242424");
+const foreground = Color3.fromHex("#fafafa");
 
 const gradient: GradientColor = {
 	color: new ColorSequence([
@@ -18,10 +18,22 @@ const gradient: GradientColor = {
 
 export const darkTheme: Theme = {
 	name: "Dark theme",
+
 	navbar: {
 		accent: gradient,
-		background: { color: black },
-		foreground: { color: white },
-		dropshadow: { color: black },
+		background: { color: background },
+		foreground: { color: foreground },
+		dropshadow: { color: background, transparency: 0.4 },
+		cornerRadius: new UDim(0, 6),
+
+		button: {
+			foreground: { color: foreground, transparency: 0.7 },
+			$active: {
+				foreground: { color: foreground, transparency: 0 },
+			},
+			$hover: {
+				foreground: { color: foreground, transparency: 0.5 },
+			},
+		},
 	},
 };

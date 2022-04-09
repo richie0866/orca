@@ -1,11 +1,10 @@
 import Make from "@rbxts/make";
 import Roact from "@rbxts/roact";
 import { Players } from "@rbxts/services";
-import { Provider } from "@rbxts/roact-rodux-hooked";
 
 import App from "./App";
 import { IS_DEV } from "constants";
-import { configureStore, getStore } from "store";
+import { configureStore } from "store";
 import { togglePagesVisible } from "store/pages";
 
 async function main() {
@@ -29,12 +28,7 @@ async function main() {
 async function mount() {
 	const container = Make("Folder", {});
 
-	Roact.mount(
-		<Provider store={getStore()}>
-			<App />
-		</Provider>,
-		container,
-	);
+	Roact.mount(<App />, container);
 
 	const renderChild = (child: Instance) => {
 		if (!child.IsA("ScreenGui")) {

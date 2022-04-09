@@ -1,4 +1,6 @@
 import Rodux from "@rbxts/rodux";
+
+import { IS_DEV } from "constants";
 import { RootAction, RootState, rootReducer } from "./root.reducer";
 import { persistentData } from "./utils/data-persistence";
 
@@ -13,11 +15,13 @@ export function configureStore(): RootStore {
 		return rootStoreProvider.current;
 	}
 
-	const initialState: Partial<RootState> = {
-		settings: persistentData("settings"),
-		shortcuts: persistentData("shortcuts"),
-		themes: persistentData("themes"),
-	};
+	const initialState: Partial<RootState> = IS_DEV
+		? {}
+		: {
+				settings: persistentData("settings", rootSelector),
+				shortcuts: persistentData("shortcuts", rootSelector),
+				themes: persistentData("themes", rootSelector),
+		  };
 
 	return new Rodux.Store(rootReducer, initialState);
 }

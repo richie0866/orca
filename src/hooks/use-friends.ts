@@ -1,4 +1,4 @@
-import { Players } from "@rbxts/services";
+import { useClient } from "./use-client";
 import { useMemo } from "@rbxts/roact-hooked";
 import { usePromise } from "@rbxts/roact-hooked-plus";
 
@@ -9,11 +9,14 @@ export interface GameActivity {
 }
 
 export function useFriends(deps?: unknown[]) {
-	return usePromise(async () => Players.LocalPlayer.GetFriendsOnline(), deps);
+	const client = useClient();
+
+	return usePromise(async () => client.GetFriendsOnline(), deps);
 }
 
-export function useFriendsPlaying(deps?: unknown[]) {
+export function useFriendsInGame(deps?: unknown[]) {
 	const [friends, err, status] = useFriends(deps);
+
 	const friendsPlaying = friends?.filter(
 		(friend): friend is FriendOnlineInfoGame => "PlaceId" in friend && "GameId" in friend,
 	);
@@ -21,29 +24,30 @@ export function useFriendsPlaying(deps?: unknown[]) {
 	return [friendsPlaying, err, status] as const;
 }
 
-export function useFriendActivity(deps?: unknown[]) {
-	const [friends, err, status] = useFriendsPlaying(deps);
+export function useFriendGameActivity(deps?: unknown[]) {
+	const [friends, err, status] = useFriendsInGame(deps);
 	const games = useMemo(() => new Array<GameActivity>(), deps);
 
 	// If there are no friends yet, or `games` is not empty (deps didn't change),
-	// don't do anything.
+	// don't do anything
 	if (!friends || games.size() > 0) {
 		return [games, err, status] as const;
 	}
 
-	friends.forEach((friend) => {
-		let gameActivity = games.find((g) => g.placeId === friend.PlaceId);
-		if (!gameActivity) {
-			gameActivity = {
-				friends: [friend],
-				placeId: friend.PlaceId,
-				thumbnail: `https://www.roblox.com/asset-thumbnail/image?assetId=${friend.PlaceId}&width=768&height=432&format=png`,
-			};
-			games.push(gameActivity);
-		} else {
+	for (const friend of friends) {
+		const gameActivity = games.find((g) => g.placeId === friend.PlaceId);
+
+		if (gameActivity) {
 			gameActivity.friends.push(friend);
+			continue;
 		}
-	});
+
+		games.push({
+			friends: [friend],
+			placeId: friend.PlaceId,
+			thumbnail: `https://www.roblox.com/asset-thumbnail/image?assetId=${friend.PlaceId}&width=768&height=432&format=png`,
+		});
+	}
 
 	return [games, err, status] as const;
 }

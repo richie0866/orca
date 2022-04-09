@@ -41,6 +41,7 @@ function Style({ onHover, onClick, size, position, anchorPoint, active, style, [
 						onHover?.(false);
 					},
 				}}
+				Text=""
 				Size={size}
 				Position={position}
 				AnchorPoint={anchorPoint}

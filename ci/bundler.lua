@@ -1,23 +1,17 @@
-local PARAMS = {...}
-
-local function getFlag(flag)
-	for _, v in ipairs(PARAMS) do
-		if v == flag then
-			return true
-		end
-	end
-	return false
-end
-
-local OUTPUT_PATH = assert(PARAMS[1], "No output path specified")
-local VERSION = assert(PARAMS[2], "No version specified")
-local DEBUG_MODE = getFlag("debug")
-local VERBOSE = getFlag("verbose")
-local MINIFY = getFlag("minify")
-
-local ROJO_INPUT = "Orca.rbxm"
+local ROJO_INPUT = "public/Orca.rbxm"
 local RUNTIME_FILE = "ci/runtime.lua"
 local BUNDLE_TEMP = "ci/bundle.tmp"
+
+---Configuration settings for the current project.
+---@class Options
+---@field output string
+---@field version string
+---@field debug boolean
+---@field verbose boolean
+---@field minify boolean
+
+---@type Options
+local options
 
 ---Convert some specific snippets to work in luamin.
 ---@param source string
@@ -72,7 +66,7 @@ local function writeModule(object, output)
 	local name = string.format("%q", object.Name)
 	local className = string.format("%q", object.ClassName)
 
-	if DEBUG_MODE then
+	if options.debug then
 		local def = table.concat({
 			"newModule(" .. name .. ", " .. className .. ", " .. path .. ", " .. parent .. ", function ()",
 			"local fn = assert(loadstring(" .. string.format("%q", source) .. ", '@'.." .. path .. "))",
@@ -123,7 +117,11 @@ local function writeInstanceTree(object, output)
 	end
 end
 
-local function main()
+---Bundle the given Rojo model.
+---@param opt Options
+return function (opt)
+	options = opt
+
 	local output = {}
 	local model = remodel.readModelFile(ROJO_INPUT)[1]
 
@@ -131,25 +129,27 @@ local function main()
 	writeInstanceTree(model, output)
 
 	-- Minify current output
-	if MINIFY then
+	if options.minify then
 		output = { minify(table.concat(output, "\n")) }
 	end
 
-	-- Core runtime
-	local runtime = string.gsub(remodel.readFile(RUNTIME_FILE), "__VERSION__", string.format("%q", VERSION))
-	table.insert(output, 1, runtime)
+	-- Runtime
+	local runtimeSrc = string.gsub(
+		remodel.readFile(RUNTIME_FILE),
+		"__VERSION__",
+		options.version
+	)
+	table.insert(output, 1, runtimeSrc)
 	table.insert(output, "init()")
 
-	if VERBOSE then
+	if options.verbose then
 		table.insert(output, 2, "local START_TIME = os.clock()")
-		table.insert(output, "print(\"[CI " .. VERSION .. "] Orca run in \" .. (os.clock() - START_TIME) * 1000 .. \" ms\")")
+		table.insert(output, "print(\"[CI " .. options.version .. "] Orca run in \" .. (os.clock() - START_TIME) * 1000 .. \" ms\")")
 	end
 
 	-- Write to file
-	remodel.createDirAll(string.match(OUTPUT_PATH, "^(.*)[/\\]"))
-	remodel.writeFile(OUTPUT_PATH, table.concat(output, "\n\n"))
+	remodel.createDirAll(string.match(options.output, "^(.*)[/\\]"))
+	remodel.writeFile(options.output, table.concat(output, "\n\n"))
 
-	print("[CI " .. VERSION .. "] Bundle written to " .. OUTPUT_PATH)
+	print("[CI " .. options.version .. "] Bundle written to " .. options.output)
 end
-
-main()

@@ -1,7 +1,12 @@
 import Roact from "@rbxts/roact";
 
-function App() {
-	return <></>;
-}
+import Navbar from "views/Navbar";
+import Provider from "components/Provider";
 
-export default App;
+export default function App() {
+	return (
+		<Provider>
+			<Navbar />
+		</Provider>
+	);
+}

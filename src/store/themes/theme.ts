@@ -26,6 +26,7 @@ export interface CardStyle {
 	dropshadow: GradientColor | SolidColor;
 	stroke?: GradientColor | SolidColor;
 	cornerRadius?: UDim;
+	button: Omit<ButtonStyle, "background" | "dropshadow" | "stroke" | "cornerRadius">;
 }
 
 export interface Theme {
@@ -47,4 +48,25 @@ export function isSolid(color?: GradientColor | SolidColor): color is SolidColor
 		return false;
 	}
 	return typeIs(color.color, "Color3") || typeIs(color.transparency, "number");
+}
+
+export function asColor(color?: SolidColor | GradientColor): Color3 {
+	if (isSolid(color)) {
+		return color.color || new Color3(1, 1, 1);
+	}
+	return new Color3(1, 1, 1);
+}
+
+export function asColorSequence(color?: SolidColor | GradientColor): ColorSequence {
+	if (isGradient(color)) {
+		return color.color || new ColorSequence(new Color3());
+	}
+	return new ColorSequence(new Color3());
+}
+
+export function asTransparency(color?: SolidColor | GradientColor): number {
+	if (isSolid(color)) {
+		return color.transparency ?? 0;
+	}
+	return 0;
 }
