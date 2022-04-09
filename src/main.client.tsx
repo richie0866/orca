@@ -40,7 +40,7 @@ async function mount() {
 		if (gethui) {
 			child.Parent = gethui();
 		} else {
-			child.Parent = IS_DEV ? game.GetService("CoreGui") : Players.LocalPlayer.WaitForChild("PlayerGui");
+			child.Parent = IS_DEV ? Players.LocalPlayer.WaitForChild("PlayerGui") : game.GetService("CoreGui");
 		}
 	};
 
