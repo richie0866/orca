@@ -1,5 +1,5 @@
 export * from "./themes";
-export * from "./theme";
 export * from "./themes.action";
 export * from "./themes.reducer";
-export { ThemesState } from "./themes.model";
+export * from "./utils";
+export { ButtonStyle, CardStyle, GradientColor, SolidColor, Theme, ThemesState } from "./themes.model";

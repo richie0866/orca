@@ -1,4 +1,4 @@
-import { GradientColor, Theme } from "../theme";
+import { GradientColor, Theme } from "../themes.model";
 
 const pink = Color3.fromHex("#C6428E");
 const blue = Color3.fromHex("#484fd7");
@@ -35,5 +35,12 @@ export const darkTheme: Theme = {
 				foreground: { color: foreground, transparency: 0.5 },
 			},
 		},
+	},
+
+	clock: {
+		background: { color: background },
+		foreground: { color: foreground },
+		dropshadow: { color: background, transparency: 0.4 },
+		cornerRadius: new UDim(0, 6),
 	},
 };
