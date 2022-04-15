@@ -1,7 +1,9 @@
 import { ShortcutsAction } from "./shortcuts.action";
 import { ShortcutsState } from "./shortcuts.model";
 
-export const initialState: ShortcutsState = {};
+export const initialState: ShortcutsState = {
+	toggleOrca: "K",
+};
 
 export function shortcutsReducer(state = initialState, action: ShortcutsAction) {
 	switch (action.type) {

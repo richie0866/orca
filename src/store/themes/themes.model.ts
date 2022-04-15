@@ -39,4 +39,8 @@ export interface Theme {
 		button: Omit<ButtonStyle, "background" | "dropshadow" | "stroke" | "cornerRadius">;
 	};
 	clock: CardStyle;
+	title: CardStyle;
+	profile: CardStyle;
+	server: CardStyle;
+	friends: CardStyle;
 }

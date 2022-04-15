@@ -1,9 +1,10 @@
 import Rodux from "@rbxts/rodux";
+import { KeyCodeValue } from "./shortcuts.model";
 
 export function setShortcut(
 	shortcut: string,
-	keyCode: number,
-): Rodux.Action<"SET_SHORTCUT"> & { payload: { shortcut: string; keyCode: number } } {
+	keyCode: KeyCodeValue,
+): Rodux.Action<"SET_SHORTCUT"> & { payload: { shortcut: string; keyCode: KeyCodeValue } } {
 	return {
 		type: "SET_SHORTCUT",
 		payload: {

@@ -1,9 +1,11 @@
+import { RunService } from "@rbxts/services";
+
 import { Page, PagesState } from "./pages.model";
 import { PagesAction } from "./pages.action";
 
 const initialState: PagesState = {
 	currentPage: Page.Home,
-	visible: true,
+	visible: !RunService.IsRunning(),
 };
 
 export function pagesReducer(state = initialState, action: PagesAction) {
@@ -12,6 +14,8 @@ export function pagesReducer(state = initialState, action: PagesAction) {
 			return { ...state, currentPage: action.payload };
 		case "TOGGLE_PAGES_VISIBLE":
 			return { ...state, visible: !state.visible };
+		case "SET_PAGES_VISIBLE":
+			return { ...state, visible: action.payload };
 		default:
 			return state;
 	}

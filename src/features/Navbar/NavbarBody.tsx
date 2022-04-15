@@ -3,6 +3,7 @@ import { hooked } from "@rbxts/roact-hooked";
 
 import Gradient from "components/Gradient";
 import InnerStroke from "components/InnerStroke";
+import { HEIGHT, WIDTH } from "./constants";
 import { Theme, asColor, asTransparency } from "store/themes";
 
 interface Props {
@@ -11,6 +12,8 @@ interface Props {
 }
 
 function NavbarBody({ style, pageNumber }: Props) {
+	const pagePercent = pageNumber.map((page) => page / 4);
+
 	return (
 		<>
 			{/* Body */}
@@ -26,14 +29,14 @@ function NavbarBody({ style, pageNumber }: Props) {
 
 			{/* Progress indicator */}
 			<frame
-				Size={new UDim2(0, 102, 0, 56)}
-				Position={pageNumber.map((n) => new UDim2(n / 4, -1, 0, 0))}
+				Size={new UDim2(0, WIDTH / 4 + 2, 0, HEIGHT)}
+				Position={pagePercent.map((n) => new UDim2(0, math.round(WIDTH * n) - 1, 0, 0))}
 				ClipsDescendants
 				BackgroundTransparency={1}
 			>
 				<frame
-					Size={new UDim2(4, 0, 0, 56)}
-					Position={pageNumber.map((n) => new UDim2(-n, 0, 0, 0))}
+					Size={new UDim2(0, WIDTH + 2, 0, HEIGHT)}
+					Position={pagePercent.map((n) => new UDim2(0, math.round(-WIDTH * n), 0, 0))}
 					BackgroundColor3={asColor(style.accent)}
 					BorderSizePixel={0}
 				>

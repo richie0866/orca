@@ -6,15 +6,11 @@ import NavbarBody from "./NavbarBody";
 import NavbarButtons from "./NavbarButtons";
 import NavbarShadow from "./NavbarShadow";
 import Screen from "components/Screen";
-import { SCREEN_MARGIN } from "constants";
+
+import { HEIGHT, POSITION_CLOSED, POSITION_OPENED, WIDTH } from "./constants";
+import { useMargin } from "hooks/use-margin";
 import { useRootSelector } from "hooks/use-root-store";
 import { useTheme } from "hooks/use-theme";
-
-const WIDTH = 400;
-const HEIGHT = 56;
-
-const POSITION_OPENED = new UDim2(0.5, 0, 1, -SCREEN_MARGIN);
-const POSITION_CLOSED = new UDim2(0.5, 0, 1, -SCREEN_MARGIN - HEIGHT - 36);
 
 function Navbar() {
 	const style = useTheme((theme) => theme.navbar);
@@ -26,6 +22,8 @@ function Navbar() {
 
 	return (
 		<Screen>
+			<uipadding PaddingBottom={useMargin().map((m) => new UDim(0, m))} />
+
 			<frame
 				Size={new UDim2(0, WIDTH, 0, HEIGHT)}
 				Position={navbarVisibility.map((n) => POSITION_CLOSED.Lerp(POSITION_OPENED, n))}

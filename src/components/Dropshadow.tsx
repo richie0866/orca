@@ -38,7 +38,7 @@ function Dropshadow({
 	transparency = 0,
 	size = new UDim2(1, 24, 1, 24),
 	position = new UDim2(0.5, 0, 0.5, 12),
-	anchorPoint = new Vector2(0.5, 0.5),
+	anchorPoint = new Vector2(0.5, 1),
 	[Roact.Children]: children,
 }: Props) {
 	const imageSize = useMemo(() => dropshadowSize[blur], [blur]);

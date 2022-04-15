@@ -7,18 +7,12 @@ import Dropshadow, { DropshadowBlur } from "components/Dropshadow";
 import Gradient from "components/Gradient";
 import InnerStroke from "components/InnerStroke";
 import Screen from "components/Screen";
-import { SCREEN_MARGIN } from "constants";
+
+import { HEIGHT, MAX_WIDTH, MIN_WIDTH, PADDING, POSITION_CLOSED, POSITION_OPENED } from "./constants";
 import { asColor, asTransparency } from "store/themes";
+import { useMargin } from "hooks/use-margin";
 import { useRootSelector } from "hooks/use-root-store";
 import { useTheme } from "hooks/use-theme";
-
-const MIN_WIDTH = 56;
-const MAX_WIDTH = 200;
-const HEIGHT = 56;
-const PADDING = 14;
-
-const POSITION_OPENED = new UDim2(0, SCREEN_MARGIN, 1, -SCREEN_MARGIN);
-const POSITION_CLOSED = new UDim2(0, SCREEN_MARGIN, 1, -SCREEN_MARGIN - HEIGHT - 36);
 
 const getClock = () => os.date("%I:%M %p").gsub("^0([0-9])", "%1")[0];
 
@@ -27,6 +21,7 @@ function Clock() {
 	const visible = useRootSelector((state) => state.pages.visible);
 
 	const [clock, setClock] = useBinding(getClock());
+
 	const clockTextSize = useMemo(() => {
 		return clock.map((text) => TextService.GetTextSize(text, 20, "GothamBold", new Vector2(MAX_WIDTH, HEIGHT)));
 	}, [clock]);
@@ -43,6 +38,8 @@ function Clock() {
 
 	return (
 		<Screen>
+			<uipadding PaddingBottom={useMargin().map((m) => new UDim(0, m))} />
+
 			<frame
 				Size={clockTextSize.map((size) => new UDim2(0, size.X + MIN_WIDTH + PADDING, 0, HEIGHT))}
 				Position={navbarVisibility.map((n) => POSITION_CLOSED.Lerp(POSITION_OPENED, n))}
@@ -56,7 +53,7 @@ function Clock() {
 					color={asColor(style.dropshadow)}
 					transparency={asTransparency(style.dropshadow)}
 					size={new UDim2(1, 100, 1, 42)}
-					position={new UDim2(0.5, 0, 0.5, 16)}
+					position={new UDim2(0.5, 0, 1, 70)}
 				>
 					<Gradient color={style.dropshadow} />
 				</Dropshadow>

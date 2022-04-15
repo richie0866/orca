@@ -1,3 +1,7 @@
-export type KeyCodeValue = number;
+import { InferEnumNames } from "@rbxts/roact";
 
-export interface ShortcutsState extends Record<string, KeyCodeValue | undefined> {}
+export type KeyCodeValue = InferEnumNames<Enum.KeyCode>;
+
+export interface ShortcutsState extends Record<string, KeyCodeValue | undefined> {
+	toggleOrca?: KeyCodeValue;
+}

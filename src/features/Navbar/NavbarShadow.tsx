@@ -21,7 +21,7 @@ function NavbarShadow({ style, pageNumber }: Props) {
 				color={asColor(style.dropshadow)}
 				transparency={asTransparency(style.dropshadow)}
 				size={new UDim2(1, 100, 1, 42)}
-				position={new UDim2(0.5, 0, 0.5, 16)}
+				position={new UDim2(0.5, 0, 1, 70)}
 			>
 				<Gradient color={style.dropshadow} />
 			</Dropshadow>
@@ -29,11 +29,11 @@ function NavbarShadow({ style, pageNumber }: Props) {
 			{/* Progress indicator glow */}
 			<Dropshadow
 				blur={DropshadowBlur.Large}
-				scale={0.7}
+				scale={0.8}
 				color={pageNumber.map((n) => getColorInSequence(asColorSequence(style.accent), n / 4 + 0.125))}
 				transparency={asTransparency(style.accent)}
-				size={new UDim2(0.25, 64, 1, 56)}
-				position={pageNumber.map((n) => new UDim2(n / 4 + 0.125, 0, 0.5, 8))}
+				size={new UDim2(0.25, 70, 1, 70)}
+				position={pageNumber.map((n) => new UDim2(n / 4 + 0.125, 0, 1, 40))}
 			/>
 		</>
 	);

@@ -1,16 +1,16 @@
 import Roact from "@rbxts/roact";
 import { Provider } from "@rbxts/roact-rodux-hooked";
 
-import Navbar from "./Navbar";
+import App from "./App";
 import { configureStore } from "store";
 
 export = (target: Frame) => {
 	const handle = Roact.mount(
 		<Provider store={configureStore()}>
-			<Navbar />
+			<App />
 		</Provider>,
 		target,
-		"Clock",
+		"App",
 	);
 
 	return () => {

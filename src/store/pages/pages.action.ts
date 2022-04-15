@@ -14,4 +14,14 @@ export function togglePagesVisible(): Rodux.Action<"TOGGLE_PAGES_VISIBLE"> {
 	};
 }
 
-export type PagesAction = ReturnType<typeof setCurrentPage> | ReturnType<typeof togglePagesVisible>;
+export function setPagesVisible(visible: boolean): Rodux.Action<"SET_PAGES_VISIBLE"> & { payload: boolean } {
+	return {
+		type: "SET_PAGES_VISIBLE",
+		payload: visible,
+	};
+}
+
+export type PagesAction =
+	| ReturnType<typeof setCurrentPage>
+	| ReturnType<typeof togglePagesVisible>
+	| ReturnType<typeof setPagesVisible>;
