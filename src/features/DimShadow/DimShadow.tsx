@@ -5,7 +5,7 @@ import { useAnimation } from "@rbxts/roact-hooked-plus";
 import Screen from "components/Screen";
 import { useRootSelector } from "hooks/use-root-store";
 
-function Shadow() {
+function DimShadow() {
 	const visible = useRootSelector((state) => state.pages.visible);
 
 	return (
@@ -22,4 +22,4 @@ function Shadow() {
 	);
 }
 
-export default pure(Shadow);
+export default pure(DimShadow);

@@ -1,41 +1,29 @@
 import Roact from "@rbxts/roact";
-import { hooked, useMemo } from "@rbxts/roact-hooked";
-import { useViewportSize } from "@rbxts/roact-hooked-plus";
+
+import Providers from "components/Providers";
 
 import Clock from "features/Clock";
+import DimShadow from "features/DimShadow";
 import Navbar from "features/Navbar";
-import Shadow from "features/Shadow";
 import Shortcuts from "features/Shortcuts";
 
 import Home from "pages/Home";
 
-import { MarginContext } from "hooks/use-margin";
-import { ScaleContext } from "hooks/use-scale";
-import { getMargin, getScale } from "utils/viewport-util";
-
-function App() {
-	const viewportSize = useViewportSize();
-
-	const [scale, margin] = useMemo(() => {
-		const scale = viewportSize.map(getScale);
-		const margin = viewportSize.map(getMargin);
-
-		return [scale, margin];
-	}, [viewportSize]);
-
+export default function App() {
 	return (
-		<ScaleContext.Provider value={scale}>
-			<MarginContext.Provider value={margin}>
-				<Shortcuts />
-				<Shadow />
+		<Providers>
+			{/* UI state effects */}
+			<Shortcuts />
 
-				<Home />
+			{/* Background dim */}
+			<DimShadow />
 
-				<Navbar />
-				<Clock />
-			</MarginContext.Provider>
-		</ScaleContext.Provider>
+			{/* Pages */}
+			<Home />
+
+			{/* Features */}
+			<Navbar />
+			<Clock />
+		</Providers>
 	);
 }
-
-export default hooked(App);
