@@ -1,5 +1,4 @@
 import Roact from "@rbxts/roact";
-import { hooked, useMemo } from "@rbxts/roact-hooked";
 import { mapBinding } from "@rbxts/roact-hooked-plus";
 
 /**
@@ -31,7 +30,7 @@ interface Props extends Roact.PropsWithChildren {
 	anchorPoint?: Vector2 | Roact.Binding<Vector2>;
 }
 
-function Dropshadow({
+export default function Dropshadow({
 	blur = DropshadowBlur.Large,
 	scale = 1,
 	color = new Color3(),
@@ -41,7 +40,7 @@ function Dropshadow({
 	anchorPoint = new Vector2(0.5, 1),
 	[Roact.Children]: children,
 }: Props) {
-	const imageSize = useMemo(() => dropshadowSize[blur], [blur]);
+	const imageSize = dropshadowSize[blur];
 
 	return (
 		<imagelabel
@@ -61,5 +60,3 @@ function Dropshadow({
 		</imagelabel>
 	);
 }
-
-export default hooked(Dropshadow);

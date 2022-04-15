@@ -1,7 +1,7 @@
 import Roact from "@rbxts/roact";
 import { pure } from "@rbxts/roact-hooked";
 
-import Screen from "./Screen";
+import Screen from "components/Screen";
 import { HEIGHT as NAVBAR_HEIGHT } from "features/Navbar";
 import { SCREEN_MARGIN } from "constants";
 import { useMargin } from "hooks/use-margin";

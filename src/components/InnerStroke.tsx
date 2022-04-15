@@ -8,7 +8,13 @@ interface Props extends Roact.PropsWithChildren {
 	transparency?: number | Roact.Binding<number>;
 }
 
-function InnerStroke({ size = 1, radius = new UDim(0, 1), color, transparency, [Roact.Children]: children }: Props) {
+export default function InnerStroke({
+	size = 1,
+	radius = new UDim(0, 1),
+	color,
+	transparency,
+	[Roact.Children]: children,
+}: Props) {
 	return (
 		<frame
 			Size={mapBinding(size, (s) => new UDim2(1, -s * 2, 1, -s * 2))}
@@ -27,5 +33,3 @@ function InnerStroke({ size = 1, radius = new UDim(0, 1), color, transparency, [
 		</frame>
 	);
 }
-
-export default InnerStroke;
