@@ -7,9 +7,7 @@ import { SCREEN_MARGIN } from "constants";
 import { useMargin } from "hooks/use-margin";
 import { useScale } from "hooks/use-scale";
 
-interface Props extends Roact.PropsWithChildren {}
-
-function Page(props: Props) {
+function Page(props: Roact.PropsWithChildren) {
 	const scale = useScale();
 	const margin = useMargin();
 

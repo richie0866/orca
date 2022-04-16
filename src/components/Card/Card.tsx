@@ -1,6 +1,7 @@
 import Roact from "@rbxts/roact";
+import { Spring } from "@rbxts/flipper";
 import { pure, useMemo } from "@rbxts/roact-hooked";
-import { useDelayedValue, useSpring } from "@rbxts/roact-hooked-plus";
+import { useDelayedUpdate, useSingleMotor } from "@rbxts/roact-hooked-plus";
 
 import CardBody from "./CardBody";
 import { CardStyle } from "store/themes";
@@ -19,8 +20,11 @@ interface Props extends Roact.PropsWithChildren {
 
 function Card({ index, style, page, align, size, position, [Roact.Children]: children }: Props) {
 	const visible = useRootSelector((state) => state.pages.visible && state.pages.currentPage === page);
-	const visibleDelayed = useDelayedValue(visible, index * 40);
-	const visiblePercent = useSpring(visibleDelayed ? 1 : 0, { frequency: 2, dampingRatio: 0.8 });
+	const [visiblePercent, setGoal] = useSingleMotor(visible ? 1 : 0);
+
+	useDelayedUpdate(visible ? 1 : 0, index * 30, (percent) => {
+		setGoal(new Spring(percent, { frequency: 2, dampingRatio: 0.8 }));
+	});
 
 	const positionHidden = useMemo(() => {
 		return new UDim2(

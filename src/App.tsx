@@ -2,8 +2,8 @@ import Roact from "@rbxts/roact";
 
 import Providers from "components/Providers";
 
+import BackgroundDim from "features/BackgroundDim";
 import Clock from "features/Clock";
-import DimShadow from "features/DimShadow";
 import Navbar from "features/Navbar";
 import Shortcuts from "features/Shortcuts";
 
@@ -16,7 +16,7 @@ export default function App() {
 			<Shortcuts />
 
 			{/* Background dim */}
-			<DimShadow />
+			<BackgroundDim />
 
 			{/* Pages */}
 			<Home />

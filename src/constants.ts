@@ -9,8 +9,9 @@ export const ORCA_DISPLAY_ORDER = 7;
 
 // Padding between cards and margins
 export const SCREEN_MARGIN = 48;
-export const CARD_MARGIN = 48; // Should not change
 export const SCREEN_MARGIN_HALF = SCREEN_MARGIN / 2;
 
-// Base card width
+// Card width, padding, etc
 export const CARD_WIDTH = 326;
+export const CARD_MARGIN = 48; // Should not change
+export const CARD_INNER_MARGIN = 24;
