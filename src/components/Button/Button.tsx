@@ -16,7 +16,7 @@ interface Props extends Roact.PropsWithChildren {
 	style: ButtonStyle;
 }
 
-function Style({ onHover, onClick, size, position, anchorPoint, active, style, [Roact.Children]: children }: Props) {
+function Button({ onHover, onClick, size, position, anchorPoint, active, style, [Roact.Children]: children }: Props) {
 	const [hovered, setHovered] = useState(false);
 
 	const currentStyle = useMemo(() => {
@@ -53,4 +53,4 @@ function Style({ onHover, onClick, size, position, anchorPoint, active, style, [
 	);
 }
 
-export default hooked(Style);
+export default hooked(Button);

@@ -7,9 +7,7 @@ import InnerStroke from "components/InnerStroke";
 import { asColor, asTransparency } from "store/themes";
 import { useButtonStyle } from "./use-button-style";
 
-interface Props extends Roact.PropsWithChildren {}
-
-function Body({ [Roact.Children]: children }: Props) {
+function ButtonBody(props: Roact.PropsWithChildren) {
 	const currentStyle = useButtonStyle();
 
 	return (
@@ -22,7 +20,7 @@ function Body({ [Roact.Children]: children }: Props) {
 			>
 				<Gradient color={currentStyle.background} />
 				<uicorner CornerRadius={currentStyle.cornerRadius} />
-				{children}
+				{props[Roact.Children]}
 			</frame>
 
 			{currentStyle.stroke && (
@@ -33,11 +31,10 @@ function Body({ [Roact.Children]: children }: Props) {
 					radius={currentStyle.cornerRadius}
 				>
 					<Gradient color={currentStyle.stroke} />
-					{children}
 				</InnerStroke>
 			)}
 		</>
 	);
 }
 
-export default hooked(Body);
+export default hooked(ButtonBody);

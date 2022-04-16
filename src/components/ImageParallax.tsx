@@ -8,7 +8,7 @@ interface Props extends Roact.PropsWithChildren {
 	offset: Roact.Binding<Vector2> | Vector2; // { -1, -1 } - { 1, 1 }
 }
 
-function ImageParallax({ image, imageSize, offset, padding, [Roact.Children]: children }: Props) {
+export default function ImageParallax({ image, imageSize, offset, padding, [Roact.Children]: children }: Props) {
 	return (
 		<imagelabel
 			Image={image}
@@ -22,5 +22,3 @@ function ImageParallax({ image, imageSize, offset, padding, [Roact.Children]: ch
 		</imagelabel>
 	);
 }
-
-export default ImageParallax;

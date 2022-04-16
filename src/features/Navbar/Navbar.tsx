@@ -3,8 +3,8 @@ import { pure } from "@rbxts/roact-hooked";
 import { useSpring } from "@rbxts/roact-hooked-plus";
 
 import NavbarBody from "./NavbarBody";
-import NavbarButtons from "./NavbarButtons";
 import NavbarShadow from "./NavbarShadow";
+import NavbarTabs from "./NavbarTabs";
 import Screen from "components/Screen";
 
 import { HEIGHT, POSITION_CLOSED, POSITION_OPENED, WIDTH } from "./constants";
@@ -32,7 +32,7 @@ function Navbar() {
 			>
 				<NavbarShadow style={style} pageNumber={pageNumber} />
 				<NavbarBody style={style} pageNumber={pageNumber} />
-				<NavbarButtons style={style} />
+				<NavbarTabs style={style} />
 			</frame>
 		</Screen>
 	);

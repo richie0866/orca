@@ -15,7 +15,7 @@ interface Props extends Roact.PropsWithChildren {
 	anchorPoint?: Vector2 | Roact.Binding<Vector2>;
 }
 
-function Shadow({
+function ButtonShadow({
 	blur = DropshadowBlur.Medium,
 	scale,
 	size = new UDim2(0, 16, 0, 16),
@@ -41,4 +41,4 @@ function Shadow({
 	);
 }
 
-export default hooked(Shadow);
+export default hooked(ButtonShadow);

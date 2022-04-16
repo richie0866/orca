@@ -1,7 +1,7 @@
-import Body from "./Body";
-import Icon from "./Icon";
-import Shadow from "./Shadow";
-import Style from "./Style";
-import Text from "./Text";
+import Button from "./Button";
+import ButtonBody from "./ButtonBody";
+import ButtonIcon from "./ButtonIcon";
+import ButtonShadow from "./ButtonShadow";
+import ButtonText from "./ButtonText";
 
-export default { Body, Icon, Shadow, Style, Text };
+export default { Root: Button, Body: ButtonBody, Icon: ButtonIcon, Shadow: ButtonShadow, Text: ButtonText };

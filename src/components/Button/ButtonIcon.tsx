@@ -11,7 +11,7 @@ interface Props extends Roact.PropsWithChildren {
 	size?: UDim2 | Roact.Binding<UDim2>;
 }
 
-function Icon({ image, size, [Roact.Children]: children }: Props) {
+function ButtonIcon({ image, size, [Roact.Children]: children }: Props) {
 	const currentStyle = useButtonStyle();
 
 	return (
@@ -31,4 +31,4 @@ function Icon({ image, size, [Roact.Children]: children }: Props) {
 	);
 }
 
-export default hooked(Icon);
+export default hooked(ButtonIcon);

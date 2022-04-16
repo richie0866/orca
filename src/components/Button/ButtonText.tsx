@@ -12,7 +12,7 @@ interface Props extends Roact.PropsWithChildren {
 	textFont?: Roact.InferEnumNames<Enum.Font>;
 }
 
-function Text({ text, textSize, textFont, [Roact.Children]: children }: Props) {
+function ButtonText({ text, textSize, textFont, [Roact.Children]: children }: Props) {
 	const currentStyle = useButtonStyle();
 
 	return (
@@ -34,4 +34,4 @@ function Text({ text, textSize, textFont, [Roact.Children]: children }: Props) {
 	);
 }
 
-export default hooked(Text);
+export default hooked(ButtonText);

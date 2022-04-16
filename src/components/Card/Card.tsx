@@ -1,7 +1,7 @@
 import Roact from "@rbxts/roact";
 import { Spring } from "@rbxts/flipper";
 import { pure, useMemo } from "@rbxts/roact-hooked";
-import { useDelayedUpdate, useSingleMotor } from "@rbxts/roact-hooked-plus";
+import { useDelayedEffect, useSingleMotor } from "@rbxts/roact-hooked-plus";
 
 import CardBody from "./CardBody";
 import { CardStyle } from "store/themes";
@@ -20,11 +20,15 @@ interface Props extends Roact.PropsWithChildren {
 
 function Card({ index, style, page, align, size, position, [Roact.Children]: children }: Props) {
 	const visible = useRootSelector((state) => state.pages.visible && state.pages.currentPage === page);
-	const [visiblePercent, setGoal] = useSingleMotor(visible ? 1 : 0);
 
-	useDelayedUpdate(visible ? 1 : 0, index * 30, (percent) => {
-		setGoal(new Spring(percent, { frequency: 2, dampingRatio: 0.8 }));
-	});
+	const [visibility, setGoal] = useSingleMotor(visible ? 1 : 0);
+	useDelayedEffect(
+		() => {
+			setGoal(new Spring(visible ? 1 : 0, { frequency: 2, dampingRatio: 0.8 }));
+		},
+		index * 30,
+		[visible],
+	);
 
 	const positionHidden = useMemo(() => {
 		return new UDim2(
@@ -45,7 +49,7 @@ function Card({ index, style, page, align, size, position, [Roact.Children]: chi
 		<frame
 			AnchorPoint={align === "left" ? new Vector2(0, 1) : new Vector2(1, 1)}
 			Size={size}
-			Position={visiblePercent.map((n) => positionHidden.Lerp(position, n))}
+			Position={visibility.map((n) => positionHidden.Lerp(position, n))}
 			BackgroundTransparency={1}
 		>
 			<CardBody style={style}>{children}</CardBody>

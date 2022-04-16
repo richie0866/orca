@@ -1,7 +1,7 @@
 import Roact from "@rbxts/roact";
 import { Spring } from "@rbxts/flipper";
 import { pure } from "@rbxts/roact-hooked";
-import { useDelayedUpdate, useSingleMotor } from "@rbxts/roact-hooked-plus";
+import { useDelayedEffect, useSingleMotor } from "@rbxts/roact-hooked-plus";
 
 import { Page } from "store/pages";
 import { asColor, asTransparency } from "store/themes";
@@ -25,10 +25,13 @@ function TitleText({ id, text, font = "GothamBold", size = 16, position, transpa
 	const visible = useRootSelector((state) => state.pages.visible && state.pages.currentPage === Page.Home);
 
 	const [visibility, setGoal] = useSingleMotor(visible ? 1 : 0);
-
-	useDelayedUpdate(visible ? 1 : 0, visible ? DELAY_START + DELAY * id : 0, (percent) => {
-		setGoal(new Spring(percent, { frequency: 3 }));
-	});
+	useDelayedEffect(
+		() => {
+			setGoal(new Spring(visible ? 1 : 0, { frequency: 3 }));
+		},
+		visible ? DELAY_START + DELAY * id : 0,
+		[visible],
+	);
 
 	return (
 		<textlabel

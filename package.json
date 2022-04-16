@@ -28,7 +28,7 @@
 		"@rbxts/make": "^1.0.6",
 		"@rbxts/roact": "^1.4.0-ts.2",
 		"@rbxts/roact-hooked": "^1.2.5",
-		"@rbxts/roact-hooked-plus": "^1.0.5",
+		"@rbxts/roact-hooked-plus": "^1.1.0",
 		"@rbxts/roact-rodux-hooked": "^1.0.4",
 		"@rbxts/rodux": "^3.0.0-ts.3",
 		"@rbxts/services": "^1.2.0"
