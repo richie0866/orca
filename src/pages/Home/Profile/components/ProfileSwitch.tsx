@@ -11,8 +11,9 @@ import { ProfileState, toggleProfileSwitch } from "store/profile";
 import { useRootDispatch, useRootSelector } from "hooks/use-root-store";
 import { useTheme } from "hooks/use-theme";
 
-const SWITCH_WIDTH = 61;
-const SWITCH_HEIGHT = 49;
+export const SWITCH_WIDTH = 60;
+export const SWITCH_HEIGHT = 50;
+export const SWITCH_PADDING = 14;
 
 interface Props extends Roact.PropsWithChildren {
 	index: number;
@@ -33,7 +34,7 @@ function ProfileSwitch({ index, key, icon, position, [Roact.Children]: children 
 		() => {
 			setGoal(new Spring(visible ? 1 : 0, { frequency: 5 }));
 		},
-		visible ? 250 + index * 50 : 200,
+		visible ? 200 + index * 50 : 200,
 		[visible],
 	);
 

@@ -3,11 +3,13 @@ import { ButtonStyle, CardStyle, SliderStyle, Theme } from "../themes.model";
 const pink = Color3.fromHex("#C6428E");
 const blue = Color3.fromHex("#484fd7");
 const purple = Color3.fromHex("#9a3fe5");
+
 const foreground = Color3.fromHex("#fafafa");
 const background = Color3.fromHex("#181818");
 const backgroundLight = Color3.fromHex("#242424");
 const backgroundLighter = Color3.fromHex("#323232");
 const dropshadow = Color3.fromHex("#000000");
+
 const gradient = new ColorSequence([
 	new ColorSequenceKeypoint(0, pink),
 	new ColorSequenceKeypoint(0.5, purple),
@@ -25,7 +27,7 @@ const cardStyle: CardStyle = {
 
 const buttonStyle: ButtonStyle = {
 	background: { color: backgroundLight },
-	foreground: { color: foreground, transparency: 0.25 },
+	foreground: { color: foreground, transparency: 0.5 },
 	dropshadow: { color: dropshadow, transparency: 0.75 },
 	cornerRadius,
 	$active: {
@@ -173,6 +175,8 @@ export const darkTheme: Theme = {
 			},
 		},
 	},
+
+	session: cardStyle,
 
 	server: cardStyle,
 

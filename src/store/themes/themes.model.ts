@@ -72,6 +72,7 @@ export interface Theme {
 			freecam: ButtonStyle;
 		};
 	};
+	session: CardStyle;
 	server: CardStyle;
 	friends: CardStyle;
 

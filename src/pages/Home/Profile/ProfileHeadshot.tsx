@@ -4,8 +4,6 @@ import { pure } from "@rbxts/roact-hooked";
 import { useDelayedEffect, useSingleMotor } from "@rbxts/roact-hooked-plus";
 
 import Gradient from "components/Gradient";
-import { AVATAR_MARGIN, AVATAR_SIZE, AVATAR_STROKE_THICKNESS, AVATAR_URL } from "./constants";
-import { CARD_INNER_MARGIN } from "constants";
 import { Page } from "store/pages";
 import { asColor, asTransparency } from "store/themes";
 import { lerp } from "utils/number-util";
@@ -14,6 +12,10 @@ import { useClient } from "hooks/use-client";
 import { useRootSelector } from "hooks/use-root-store";
 import { useScale } from "hooks/use-scale";
 import { useTheme } from "hooks/use-theme";
+
+const AVATAR_SIZE = 150;
+const AVATAR_STROKE_THICKNESS = 4;
+const AVATAR_URL = `https://www.roblox.com/headshot-thumbnail/image?userId=%d&width=150&height=150&format=png`;
 
 function ProfileHeadshot() {
 	const client = useClient();
@@ -35,7 +37,7 @@ function ProfileHeadshot() {
 		<imagelabel
 			Image={AVATAR_URL.format(client.UserId)}
 			Size={new UDim2(0, AVATAR_SIZE, 0, AVATAR_SIZE)}
-			Position={new UDim2(0.5, 0, 0, CARD_INNER_MARGIN + AVATAR_MARGIN)}
+			Position={new UDim2(0.5, 0, 0, 42)}
 			AnchorPoint={new Vector2(0.5, 0)}
 			BackgroundColor3={asColor(style.background)}
 			BackgroundTransparency={asTransparency(style.background)}
@@ -46,12 +48,7 @@ function ProfileHeadshot() {
 
 			{style.stroke && (
 				<frame
-					Size={visibility.map((n) =>
-						UDim2.fromOffset(
-							(AVATAR_SIZE + AVATAR_MARGIN * 2 - AVATAR_STROKE_THICKNESS * 2) * n,
-							(AVATAR_SIZE + AVATAR_MARGIN * 2 - AVATAR_STROKE_THICKNESS * 2) * n,
-						),
-					)}
+					Size={visibility.map((n) => UDim2.fromOffset((AVATAR_SIZE + 28) * n, (AVATAR_SIZE + 28) * n))}
 					Position={new UDim2(0.5, 0, 0.5, 0)}
 					AnchorPoint={new Vector2(0.5, 0.5)}
 					BackgroundTransparency={1}

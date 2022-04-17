@@ -14,13 +14,12 @@ const DELAY_START = 200;
 interface Props {
 	id: number;
 	text: string;
-	position: UDim2;
-	font?: Roact.InferEnumNames<Enum.Font>;
-	size?: number;
 	transparency?: number;
+	alignment?: Roact.InferEnumNames<Enum.TextYAlignment>;
+	position: UDim2;
 }
 
-function TitleText({ id, text, font = "GothamBold", size = 16, position, transparency = 0 }: Props) {
+function TitleText({ id, text, position, transparency = 0, alignment = "Top" }: Props) {
 	const style = useTheme((theme) => theme.title);
 	const visible = useRootSelector((state) => state.pages.visible && state.pages.currentPage === Page.Home);
 
@@ -36,14 +35,15 @@ function TitleText({ id, text, font = "GothamBold", size = 16, position, transpa
 	return (
 		<textlabel
 			Text={text}
-			Font={font}
-			TextSize={size}
+			Font="GothamBold"
+			TextSize={16}
 			TextXAlignment="Left"
-			TextYAlignment="Top"
+			TextYAlignment={alignment}
 			TextColor3={asColor(style.foreground)}
 			TextTransparency={visibility.map((n) =>
 				multiplyTransparency(1 - n, transparency, asTransparency(style.foreground)),
 			)}
+			AnchorPoint={alignment === "Top" ? new Vector2(0, 0) : new Vector2(0, 1)}
 			Size={new UDim2(0, 200, 0, 24)}
 			Position={visibility.map((n) => position.sub(new UDim2(0, 24, 0, 0)).Lerp(position, n))}
 			BackgroundTransparency={1}

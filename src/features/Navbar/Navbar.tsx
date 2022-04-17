@@ -10,6 +10,7 @@ import Screen from "components/Screen";
 import { HEIGHT, POSITION_CLOSED, POSITION_OPENED, WIDTH } from "./constants";
 import { useMargin } from "hooks/use-margin";
 import { useRootSelector } from "hooks/use-root-store";
+import { useScale } from "hooks/use-scale";
 import { useTheme } from "hooks/use-theme";
 
 function Navbar() {
@@ -30,9 +31,18 @@ function Navbar() {
 				AnchorPoint={new Vector2(0.5, 1)}
 				BackgroundTransparency={1}
 			>
-				<NavbarShadow style={style} pageNumber={pageNumber} />
-				<NavbarBody style={style} pageNumber={pageNumber} />
-				<NavbarTabs style={style} />
+				<frame
+					Size={new UDim2(1, 0, 1, 0)}
+					Position={new UDim2(0.5, 0, 0.5, 0)}
+					AnchorPoint={new Vector2(0.5, 0.5)}
+					BackgroundTransparency={1}
+				>
+					<NavbarShadow style={style} pageNumber={pageNumber} />
+					<NavbarBody style={style} pageNumber={pageNumber} />
+					<NavbarTabs style={style} />
+
+					<uiscale Scale={useScale()} />
+				</frame>
 			</frame>
 		</Screen>
 	);

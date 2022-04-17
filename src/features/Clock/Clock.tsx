@@ -12,6 +12,7 @@ import { HEIGHT, MAX_WIDTH, MIN_WIDTH, PADDING, POSITION_CLOSED, POSITION_OPENED
 import { asColor, asTransparency } from "store/themes";
 import { useMargin } from "hooks/use-margin";
 import { useRootSelector } from "hooks/use-root-store";
+import { useScale } from "hooks/use-scale";
 import { useTheme } from "hooks/use-theme";
 
 const getClock = () => os.date("%I:%M %p").gsub("^0([0-9])", "%1")[0];
@@ -46,63 +47,72 @@ function Clock() {
 				AnchorPoint={new Vector2(0, 1)}
 				BackgroundTransparency={1}
 			>
-				{/* Clock dropshadow */}
-				<Dropshadow
-					blur={DropshadowBlur.Large}
-					scale={1.1}
-					color={asColor(style.dropshadow)}
-					transparency={asTransparency(style.dropshadow)}
-					size={new UDim2(1, 100, 1, 42)}
-					position={new UDim2(0.5, 0, 1, 70)}
-				>
-					<Gradient color={style.dropshadow} />
-				</Dropshadow>
-
-				{/* Body */}
 				<frame
 					Size={new UDim2(1, 0, 1, 0)}
-					BackgroundColor3={asColor(style.background)}
-					BackgroundTransparency={asTransparency(style.background)}
-					BorderSizePixel={0}
+					Position={new UDim2(0, 0, 0.5, 0)}
+					AnchorPoint={new Vector2(0, 0.5)}
+					BackgroundTransparency={1}
 				>
-					<Gradient color={style.background} />
-					<uicorner CornerRadius={style.cornerRadius} />
-				</frame>
+					<uiscale Scale={useScale()} />
 
-				{/* Clock icon */}
-				<imagelabel
-					Image="rbxassetid://8992234911"
-					ImageColor3={asColor(style.foreground)}
-					ImageTransparency={asTransparency(style.foreground)}
-					Size={new UDim2(0, 36, 0, 36)}
-					Position={new UDim2(0, 10, 0, 10)}
-					BackgroundTransparency={1}
-				/>
-
-				{/* Time */}
-				<textlabel
-					Text={clock}
-					Font="GothamBold"
-					TextColor3={asColor(style.foreground)}
-					TextTransparency={asTransparency(style.foreground)}
-					TextSize={20}
-					TextXAlignment="Left"
-					TextYAlignment="Center"
-					Position={new UDim2(0, 51, 0, 27)}
-					BackgroundTransparency={1}
-				/>
-
-				{/* Stroke */}
-				{style.stroke && (
-					<InnerStroke
-						color={asColor(style.stroke)}
-						transparency={asTransparency(style.stroke)}
-						size={1}
-						radius={style.cornerRadius}
+					{/* Clock dropshadow */}
+					<Dropshadow
+						blur={DropshadowBlur.Large}
+						scale={1.1}
+						color={asColor(style.dropshadow)}
+						transparency={asTransparency(style.dropshadow)}
+						size={new UDim2(1, 100, 1, 42)}
+						position={new UDim2(0.5, 0, 1, 70)}
 					>
-						<Gradient color={style.stroke} />
-					</InnerStroke>
-				)}
+						<Gradient color={style.dropshadow} />
+					</Dropshadow>
+
+					{/* Body */}
+					<frame
+						Size={new UDim2(1, 0, 1, 0)}
+						BackgroundColor3={asColor(style.background)}
+						BackgroundTransparency={asTransparency(style.background)}
+						BorderSizePixel={0}
+					>
+						<Gradient color={style.background} />
+						<uicorner CornerRadius={style.cornerRadius} />
+					</frame>
+
+					{/* Clock icon */}
+					<imagelabel
+						Image="rbxassetid://8992234911"
+						ImageColor3={asColor(style.foreground)}
+						ImageTransparency={asTransparency(style.foreground)}
+						Size={new UDim2(0, 36, 0, 36)}
+						Position={new UDim2(0, 10, 0, 10)}
+						BackgroundTransparency={1}
+					/>
+
+					{/* Time */}
+					<textlabel
+						Text={clock}
+						Font="GothamBold"
+						TextColor3={asColor(style.foreground)}
+						TextTransparency={asTransparency(style.foreground)}
+						TextSize={20}
+						TextXAlignment="Left"
+						TextYAlignment="Center"
+						Position={new UDim2(0, 51, 0, 27)}
+						BackgroundTransparency={1}
+					/>
+
+					{/* Stroke */}
+					{style.stroke && (
+						<InnerStroke
+							color={asColor(style.stroke)}
+							transparency={asTransparency(style.stroke)}
+							size={1}
+							radius={style.cornerRadius}
+						>
+							<Gradient color={style.stroke} />
+						</InnerStroke>
+					)}
+				</frame>
 			</frame>
 		</Screen>
 	);

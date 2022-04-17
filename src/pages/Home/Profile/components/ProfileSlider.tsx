@@ -11,12 +11,12 @@ import { ProfileState, toggleProfileSlider, updateProfileSlider } from "store/pr
 import { useRootDispatch, useRootSelector, useRootStore } from "hooks/use-root-store";
 import { useTheme } from "hooks/use-theme";
 
-const SLIDER_WIDTH = 181;
-const SLIDER_HEIGHT = 49;
+const SLIDER_WIDTH = 188;
+const SLIDER_HEIGHT = 50;
 
-const SWITCH_WIDTH = 85;
-const SWITCH_HEIGHT = 49;
-const SWITCH_PADDING = 12;
+const SWITCH_WIDTH = 80;
+const SWITCH_HEIGHT = 50;
+const SWITCH_PADDING = 14;
 
 interface Props extends Roact.PropsWithChildren {
 	index: number;
@@ -41,7 +41,7 @@ function ProfileSlider({ index, key, text, units, min, max, position, [Roact.Chi
 		() => {
 			setGoal(new Spring(visible ? 1 : 0, { frequency: 5 }));
 		},
-		visible ? 250 + index * 50 : 200,
+		visible ? 200 + index * 50 : 200,
 		[visible],
 	);
 
