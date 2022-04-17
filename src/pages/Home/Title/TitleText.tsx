@@ -4,12 +4,12 @@ import { pure } from "@rbxts/roact-hooked";
 import { useDelayedEffect, useSingleMotor } from "@rbxts/roact-hooked-plus";
 
 import { Page } from "store/pages";
-import { asColor, asTransparency } from "store/themes";
+import { asColor, asTransparency, multiplyTransparency } from "store/themes";
 import { useRootSelector } from "hooks/use-root-store";
 import { useTheme } from "hooks/use-theme";
 
-const DELAY = 80;
-const DELAY_START = 250;
+const DELAY = 60;
+const DELAY_START = 200;
 
 interface Props {
 	id: number;
@@ -41,8 +41,8 @@ function TitleText({ id, text, font = "GothamBold", size = 16, position, transpa
 			TextXAlignment="Left"
 			TextYAlignment="Top"
 			TextColor3={asColor(style.foreground)}
-			TextTransparency={visibility.map(
-				(n) => 1 - n * (1 - transparency) * (1 - asTransparency(style.foreground)),
+			TextTransparency={visibility.map((n) =>
+				multiplyTransparency(1 - n, transparency, asTransparency(style.foreground)),
 			)}
 			Size={new UDim2(0, 200, 0, 24)}
 			Position={visibility.map((n) => position.sub(new UDim2(0, 24, 0, 0)).Lerp(position, n))}

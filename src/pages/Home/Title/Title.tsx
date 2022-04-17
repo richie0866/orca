@@ -30,7 +30,7 @@ function Title() {
 				padding={new Vector2(30, 30)}
 				offset={offset}
 			>
-				<uicorner CornerRadius={new UDim(0, 12)} />
+				<uicorner CornerRadius={style.cornerRadius} />
 			</ImageParallax>
 
 			{/* Shine effect */}
@@ -40,7 +40,7 @@ function Title() {
 				ImageTransparency={0.3}
 				BackgroundTransparency={1}
 			>
-				<uicorner CornerRadius={new UDim(0, 12)} />
+				<uicorner CornerRadius={style.cornerRadius} />
 			</imagelabel>
 
 			{/* Content */}

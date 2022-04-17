@@ -34,3 +34,8 @@ export function asTransparency(color?: SolidColor | GradientColor): number {
 	}
 	return 0;
 }
+
+export function multiplyTransparency(n: number, ...rest: number[]): number {
+	//return 1 - (1 - a) * (1 - b);
+	return rest.reduce((a, b) => 1 - (1 - a) * (1 - b), n);
+}

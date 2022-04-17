@@ -1,6 +1,7 @@
 import Roact from "@rbxts/roact";
-import { ButtonStyle } from "store/themes";
 import { useContext } from "@rbxts/roact-hooked";
+
+import { ButtonStyle } from "store/themes";
 
 export const ButtonStyleContext = Roact.createContext<ButtonStyle>(undefined!);
 

@@ -15,7 +15,7 @@ export enum DropshadowBlur {
 	Large = "rbxassetid://9313765710",
 }
 
-const dropshadowSize = {
+export const dropshadowSize = {
 	[DropshadowBlur.Medium]: new Vector2(90, 90),
 	[DropshadowBlur.Large]: new Vector2(146, 146),
 };

@@ -7,7 +7,10 @@ import Clock from "features/Clock";
 import Navbar from "features/Navbar";
 import Shortcuts from "features/Shortcuts";
 
+import Apps from "pages/Apps";
 import Home from "pages/Home";
+import Scripts from "pages/Scripts";
+import Settings from "pages/Settings";
 
 export default function App() {
 	return (
@@ -20,6 +23,9 @@ export default function App() {
 
 			{/* Pages */}
 			<Home />
+			<Apps />
+			<Scripts />
+			<Settings />
 
 			{/* Features */}
 			<Navbar />
