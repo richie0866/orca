@@ -3,7 +3,7 @@ name: Snapshot Build
 on:
   workflow_dispatch:
   schedule:
-  - cron: "0 0 * * *"
+  - cron: "30 2 * * 6"
 
 jobs:
   publish-snapshot:
@@ -38,9 +38,9 @@ jobs:
           remodel run ci/bundle-prod.lua public/snapshot.lua ${{ steps.date.outputs.date }}
           remodel run ci/bundle-debug.lua public/snapshot.debug.lua ${{ steps.date.outputs.date }}-debug
 
-      - name: Commit nightly snapshot
+      - name: Commit weekly snapshot
         uses: EndBug/add-and-commit@v8.0.2
         with:
           default_author: "github_actions"
           add: "['public/snapshot.lua', 'public/snapshot.debug.lua']"
-          message: 🔥 Nightly snapshot ${{ steps.date.outputs.date }}
+          message: 🔥 Weekly snapshot ${{ steps.date.outputs.date }}
