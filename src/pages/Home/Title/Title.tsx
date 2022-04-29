@@ -9,17 +9,14 @@ import { Page } from "store/pages";
 export default function Title() {
 	return (
 		<Card
-			index={0}
-			align="left"
 			getStyle={(theme) => theme.title}
+			index={0}
 			page={Page.Home}
+			align="left"
 			size={new UDim2(0, CARD_WIDTH, 0, CARD_HEIGHT_25)}
 			position={new UDim2(0, 0, 1, -CARD_HEIGHT_75 - CARD_MARGIN)}
 		>
-			{/* Title art */}
 			<TitleArt />
-
-			{/* Content */}
 			<TitleContent />
 		</Card>
 	);

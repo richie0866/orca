@@ -23,8 +23,6 @@ function Navbar() {
 
 	return (
 		<Screen>
-			<uipadding PaddingBottom={useMargin().map((m) => new UDim(0, m))} />
-
 			<frame
 				Size={new UDim2(0, WIDTH, 0, HEIGHT)}
 				Position={navbarVisibility.map((n) => POSITION_CLOSED.Lerp(POSITION_OPENED, n))}
@@ -44,6 +42,8 @@ function Navbar() {
 					<uiscale Scale={useScale()} />
 				</frame>
 			</frame>
+
+			<uipadding PaddingBottom={useMargin().map((m) => new UDim(0, m))} />
 		</Screen>
 	);
 }

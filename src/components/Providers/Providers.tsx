@@ -4,7 +4,7 @@ import { useViewportSize } from "@rbxts/roact-hooked-plus";
 
 import { MarginContext } from "hooks/use-margin";
 import { ScaleContext } from "hooks/use-scale";
-import { getMargin, getScale } from "utils/viewport-util";
+import { getMargin, getScale } from "./utils";
 
 function Providers(props: Roact.PropsWithChildren) {
 	const viewportSize = useViewportSize();

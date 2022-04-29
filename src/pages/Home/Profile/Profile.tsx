@@ -11,10 +11,10 @@ import { Page } from "store/pages";
 export default function Profile() {
 	return (
 		<Card
-			index={1}
-			align="left"
 			getStyle={(theme) => theme.profile}
+			index={1}
 			page={Page.Home}
+			align="left"
 			size={new UDim2(0, CARD_WIDTH, 0, CARD_HEIGHT_75)}
 			position={new UDim2(0, 0, 1, 0)}
 		>

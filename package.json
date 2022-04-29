@@ -5,7 +5,8 @@
 		"watch": "npx rbxtsc -w",
 		"build": "rojo build default.project.json --output \"public/Orca.rbxm\"",
 		"serve": "rojo serve place.project.json",
-		"bundle": "npm run build && remodel run ci/bundle-debug.lua public/dev.lua dev-debug"
+		"bundle": "npm run build && remodel run ci/bundle-dev.lua public/dev.lua dev-debug",
+		"bundle:prod": "npm run build && remodel run ci/bundle-prod.lua public/dev.lua dev"
 	},
 	"devDependencies": {
 		"@rbxts/compiler-types": "^1.3.2-types.0",
@@ -27,8 +28,8 @@
 		"@rbxts/flipper": "^2.0.1",
 		"@rbxts/make": "^1.0.6",
 		"@rbxts/roact": "^1.4.0-ts.2",
-		"@rbxts/roact-hooked": "^1.2.5",
-		"@rbxts/roact-hooked-plus": "^1.1.0",
+		"@rbxts/roact-hooked": "^1.2.7",
+		"@rbxts/roact-hooked-plus": "^1.1.1",
 		"@rbxts/roact-rodux-hooked": "^1.0.4",
 		"@rbxts/rodux": "^3.0.0-ts.3",
 		"@rbxts/services": "^1.2.0"

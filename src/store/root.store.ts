@@ -1,12 +1,10 @@
 import Rodux from "@rbxts/rodux";
 
 import { IS_DEV } from "constants";
-import { RootAction, RootState, rootReducer } from "./root.reducer";
+import { RootAction, RootState, RootStore, rootReducer } from "./root.reducer";
 import { persistentData } from "./utils/data-persistence";
 
-export type RootStore = Rodux.Store<RootState, RootAction>;
-
-let rootStore: RootStore | undefined;
+let rootStore: RootStore;
 
 function createStore(): RootStore {
 	if (IS_DEV) {
@@ -28,23 +26,29 @@ export function configureStore(): RootStore {
 }
 
 export function rootDispatch(action: RootAction): void {
-	configureStore().dispatch(action);
+	configureStore();
+	rootStore.dispatch(action);
 }
 
-export function rootSelector<T = RootState>(selector?: (state: RootState) => T): T {
-	const rootStore = configureStore();
-	return selector ? selector(rootStore.getState()) : (rootStore.getState() as unknown as T);
+export function rootSelector<T>(selector: (state: RootState) => T): T;
+export function rootSelector(): RootState;
+export function rootSelector(selector?: (state: RootState) => unknown) {
+	configureStore();
+	return selector ? selector(rootStore.getState()) : rootStore.getState();
 }
 
 export function rootChanged<T>(selector: (state: RootState) => T, callback: (value: T) => void): Rodux.Signal {
-	let lastState: T;
+	configureStore();
+
+	let lastState = selector(rootStore.getState());
+
+	task.spawn(callback, lastState);
 
 	return configureStore().changed.connect((state) => {
 		const newState = selector(state);
 
 		if (lastState !== newState) {
-			lastState = newState;
-			callback(newState);
+			callback((lastState = newState));
 		}
 	});
 }

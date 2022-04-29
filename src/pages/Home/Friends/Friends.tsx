@@ -7,10 +7,10 @@ import { Page } from "store/pages";
 export default function Friends() {
 	return (
 		<Card
-			index={3}
-			align="left"
 			getStyle={(theme) => theme.friends}
+			index={3}
 			page={Page.Home}
+			align="left"
 			size={new UDim2(0, CARD_WIDTH, 0, CARD_HEIGHT_50)}
 			position={new UDim2(0, CARD_WIDTH + CARD_MARGIN, 1, 0)}
 		>

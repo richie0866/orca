@@ -46,16 +46,7 @@ function NavbarBody({ style, pageNumber }: Props) {
 			</frame>
 
 			{/* Stroke */}
-			{style.stroke && (
-				<InnerStroke
-					color={asColor(style.stroke)}
-					transparency={asTransparency(style.stroke)}
-					size={1}
-					radius={style.cornerRadius}
-				>
-					<Gradient color={style.stroke} />
-				</InnerStroke>
-			)}
+			{style.stroke && <InnerStroke color={style.stroke} radius={style.cornerRadius} />}
 		</>
 	);
 }

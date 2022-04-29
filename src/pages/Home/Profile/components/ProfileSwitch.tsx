@@ -46,26 +46,24 @@ function ProfileSwitch({ index, key, icon, position, [Roact.Children]: children 
 	);
 
 	return (
-		<>
-			<Button.Root
-				onClick={() => dispatch(toggleProfileSwitch(key, !enabled))}
-				active={enabled}
-				style={style}
-				size={new UDim2(0, SWITCH_WIDTH, 0, SWITCH_HEIGHT)}
-				position={visibility.map((n) => switchPositionHidden.Lerp(switchPosition, n))}
-			>
-				<Button.Shadow
-					blur={DropshadowBlur.Medium}
-					scale={0.75}
-					size={new UDim2(1, 32, 1, 30)}
-					position={new UDim2(0.5, 0, 1, 20)}
-				/>
-				<Button.Body />
-				<Button.Icon image={icon} size={new UDim2(0, 36, 0, 36)} />
+		<Button.Root
+			onClick={() => dispatch(toggleProfileSwitch(key, !enabled))}
+			active={enabled}
+			style={style}
+			size={new UDim2(0, SWITCH_WIDTH, 0, SWITCH_HEIGHT)}
+			position={visibility.map((n) => switchPositionHidden.Lerp(switchPosition, n))}
+		>
+			<Button.Shadow
+				blur={DropshadowBlur.Medium}
+				scale={0.75}
+				size={new UDim2(1, 32, 1, 30)}
+				position={new UDim2(0.5, 0, 1, 20)}
+			/>
+			<Button.Body />
+			<Button.Icon image={icon} size={new UDim2(0, 36, 0, 36)} />
 
-				{children}
-			</Button.Root>
-		</>
+			{children}
+		</Button.Root>
 	);
 }
 

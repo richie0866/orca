@@ -7,7 +7,7 @@ import { configureStore } from "store";
 export = (target: Frame) => {
 	const handle = Roact.mount(
 		<Provider store={configureStore()}>
-			<imagelabel Image="rbxassetid://9398774597" Size={new UDim2(1, 0, 1, 0)} ScaleType="Crop" />
+			<imagelabel Image="rbxassetid://9492880314" Size={new UDim2(1, 0, 1, 0)} ScaleType="Crop" />
 			<App />
 		</Provider>,
 		target,

@@ -15,13 +15,13 @@ import { useRootSelector } from "hooks/use-root-store";
 import { useScale } from "hooks/use-scale";
 import { useTheme } from "hooks/use-theme";
 
-const getClock = () => os.date("%I:%M %p").gsub("^0([0-9])", "%1")[0];
+const getTime = () => os.date("%I:%M %p").gsub("^0([0-9])", "%1")[0];
 
 function Clock() {
 	const style = useTheme((theme) => theme.clock);
 	const visible = useRootSelector((state) => state.pages.visible);
 
-	const [clock, setClock] = useBinding(getClock());
+	const [clock, setClock] = useBinding(getTime());
 
 	const clockTextSize = useMemo(() => {
 		return clock.map((text) => TextService.GetTextSize(text, 20, "GothamBold", new Vector2(MAX_WIDTH, HEIGHT)));
@@ -31,7 +31,7 @@ function Clock() {
 
 	useEffect(() => {
 		const interval = setInterval(() => {
-			setClock(getClock());
+			setClock(getTime());
 		}, 1000);
 
 		return () => interval.clear();
@@ -102,16 +102,7 @@ function Clock() {
 					/>
 
 					{/* Stroke */}
-					{style.stroke && (
-						<InnerStroke
-							color={asColor(style.stroke)}
-							transparency={asTransparency(style.stroke)}
-							size={1}
-							radius={style.cornerRadius}
-						>
-							<Gradient color={style.stroke} />
-						</InnerStroke>
-					)}
+					{style.stroke && <InnerStroke color={style.stroke} radius={style.cornerRadius} />}
 				</frame>
 			</frame>
 		</Screen>

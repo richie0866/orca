@@ -1,7 +1,8 @@
 import Roact from "@rbxts/roact";
 
-import Friends from "./Friends";
 import Page from "components/Page";
+
+import Friends from "./Friends";
 import Profile from "./Profile";
 import Server from "./Server";
 import Session from "./Session";

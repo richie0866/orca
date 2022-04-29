@@ -36,16 +36,7 @@ function SliderBody(props: Roact.PropsWithChildren) {
 				{props[Roact.Children]}
 			</frame>
 
-			{currentStyle.stroke && (
-				<InnerStroke
-					color={useAnimation(asColor(currentStyle.stroke))}
-					transparency={useAnimation(asTransparency(currentStyle.stroke))}
-					size={1}
-					radius={currentStyle.cornerRadius}
-				>
-					<Gradient color={currentStyle.stroke} />
-				</InnerStroke>
-			)}
+			{currentStyle.stroke && <InnerStroke color={currentStyle.stroke} radius={currentStyle.cornerRadius} />}
 		</>
 	);
 }

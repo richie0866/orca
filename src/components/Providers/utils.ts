@@ -1,5 +1,5 @@
 import { SCREEN_MARGIN } from "constants";
-import { map } from "./number-util";
+import { map } from "utils/number-util";
 
 // Minimum/maximum screen height that will cause the padding to decrease. Avoids
 // rescaling the UI for as long as possible.

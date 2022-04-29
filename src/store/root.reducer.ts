@@ -16,6 +16,8 @@ export interface RootState {
 
 export type RootAction = PagesAction | SettingsAction | ShortcutsAction | ThemesAction | ProfileAction;
 
+export type RootStore = Rodux.Store<RootState, RootAction>;
+
 export const rootReducer = Rodux.combineReducers<RootState, RootAction>({
 	pages: pagesReducer,
 	settings: settingsReducer,

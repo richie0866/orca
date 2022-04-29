@@ -1,27 +1,23 @@
+import Gradient from "./Gradient";
 import Roact from "@rbxts/roact";
+import { GradientColor, SolidColor, asColor, asTransparency } from "store/themes";
 import { asBinding, mapBinding } from "@rbxts/roact-hooked-plus";
 
 interface Props extends Roact.PropsWithChildren {
 	size?: number | Roact.Binding<number>;
 	radius?: UDim | Roact.Binding<UDim>;
-	color?: Color3 | Roact.Binding<Color3>;
-	transparency?: number | Roact.Binding<number>;
+	color?: SolidColor | GradientColor;
 }
 
-export default function InnerStroke({
-	size = 1,
-	radius = new UDim(0, 1),
-	color,
-	transparency,
-	[Roact.Children]: children,
-}: Props) {
+export default function InnerStroke({ size = 1, radius = new UDim(0, 1), color, [Roact.Children]: children }: Props) {
 	return (
 		<frame
 			Size={mapBinding(size, (s) => new UDim2(1, -s * 2, 1, -s * 2))}
 			Position={mapBinding(size, (s) => new UDim2(0, s, 0, s))}
 			BackgroundTransparency={1}
 		>
-			<uistroke Thickness={size} Color={color} Transparency={transparency}>
+			<uistroke Thickness={size} Color={asColor(color)} Transparency={asTransparency(color)}>
+				<Gradient color={color} />
 				{children}
 			</uistroke>
 
