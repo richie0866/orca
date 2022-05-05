@@ -180,7 +180,7 @@ export const darkTheme: Theme = {
 
 	server: cardStyle,
 
-	friends: cardStyle,
+	games: cardStyle,
 
 	players: cardStyle,
 

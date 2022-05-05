@@ -74,7 +74,7 @@ export interface Theme {
 	};
 	session: CardStyle;
 	server: CardStyle;
-	friends: CardStyle;
+	games: CardStyle;
 
 	players: CardStyle;
 

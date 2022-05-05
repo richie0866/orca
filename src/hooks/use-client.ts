@@ -6,6 +6,10 @@ class MockClient {
 	public UserId = 80254;
 	public AccountAge = 500;
 
+	public GetNetworkPing(): number {
+		return math.random(50, 100) / 1000;
+	}
+
 	public GetFriendsOnline(): FriendOnlineInfo[] {
 		return [
 			{

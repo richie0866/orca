@@ -2,7 +2,7 @@ import Roact from "@rbxts/roact";
 
 import Page from "components/Page";
 
-import Friends from "./Friends";
+import Games from "./Games";
 import Profile from "./Profile";
 import Server from "./Server";
 import Session from "./Session";
@@ -12,7 +12,7 @@ export default function Home() {
 	return (
 		<Page>
 			<Session />
-			<Friends />
+			<Games />
 			<Title />
 			<Profile />
 			<Server />
