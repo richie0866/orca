@@ -3,12 +3,11 @@ import Roact from "@rbxts/roact";
 import TitleText from "./components/TitleText";
 import { CARD_INNER_MARGIN, VERSION_TAG } from "constants";
 import { CardHeader } from "components/Card";
-import { Page } from "store/pages";
 
 export default function TitleContent() {
 	return (
 		<>
-			<CardHeader text="Orca" getColor={(theme) => theme.title.foreground} page={Page.Home} />
+			<CardHeader text="Orca" getColor={(theme) => theme.title.foreground} page="Home" />
 			<TitleText
 				id={1}
 				text={VERSION_TAG}

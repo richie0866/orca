@@ -74,7 +74,17 @@ export interface Theme {
 	};
 	session: CardStyle;
 	server: CardStyle;
-	games: CardStyle;
+	games: CardStyle & {
+		gameCard: {
+			skeleton: {
+				from: SolidColor;
+				to: SolidColor;
+			};
+			dropshadow: GradientColor | SolidColor;
+			stroke?: GradientColor | SolidColor;
+			cornerRadius?: UDim;
+		};
+	};
 
 	players: CardStyle;
 

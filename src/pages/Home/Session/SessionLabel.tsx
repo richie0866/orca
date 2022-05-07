@@ -4,10 +4,9 @@ import { pure, useBinding, useEffect } from "@rbxts/roact-hooked";
 
 import Gradient from "components/Gradient";
 import { CARD_INNER_MARGIN } from "constants";
-import { Page } from "store/pages";
 import { Spring } from "@rbxts/flipper";
 import { asColor, asTransparency, multiplyTransparency } from "store/themes";
-import { useRootSelector } from "hooks/use-root-store";
+import { usePageOpen } from "hooks/use-page-open";
 import { useTheme } from "hooks/use-theme";
 
 interface Props {
@@ -22,7 +21,7 @@ const getOffset = (visibility: number) => math.floor((1 - visibility) * CARD_INN
 
 function SessionLabel({ icon, order, position, description, getText }: Props) {
 	const foreground = useTheme((theme) => theme.session.foreground);
-	const visible = useRootSelector((state) => state.pages.currentPage === Page.Home && state.pages.visible);
+	const visible = usePageOpen("Home");
 
 	const [text, setText] = useBinding(getText());
 

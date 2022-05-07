@@ -180,7 +180,17 @@ export const darkTheme: Theme = {
 
 	server: cardStyle,
 
-	games: cardStyle,
+	games: {
+		...cardStyle,
+		gameCard: {
+			skeleton: {
+				from: { color: Color3.fromHex("#282828") },
+				to: { color: Color3.fromHex("#383838") },
+			},
+			dropshadow: { color: dropshadow, transparency: 0.4 },
+			cornerRadius,
+		},
+	},
 
 	players: cardStyle,
 

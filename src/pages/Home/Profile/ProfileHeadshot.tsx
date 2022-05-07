@@ -4,12 +4,11 @@ import { pure } from "@rbxts/roact-hooked";
 import { useDelayedEffect, useSingleMotor } from "@rbxts/roact-hooked-plus";
 
 import Gradient from "components/Gradient";
-import { Page } from "store/pages";
 import { asColor, asTransparency } from "store/themes";
 import { lerp } from "utils/number-util";
 
 import { useClient } from "hooks/use-client";
-import { useRootSelector } from "hooks/use-root-store";
+import { usePageOpen } from "hooks/use-page-open";
 import { useScale } from "hooks/use-scale";
 import { useTheme } from "hooks/use-theme";
 
@@ -20,9 +19,9 @@ const AVATAR_URL = `https://www.roblox.com/headshot-thumbnail/image?userId=%d&wi
 function ProfileHeadshot() {
 	const client = useClient();
 	const scale = useScale();
-	const style = useTheme((theme) => theme.profile.headshot);
 
-	const visible = useRootSelector((state) => state.pages.visible && state.pages.currentPage === Page.Home);
+	const style = useTheme((theme) => theme.profile.headshot);
+	const visible = usePageOpen("Home");
 
 	const [visibility, setGoal] = useSingleMotor(visible ? 1 : 0);
 	useDelayedEffect(

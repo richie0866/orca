@@ -9,6 +9,7 @@ import Screen from "components/Screen";
 
 import { HEIGHT, POSITION_CLOSED, POSITION_OPENED, WIDTH } from "./constants";
 import { useMargin } from "hooks/use-margin";
+import { usePageOpen } from "hooks/use-page-open";
 import { useRootSelector } from "hooks/use-root-store";
 import { useScale } from "hooks/use-scale";
 import { useTheme } from "hooks/use-theme";
@@ -16,7 +17,7 @@ import { useTheme } from "hooks/use-theme";
 function Navbar() {
 	const style = useTheme((theme) => theme.navbar);
 	const currentPage = useRootSelector((state) => state.pages.currentPage);
-	const visible = useRootSelector((state) => state.pages.visible);
+	const visible = usePageOpen();
 
 	const pageNumber = useSpring(currentPage, { frequency: 3.9, dampingRatio: 0.76 });
 	const navbarVisibility = useSpring(visible ? 1 : 0, {});

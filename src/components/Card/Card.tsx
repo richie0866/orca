@@ -7,13 +7,13 @@ import CardBody from "./CardBody";
 import { CardStyle, Theme } from "store/themes";
 import { Page } from "store/pages";
 import { SCREEN_MARGIN } from "constants";
-import { useRootSelector } from "hooks/use-root-store";
+import { usePageOpen } from "hooks/use-page-open";
 import { useTheme } from "hooks/use-theme";
 
 interface Props extends Roact.PropsWithChildren {
 	getStyle: (theme: Theme) => CardStyle;
 	index: number;
-	page: Page;
+	page: keyof typeof Page;
 	align: "left" | "right";
 	size: UDim2;
 	position: UDim2;
@@ -21,7 +21,7 @@ interface Props extends Roact.PropsWithChildren {
 
 function Card({ getStyle, index, page, align, size, position, [Roact.Children]: children }: Props) {
 	const style = useTheme(getStyle);
-	const visible = useRootSelector((state) => state.pages.visible && state.pages.currentPage === page);
+	const visible = usePageOpen(page);
 
 	const [visibility, setGoal] = useSingleMotor(visible ? 1 : 0);
 	useDelayedEffect(

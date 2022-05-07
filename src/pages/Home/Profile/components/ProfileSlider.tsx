@@ -6,8 +6,8 @@ import { useDelayedEffect, useSingleMotor } from "@rbxts/roact-hooked-plus";
 import Button from "components/Button";
 import Slider from "components/Slider";
 import { DropshadowBlur } from "components/Dropshadow";
-import { Page } from "store/pages";
 import { ProfileState, toggleProfileSlider, updateProfileSlider } from "store/profile";
+import { usePageOpen } from "hooks/use-page-open";
 import { useRootDispatch, useRootSelector, useRootStore } from "hooks/use-root-store";
 import { useTheme } from "hooks/use-theme";
 
@@ -34,7 +34,7 @@ function ProfileSlider({ index, key, text, units, min, max, position, [Roact.Chi
 
 	const [sliderStyle, buttonStyle] = useTheme((theme) => [theme.profile.sliders[key], theme.profile.switches[key]]);
 	const enabled = useRootSelector((state) => state.profile.sliders[key].enabled);
-	const visible = useRootSelector((state) => state.pages.visible && state.pages.currentPage === Page.Home);
+	const visible = usePageOpen("Home");
 
 	const [visibility, setGoal] = useSingleMotor(visible ? 1 : 0);
 	useDelayedEffect(

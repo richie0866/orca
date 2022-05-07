@@ -7,13 +7,13 @@ import Gradient from "components/Gradient";
 import { CARD_INNER_MARGIN } from "constants";
 import { GradientColor, SolidColor, Theme, asColor, asTransparency, multiplyTransparency } from "store/themes";
 import { Page } from "store/pages";
-import { useRootSelector } from "hooks/use-root-store";
+import { usePageOpen } from "hooks/use-page-open";
 import { useTheme } from "hooks/use-theme";
 
 interface Props {
 	getColor: (theme: Theme) => SolidColor | GradientColor;
 	text: string;
-	page?: Page;
+	page?: keyof typeof Page;
 	delayMs?: number;
 }
 
@@ -22,10 +22,7 @@ const TITLE_POSITION_HIDDEN = new UDim2(0, -CARD_INNER_MARGIN, 0, CARD_INNER_MAR
 
 function CardHeader({ getColor, text, page, delayMs = 200 }: Props) {
 	const color = useTheme(getColor);
-
-	const visible = useRootSelector(
-		(state) => page !== undefined && state.pages.visible && state.pages.currentPage === page,
-	);
+	const visible = usePageOpen(page);
 
 	const [visibility, setGoal] = useSingleMotor(visible ? 1 : 0);
 	useDelayedEffect(

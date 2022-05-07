@@ -6,8 +6,8 @@ import { useDelayedEffect, useSingleMotor } from "@rbxts/roact-hooked-plus";
 import Button from "components/Button";
 import { CARD_INNER_MARGIN } from "constants";
 import { DropshadowBlur } from "components/Dropshadow";
-import { Page } from "store/pages";
 import { ProfileState, toggleProfileSwitch } from "store/profile";
+import { usePageOpen } from "hooks/use-page-open";
 import { useRootDispatch, useRootSelector } from "hooks/use-root-store";
 import { useTheme } from "hooks/use-theme";
 
@@ -27,7 +27,7 @@ function ProfileSwitch({ index, key, icon, position, [Roact.Children]: children 
 
 	const style = useTheme((theme) => theme.profile.switches[key]);
 	const enabled = useRootSelector((state) => state.profile.switches[key].enabled);
-	const visible = useRootSelector((state) => state.pages.visible && state.pages.currentPage === Page.Home);
+	const visible = usePageOpen("Home");
 
 	const [visibility, setGoal] = useSingleMotor(visible ? 1 : 0);
 	useDelayedEffect(

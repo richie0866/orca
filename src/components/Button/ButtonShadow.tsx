@@ -35,7 +35,7 @@ function ButtonShadow({
 			position={position}
 			anchorPoint={anchorPoint}
 		>
-			<Gradient color={currentStyle.background} />
+			<Gradient color={currentStyle.dropshadow} />
 			{children}
 		</Dropshadow>
 	);

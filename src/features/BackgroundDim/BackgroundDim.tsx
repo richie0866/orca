@@ -3,10 +3,10 @@ import { pure } from "@rbxts/roact-hooked";
 import { useSpring } from "@rbxts/roact-hooked-plus";
 
 import Screen from "components/Screen";
-import { useRootSelector } from "hooks/use-root-store";
+import { usePageOpen } from "hooks/use-page-open";
 
 function BackgroundDim() {
-	const visible = useRootSelector((state) => state.pages.visible);
+	const visible = usePageOpen();
 	const visibility = useSpring(visible ? 0 : 1, {});
 
 	return (

@@ -1,11 +1,10 @@
 import Gradient from "components/Gradient";
 import Roact from "@rbxts/roact";
 import { GradientColor, SolidColor, asColor, asTransparency, multiplyTransparency } from "store/themes";
-import { Page } from "store/pages";
 import { Spring } from "@rbxts/flipper";
 import { pure } from "@rbxts/roact-hooked";
 import { useDelayedEffect, useSingleMotor } from "@rbxts/roact-hooked-plus";
-import { useRootSelector } from "hooks/use-root-store";
+import { usePageOpen } from "hooks/use-page-open";
 
 interface Props {
 	index: number;
@@ -17,7 +16,7 @@ interface Props {
 }
 
 function ProfileInfo({ index, color, text, enabled, size, position }: Props) {
-	const visible = useRootSelector((state) => state.pages.visible && state.pages.currentPage === Page.Home);
+	const visible = usePageOpen("Home");
 
 	const [visibility, setVisibility] = useSingleMotor(enabled && visible ? 1 : 0);
 	useDelayedEffect(

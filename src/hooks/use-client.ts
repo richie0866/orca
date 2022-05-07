@@ -11,6 +11,8 @@ class MockClient {
 	}
 
 	public GetFriendsOnline(): FriendOnlineInfo[] {
+		task.wait(2);
+
 		return [
 			{
 				VisitorId: 4402987,

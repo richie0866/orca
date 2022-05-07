@@ -3,9 +3,8 @@ import { Spring } from "@rbxts/flipper";
 import { pure } from "@rbxts/roact-hooked";
 import { useDelayedEffect, useSingleMotor } from "@rbxts/roact-hooked-plus";
 
-import { Page } from "store/pages";
 import { asColor, asTransparency, multiplyTransparency } from "store/themes";
-import { useRootSelector } from "hooks/use-root-store";
+import { usePageOpen } from "hooks/use-page-open";
 import { useTheme } from "hooks/use-theme";
 
 const DELAY = 60;
@@ -21,7 +20,7 @@ interface Props {
 
 function TitleText({ id, text, position, transparency = 0, alignment = "Top" }: Props) {
 	const style = useTheme((theme) => theme.title);
-	const visible = useRootSelector((state) => state.pages.visible && state.pages.currentPage === Page.Home);
+	const visible = usePageOpen("Home");
 
 	const [visibility, setGoal] = useSingleMotor(visible ? 1 : 0);
 	useDelayedEffect(
