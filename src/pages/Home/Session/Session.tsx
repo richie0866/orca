@@ -60,11 +60,14 @@ function Session() {
 					if (!camera) {
 						return "0 players";
 					}
-					const nearby = Players.GetPlayers().filter((player) => {
+					const nearby = Players.GetPlayers().reduce((acc, player) => {
 						const distance = player.DistanceFromCharacter(camera.CFrame.Position);
-						return player !== client && distance !== 0 && distance < 50;
-					});
-					return `${nearby.size()} players`;
+						if (player !== client && distance > 0 && distance < 50) {
+							return acc + 1;
+						}
+						return acc;
+					}, 0);
+					return `${nearby} players`;
 				}}
 				order={2}
 				position={142}
