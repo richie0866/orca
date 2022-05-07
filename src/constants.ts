@@ -1,3 +1,5 @@
+declare const VERSION: string;
+
 export const IS_DEV = readfile === undefined;
 export const VERSION_TAG = VERSION ?? "studio";
 

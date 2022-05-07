@@ -13,7 +13,7 @@
 		"forceConsistentCasingInFileNames": true,
 		"strict": true,
 		"target": "ESNext",
-		"typeRoots": ["node_modules/@rbxts", "types"],
+		"typeRoots": ["node_modules/@rbxts"],
 
 		// configurable
 		"rootDir": "src",
