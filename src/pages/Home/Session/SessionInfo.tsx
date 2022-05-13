@@ -3,7 +3,7 @@ import { Players, Workspace } from "@rbxts/services";
 import { pure } from "@rbxts/roact-hooked";
 
 import SessionLabel from "./SessionLabel";
-import { IS_DEV } from "constants";
+import { IS_RUNNING } from "constants/env";
 import { useClient } from "hooks/use-client";
 
 function SessionInfo() {
@@ -15,7 +15,7 @@ function SessionInfo() {
 				icon="rbxassetid://9550703910"
 				description="Played for"
 				getText={() => {
-					const uptime = IS_DEV ? elapsedTime() : time();
+					const uptime = IS_RUNNING ? time() : elapsedTime();
 					const days = math.floor(uptime / 86400);
 					const hours = math.floor((uptime - days * 86400) / 3600);
 					const minutes = math.floor((uptime - days * 86400 - hours * 3600) / 60);

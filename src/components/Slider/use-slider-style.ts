@@ -1,7 +1,7 @@
 import Roact from "@rbxts/roact";
 import { useContext } from "@rbxts/roact-hooked";
 
-import { SliderStyle } from "store/themes";
+import { SliderStyle } from "reducers/themes";
 
 export const SliderStyleContext = Roact.createContext<{
 	style: SliderStyle;

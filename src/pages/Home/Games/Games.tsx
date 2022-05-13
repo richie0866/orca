@@ -3,7 +3,7 @@ import Roact from "@rbxts/roact";
 import Card, { CardHeader } from "components/Card";
 import GameList from "./GameList";
 import GamePreview from "./GamePreview";
-import { CARD_HEIGHT_50, CARD_MARGIN, CARD_WIDTH } from "constants";
+import { CARD_HEIGHT_50, CARD_MARGIN, CARD_WIDTH } from "constants/app";
 
 export default function Games() {
 	return (

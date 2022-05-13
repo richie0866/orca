@@ -1,7 +1,7 @@
 import Roact from "@rbxts/roact";
 import { hooked, useMemo, useState } from "@rbxts/roact-hooked";
 
-import { ButtonStyle } from "store/themes";
+import { ButtonStyle } from "reducers/themes";
 import { ButtonStyleContext } from "./use-button-style";
 
 interface Props extends Roact.PropsWithChildren {

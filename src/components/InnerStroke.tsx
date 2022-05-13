@@ -1,6 +1,6 @@
 import Gradient from "./Gradient";
 import Roact from "@rbxts/roact";
-import { GradientColor, SolidColor, asColor, asTransparency } from "store/themes";
+import { GradientColor, SolidColor, asColor, asTransparency } from "reducers/themes";
 import { asBinding, mapBinding } from "@rbxts/roact-hooked-plus";
 
 interface Props extends Roact.PropsWithChildren {

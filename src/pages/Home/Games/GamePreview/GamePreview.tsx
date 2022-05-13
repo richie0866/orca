@@ -2,7 +2,7 @@ import Roact from "@rbxts/roact";
 import { pure } from "@rbxts/roact-hooked";
 import { useSpring } from "@rbxts/roact-hooked-plus";
 
-import { GamesPage } from "store/games";
+import { GamesPage } from "reducers/games";
 import { useRootSelector } from "hooks/use-root-store";
 
 function GamePreview() {

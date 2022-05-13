@@ -4,7 +4,7 @@ import { useSpring } from "@rbxts/roact-hooked-plus";
 
 import GameCard, { HEIGHT, PADDING } from "./GameCard";
 import GameCardSkeleton from "./GameCardSkeleton";
-import { GamesPage } from "store/games";
+import { GamesPage } from "reducers/games";
 import { useFriendGameActivity } from "hooks/use-friends";
 import { useRootSelector } from "hooks/use-root-store";
 

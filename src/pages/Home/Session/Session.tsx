@@ -2,7 +2,7 @@ import Roact from "@rbxts/roact";
 
 import Card, { CardHeader } from "components/Card";
 import SessionInfo from "./SessionInfo";
-import { CARD_HEIGHT_25, CARD_HEIGHT_50, CARD_MARGIN, CARD_WIDTH } from "constants";
+import { CARD_HEIGHT_25, CARD_HEIGHT_50, CARD_MARGIN, CARD_WIDTH } from "constants/app";
 
 export default function Session() {
 	return (

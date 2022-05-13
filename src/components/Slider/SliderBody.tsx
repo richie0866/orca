@@ -4,7 +4,7 @@ import { useAnimation } from "@rbxts/roact-hooked-plus";
 
 import Gradient from "components/Gradient";
 import InnerStroke from "components/InnerStroke";
-import { asColor, asTransparency } from "store/themes";
+import { asColor, asTransparency } from "reducers/themes";
 import { useSliderStyle } from "./use-slider-style";
 
 function SliderBody(props: Roact.PropsWithChildren) {

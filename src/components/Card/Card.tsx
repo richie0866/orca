@@ -4,9 +4,9 @@ import { pure, useMemo } from "@rbxts/roact-hooked";
 import { useDelayedEffect, useSingleMotor } from "@rbxts/roact-hooked-plus";
 
 import CardBody from "./CardBody";
-import { CardStyle, Theme } from "store/themes";
-import { Page } from "store/pages";
-import { SCREEN_MARGIN } from "constants";
+import { CardStyle, Theme } from "reducers/themes";
+import { Page } from "reducers/pages";
+import { SCREEN_MARGIN } from "constants/app";
 import { usePageOpen } from "hooks/use-page-open";
 import { useTheme } from "hooks/use-theme";
 

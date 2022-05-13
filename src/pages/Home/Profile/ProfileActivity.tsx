@@ -2,8 +2,8 @@ import Roact from "@rbxts/roact";
 import { pure, useMemo } from "@rbxts/roact-hooked";
 
 import ProfileInfo from "./components/ProfileInfo";
-import { CARD_INNER_MARGIN } from "constants";
-import { asColor, asTransparency, multiplyTransparency } from "store/themes";
+import { CARD_INNER_MARGIN } from "constants/app";
+import { asColor, asTransparency, multiplyTransparency } from "reducers/themes";
 import { useClient } from "hooks/use-client";
 import { useFriends } from "hooks/use-friends";
 import { useScale } from "hooks/use-scale";

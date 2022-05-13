@@ -33,6 +33,7 @@
 		"@rbxts/roact-hooked-plus": "^1.1.1",
 		"@rbxts/roact-rodux-hooked": "^1.0.4",
 		"@rbxts/rodux": "^3.0.0-ts.3",
+		"@rbxts/roselect": "^0.1.1",
 		"@rbxts/services": "^1.2.0"
 	}
 }

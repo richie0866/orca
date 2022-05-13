@@ -4,7 +4,7 @@ import { useAnimation } from "@rbxts/roact-hooked-plus";
 
 import Gradient from "components/Gradient";
 import InnerStroke from "components/InnerStroke";
-import { asColor, asTransparency } from "store/themes";
+import { asColor, asTransparency } from "reducers/themes";
 import { useButtonStyle } from "./use-button-style";
 
 function ButtonBody(props: Roact.PropsWithChildren) {

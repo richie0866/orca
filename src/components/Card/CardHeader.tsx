@@ -4,9 +4,9 @@ import { pure } from "@rbxts/roact-hooked";
 import { useDelayedEffect, useSingleMotor } from "@rbxts/roact-hooked-plus";
 
 import Gradient from "components/Gradient";
-import { CARD_INNER_MARGIN } from "constants";
-import { GradientColor, SolidColor, Theme, asColor, asTransparency, multiplyTransparency } from "store/themes";
-import { Page } from "store/pages";
+import { CARD_INNER_MARGIN } from "constants/app";
+import { GradientColor, SolidColor, Theme, asColor, asTransparency, multiplyTransparency } from "reducers/themes";
+import { Page } from "reducers/pages";
 import { usePageOpen } from "hooks/use-page-open";
 import { useTheme } from "hooks/use-theme";
 
@@ -20,7 +20,7 @@ interface Props {
 const TITLE_POSITION = new UDim2(0, CARD_INNER_MARGIN, 0, CARD_INNER_MARGIN);
 const TITLE_POSITION_HIDDEN = new UDim2(0, -CARD_INNER_MARGIN, 0, CARD_INNER_MARGIN);
 
-function CardHeader({ getColor, text, page, delayMs = 200 }: Props) {
+function CardHeader({ getColor, text, page, delayMs = 100 }: Props) {
 	const color = useTheme(getColor);
 	const visible = usePageOpen(page);
 

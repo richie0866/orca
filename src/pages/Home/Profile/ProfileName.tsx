@@ -3,7 +3,7 @@ import { Spring } from "@rbxts/flipper";
 import { pure } from "@rbxts/roact-hooked";
 import { useDelayedEffect, useSingleMotor } from "@rbxts/roact-hooked-plus";
 
-import { asColor, asTransparency, multiplyTransparency } from "store/themes";
+import { asColor, asTransparency, multiplyTransparency } from "reducers/themes";
 import { lerp } from "utils/number-util";
 import { useClient } from "hooks/use-client";
 import { usePageOpen } from "hooks/use-page-open";

@@ -1,5 +1,5 @@
 import Roact from "@rbxts/roact";
-import { GradientColor, SolidColor, isGradient } from "store/themes";
+import { GradientColor, SolidColor, isGradient } from "reducers/themes";
 
 interface Props {
 	color?: GradientColor | SolidColor;

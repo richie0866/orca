@@ -4,7 +4,7 @@ import { useAnimation } from "@rbxts/roact-hooked-plus";
 
 import Dropshadow, { DropshadowBlur } from "components/Dropshadow";
 import Gradient from "components/Gradient";
-import { asColor, asTransparency } from "store/themes";
+import { asColor, asTransparency } from "reducers/themes";
 import { useSliderStyle } from "./use-slider-style";
 
 interface Props extends Roact.PropsWithChildren {

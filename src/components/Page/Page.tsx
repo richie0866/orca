@@ -3,7 +3,7 @@ import { pure } from "@rbxts/roact-hooked";
 
 import Screen from "components/Screen";
 import { HEIGHT as NAVBAR_HEIGHT } from "features/Navbar";
-import { SCREEN_MARGIN } from "constants";
+import { SCREEN_MARGIN } from "constants/app";
 import { useMargin } from "hooks/use-margin";
 import { useScale } from "hooks/use-scale";
 

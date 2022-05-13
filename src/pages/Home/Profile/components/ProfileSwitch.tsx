@@ -4,9 +4,9 @@ import { pure } from "@rbxts/roact-hooked";
 import { useDelayedEffect, useSingleMotor } from "@rbxts/roact-hooked-plus";
 
 import Button from "components/Button";
-import { CARD_INNER_MARGIN } from "constants";
+import { CARD_INNER_MARGIN } from "constants/app";
 import { DropshadowBlur } from "components/Dropshadow";
-import { ProfileState, toggleProfileSwitch } from "store/profile";
+import { ProfileState, selectSwitchStatus, toggleProfileSwitch } from "reducers/profile";
 import { usePageOpen } from "hooks/use-page-open";
 import { useRootDispatch, useRootSelector } from "hooks/use-root-store";
 import { useTheme } from "hooks/use-theme";
@@ -25,9 +25,9 @@ interface Props extends Roact.PropsWithChildren {
 function ProfileSwitch({ index, key, icon, position, [Roact.Children]: children }: Props) {
 	const dispatch = useRootDispatch();
 
-	const style = useTheme((theme) => theme.profile.switches[key]);
-	const enabled = useRootSelector((state) => state.profile.switches[key].enabled);
 	const visible = usePageOpen("Home");
+	const style = useTheme((theme) => theme.profile);
+	const enabled = useRootSelector((state) => selectSwitchStatus(state, key));
 
 	const [visibility, setGoal] = useSingleMotor(visible ? 1 : 0);
 	useDelayedEffect(
@@ -49,7 +49,7 @@ function ProfileSwitch({ index, key, icon, position, [Roact.Children]: children 
 		<Button.Root
 			onClick={() => dispatch(toggleProfileSwitch(key, !enabled))}
 			active={enabled}
-			style={style}
+			style={style.switches[key]}
 			size={new UDim2(0, SWITCH_WIDTH, 0, SWITCH_HEIGHT)}
 			position={visibility.map((n) => switchPositionHidden.Lerp(switchPosition, n))}
 		>

@@ -1,19 +1,12 @@
 import { useMemo } from "@rbxts/roact-hooked";
 
-import { Theme, getTheme } from "store/themes";
+import { Theme, createThemeSelector } from "reducers/themes";
 import { useRootSelector } from "./use-root-store";
-
-const defaultTheme = getTheme("Dark theme")!;
 
 export function useTheme<T>(selector: (theme: Theme) => T): T;
 export function useTheme(): Theme;
-export function useTheme(selector?: (theme: Theme) => unknown): unknown {
-	const themeName = useRootSelector((state) => state.themes.currentTheme);
-	const theme = useMemo(() => getTheme(themeName) || defaultTheme, [themeName]);
-
-	if (selector) {
-		return selector(theme);
-	}
-
-	return theme;
+export function useTheme(selector?: (theme: Theme) => defined): defined {
+	const theme = useRootSelector(useMemo(() => createThemeSelector(), []));
+	const result = useMemo(() => selector?.(theme) ?? theme, [theme, selector]);
+	return result;
 }

@@ -9,9 +9,9 @@ import InnerStroke from "components/InnerStroke";
 import Screen from "components/Screen";
 
 import { HEIGHT, MAX_WIDTH, MIN_WIDTH, PADDING, POSITION_CLOSED, POSITION_OPENED } from "./constants";
-import { asColor, asTransparency } from "store/themes";
+import { asColor, asTransparency } from "reducers/themes";
 import { useMargin } from "hooks/use-margin";
-import { usePageOpen } from "hooks/use-page-open";
+import { usePagesVisible } from "hooks/use-page-open";
 import { useScale } from "hooks/use-scale";
 import { useTheme } from "hooks/use-theme";
 
@@ -19,7 +19,7 @@ const getTime = () => os.date("%I:%M %p").gsub("^0([0-9])", "%1")[0];
 
 function Clock() {
 	const style = useTheme((theme) => theme.clock);
-	const visible = usePageOpen();
+	const visible = usePagesVisible();
 
 	const [clock, setClock] = useBinding(getTime());
 

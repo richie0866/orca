@@ -3,7 +3,7 @@ import { hooked } from "@rbxts/roact-hooked";
 import { useAnimation } from "@rbxts/roact-hooked-plus";
 
 import Gradient from "components/Gradient";
-import { asColor, asTransparency } from "store/themes";
+import { asColor, asTransparency } from "reducers/themes";
 import { mapStrict } from "utils/number-util";
 import { useSliderStyle } from "./use-slider-style";
 

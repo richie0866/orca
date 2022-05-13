@@ -3,9 +3,10 @@ import { RunService } from "@rbxts/services";
 import { pure, useBinding, useEffect } from "@rbxts/roact-hooked";
 
 import InnerStroke from "components/InnerStroke";
-import { CARD_INNER_MARGIN, IS_DEV } from "constants";
+import { CARD_INNER_MARGIN } from "constants/app";
 import { HEIGHT, PADDING, WIDTH } from "./GameCard";
-import { asColor, asTransparency } from "store/themes";
+import { IS_RUNNING } from "constants/env";
+import { asColor, asTransparency } from "reducers/themes";
 import { lerp, mapStrict } from "utils/number-util";
 import { useTheme } from "hooks/use-theme";
 
@@ -13,7 +14,8 @@ interface Props {
 	order: number;
 }
 
-const getBlink = (order: number) => mapStrict(math.sin((IS_DEV ? elapsedTime() : time()) * 4 - order / 2), -1, 1, 0, 1);
+const getBlink = (order: number) =>
+	mapStrict(math.sin((IS_RUNNING ? time() : elapsedTime()) * 4 - order / 2), -1, 1, 0, 1);
 
 function GameCardSkeleton({ order }: Props) {
 	const style = useTheme((theme) => theme.games.gameCard);

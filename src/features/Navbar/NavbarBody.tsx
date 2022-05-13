@@ -4,7 +4,7 @@ import { hooked } from "@rbxts/roact-hooked";
 import Gradient from "components/Gradient";
 import InnerStroke from "components/InnerStroke";
 import { HEIGHT, WIDTH } from "./constants";
-import { Theme, asColor, asTransparency } from "store/themes";
+import { Theme, asColor, asTransparency } from "reducers/themes";
 
 interface Props {
 	style: Theme["navbar"];

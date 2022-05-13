@@ -4,7 +4,7 @@ import { pure } from "@rbxts/roact-hooked";
 import { useDelayedEffect, useSingleMotor } from "@rbxts/roact-hooked-plus";
 
 import Gradient from "components/Gradient";
-import { asColor, asTransparency } from "store/themes";
+import { asColor, asTransparency } from "reducers/themes";
 import { lerp } from "utils/number-util";
 
 import { useClient } from "hooks/use-client";

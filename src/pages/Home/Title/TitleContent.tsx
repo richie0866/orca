@@ -1,8 +1,9 @@
 import Roact from "@rbxts/roact";
 
 import TitleText from "./components/TitleText";
-import { CARD_INNER_MARGIN, VERSION_TAG } from "constants";
+import { CARD_INNER_MARGIN } from "constants/app";
 import { CardHeader } from "components/Card";
+import { VERSION_TAG } from "constants/env";
 
 export default function TitleContent() {
 	return (

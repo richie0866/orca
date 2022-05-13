@@ -4,7 +4,7 @@ import { UserInputService } from "@rbxts/services";
 import { hooked, useBinding, useCallback, useMemo, useMutable, useState } from "@rbxts/roact-hooked";
 import { useEvent, useSingleMotor } from "@rbxts/roact-hooked-plus";
 
-import { SliderStyle } from "store/themes";
+import { SliderStyle } from "reducers/themes";
 import { SliderStyleContext } from "./use-slider-style";
 import { mapStrict } from "utils/number-util";
 

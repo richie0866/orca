@@ -1,4 +1,4 @@
-import { SCREEN_MARGIN } from "constants";
+import { SCREEN_MARGIN } from "constants/app";
 
 export const MIN_WIDTH = 56;
 export const MAX_WIDTH = 200;

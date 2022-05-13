@@ -1,7 +1,7 @@
 import Roact from "@rbxts/roact";
 
 import Card from "components/Card";
-import { CARD_HEIGHT_75, CARD_WIDTH } from "constants";
+import { CARD_HEIGHT_75, CARD_WIDTH } from "constants/app";
 
 export default function Players() {
 	return (

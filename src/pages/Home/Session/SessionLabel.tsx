@@ -3,9 +3,9 @@ import { clearInterval, setInterval, useDelayedEffect, useSingleMotor } from "@r
 import { pure, useBinding, useEffect } from "@rbxts/roact-hooked";
 
 import Gradient from "components/Gradient";
-import { CARD_INNER_MARGIN } from "constants";
+import { CARD_INNER_MARGIN } from "constants/app";
 import { Spring } from "@rbxts/flipper";
-import { asColor, asTransparency, multiplyTransparency } from "store/themes";
+import { asColor, asTransparency, multiplyTransparency } from "reducers/themes";
 import { usePageOpen } from "hooks/use-page-open";
 import { useTheme } from "hooks/use-theme";
 

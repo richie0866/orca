@@ -3,7 +3,7 @@ import { pure } from "@rbxts/roact-hooked";
 
 import ProfileSlider from "./components/ProfileSlider";
 import ProfileSwitch, { SWITCH_PADDING, SWITCH_WIDTH } from "./components/ProfileSwitch";
-import { CARD_INNER_MARGIN } from "constants";
+import { CARD_INNER_MARGIN } from "constants/app";
 
 function ProfileActions() {
 	return (

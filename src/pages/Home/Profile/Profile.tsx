@@ -5,7 +5,7 @@ import ProfileActions from "./ProfileActions";
 import ProfileActivity from "./ProfileActivity";
 import ProfileHeadshot from "./ProfileHeadshot";
 import ProfileName from "./ProfileName";
-import { CARD_HEIGHT_75, CARD_WIDTH } from "constants";
+import { CARD_HEIGHT_75, CARD_WIDTH } from "constants/app";
 
 export default function Profile() {
 	return (

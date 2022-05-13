@@ -1,6 +1,6 @@
 import Gradient from "components/Gradient";
 import Roact from "@rbxts/roact";
-import { GradientColor, SolidColor, asColor, asTransparency, multiplyTransparency } from "store/themes";
+import { GradientColor, SolidColor, asColor, asTransparency, multiplyTransparency } from "reducers/themes";
 import { Spring } from "@rbxts/flipper";
 import { pure } from "@rbxts/roact-hooked";
 import { useDelayedEffect, useSingleMotor } from "@rbxts/roact-hooked-plus";

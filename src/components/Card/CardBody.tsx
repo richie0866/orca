@@ -4,7 +4,7 @@ import { hooked } from "@rbxts/roact-hooked";
 import Dropshadow, { DropshadowBlur } from "components/Dropshadow";
 import Gradient from "components/Gradient";
 import InnerStroke from "components/InnerStroke";
-import { CardStyle, asColor, asTransparency } from "store/themes";
+import { CardStyle, asColor, asTransparency } from "reducers/themes";
 
 interface Props extends Roact.PropsWithChildren {
 	style: CardStyle;

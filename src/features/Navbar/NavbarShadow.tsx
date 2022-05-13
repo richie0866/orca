@@ -3,7 +3,7 @@ import { hooked } from "@rbxts/roact-hooked";
 
 import Dropshadow, { DropshadowBlur } from "components/Dropshadow";
 import Gradient from "components/Gradient";
-import { Theme, asColor, asColorSequence, asTransparency } from "store/themes";
+import { Theme, asColor, asColorSequence, asTransparency } from "reducers/themes";
 import { getColorInSequence } from "utils/color-util";
 
 interface Props {

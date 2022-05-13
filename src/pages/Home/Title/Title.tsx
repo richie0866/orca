@@ -3,7 +3,7 @@ import Roact from "@rbxts/roact";
 import Card from "components/Card";
 import TitleArt from "./TitleArt";
 import TitleContent from "./TitleContent";
-import { CARD_HEIGHT_25, CARD_HEIGHT_75, CARD_MARGIN, CARD_WIDTH } from "constants";
+import { CARD_HEIGHT_25, CARD_HEIGHT_75, CARD_MARGIN, CARD_WIDTH } from "constants/app";
 
 export default function Title() {
 	return (

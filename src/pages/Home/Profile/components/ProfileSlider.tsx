@@ -6,7 +6,7 @@ import { useDelayedEffect, useSingleMotor } from "@rbxts/roact-hooked-plus";
 import Button from "components/Button";
 import Slider from "components/Slider";
 import { DropshadowBlur } from "components/Dropshadow";
-import { ProfileState, toggleProfileSlider, updateProfileSlider } from "store/profile";
+import { ProfileState, selectSliderStatus, toggleProfileSlider, updateProfileSlider } from "reducers/profile";
 import { usePageOpen } from "hooks/use-page-open";
 import { useRootDispatch, useRootSelector, useRootStore } from "hooks/use-root-store";
 import { useTheme } from "hooks/use-theme";
@@ -32,9 +32,9 @@ function ProfileSlider({ index, key, text, units, min, max, position, [Roact.Chi
 	const store = useRootStore();
 	const dispatch = useRootDispatch();
 
-	const [sliderStyle, buttonStyle] = useTheme((theme) => [theme.profile.sliders[key], theme.profile.switches[key]]);
-	const enabled = useRootSelector((state) => state.profile.sliders[key].enabled);
 	const visible = usePageOpen("Home");
+	const styles = useTheme((theme) => theme.profile);
+	const enabled = useRootSelector((state) => selectSliderStatus(state, key));
 
 	const [visibility, setGoal] = useSingleMotor(visible ? 1 : 0);
 	useDelayedEffect(
@@ -56,7 +56,7 @@ function ProfileSlider({ index, key, text, units, min, max, position, [Roact.Chi
 			<Button.Root
 				onClick={() => dispatch(toggleProfileSlider(key, !enabled))}
 				active={enabled}
-				style={buttonStyle}
+				style={styles.switches[key]}
 				size={new UDim2(0, SWITCH_WIDTH, 0, SWITCH_HEIGHT)}
 				position={visibility.map((n) => switchPositionHidden.Lerp(switchPosition, n))}
 			>
@@ -77,7 +77,7 @@ function ProfileSlider({ index, key, text, units, min, max, position, [Roact.Chi
 				min={min}
 				max={max}
 				defaultValue={useMemo(() => store.getState().profile.sliders[key].value, [])}
-				style={sliderStyle}
+				style={styles.sliders[key]}
 				size={new UDim2(0, SLIDER_WIDTH, 0, SLIDER_HEIGHT)}
 				position={visibility.map((n) => sliderPositionHidden.Lerp(sliderPosition, n))}
 			>

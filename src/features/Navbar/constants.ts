@@ -1,4 +1,4 @@
-import { SCREEN_MARGIN } from "constants";
+import { SCREEN_MARGIN } from "constants/app";
 
 export const WIDTH = 400;
 export const HEIGHT = 56;

@@ -2,8 +2,8 @@ import Roact from "@rbxts/roact";
 import { hooked } from "@rbxts/roact-hooked";
 
 import Button from "components/Button";
-import { Page, setCurrentPage } from "store/pages";
-import { Theme } from "store/themes";
+import { Page, selectCurrentPage, setCurrentPage } from "reducers/pages";
+import { Theme } from "reducers/themes";
 import { useRootDispatch, useRootSelector } from "hooks/use-root-store";
 
 interface Props {
@@ -12,7 +12,7 @@ interface Props {
 
 function NavbarTabs({ style }: Props) {
 	const dispatch = useRootDispatch();
-	const currentPage = useRootSelector((state) => state.pages.currentPage);
+	const currentPage = useRootSelector(selectCurrentPage);
 
 	return (
 		<>
