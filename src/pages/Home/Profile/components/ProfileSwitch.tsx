@@ -39,11 +39,7 @@ function ProfileSwitch({ index, key, icon, position, [Roact.Children]: children 
 	);
 
 	// Position for show and hide transition
-	const switchPosition = position;
-	const switchPositionHidden = new UDim2(
-		position.X,
-		position.Y.add(new UDim(0, SWITCH_HEIGHT + CARD_INNER_MARGIN * 2)),
-	);
+	const positionHidden = new UDim2(position.X, position.Y.add(new UDim(0, SWITCH_HEIGHT + CARD_INNER_MARGIN * 2)));
 
 	return (
 		<Button.Root
@@ -51,7 +47,7 @@ function ProfileSwitch({ index, key, icon, position, [Roact.Children]: children 
 			active={enabled}
 			style={style.switches[key]}
 			size={new UDim2(0, SWITCH_WIDTH, 0, SWITCH_HEIGHT)}
-			position={visibility.map((n) => switchPositionHidden.Lerp(switchPosition, n))}
+			position={visibility.map((n) => positionHidden.Lerp(position, n))}
 		>
 			<Button.Shadow
 				blur={DropshadowBlur.Medium}

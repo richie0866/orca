@@ -8,7 +8,7 @@ import SliderShadow from "./SliderShadow";
 import SliderText from "./SliderText";
 import { DropshadowBlur } from "components/Dropshadow";
 import { asColor, getTheme } from "reducers/themes";
-import { configureStore } from "store/configure-store";
+import { configureStore } from "store";
 
 const theme = getTheme("Dark theme")!;
 

@@ -4,5 +4,7 @@ import { getTheme } from "./styles";
 
 export const selectCurrentTheme = (state: RootState) => state.themes.currentTheme;
 
-export const createThemeSelector = () =>
-	createSelector([selectCurrentTheme], (themeName) => getTheme(themeName) || getTheme("Dark theme")!);
+export const selectThemeData = createSelector(
+	[selectCurrentTheme],
+	(themeName) => getTheme(themeName) || getTheme("Dark theme")!,
+);

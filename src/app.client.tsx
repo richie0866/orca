@@ -3,7 +3,7 @@ import { Provider } from "@rbxts/roact-rodux-hooked";
 
 import App from "components/App";
 import { IS_LOADED } from "constants/env";
-import { configureStore } from "store/configure-store";
+import { configureStore } from "store";
 import { getMountTarget } from "utils/get-mount-target";
 import { hasGlobal, setGlobal } from "utils/global-util";
 import { setPagesVisible } from "reducers/pages";

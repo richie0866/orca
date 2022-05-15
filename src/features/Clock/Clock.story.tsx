@@ -2,7 +2,7 @@ import Roact from "@rbxts/roact";
 import { Provider } from "@rbxts/roact-rodux-hooked";
 
 import Clock from "./Clock";
-import { configureStore } from "store/configure-store";
+import { configureStore } from "store";
 
 export = (target: Frame) => {
 	const handle = Roact.mount(
