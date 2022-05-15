@@ -1,4 +1,4 @@
-local ROJO_INPUT = "public/Orca.rbxm"
+local ROJO_INPUT = "dist/Orca.rbxm"
 local RUNTIME_FILE = "ci/runtime.lua"
 local BUNDLE_TEMP = "ci/bundle.tmp"
 

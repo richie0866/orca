@@ -17,7 +17,7 @@ export function storeChanged<T>(selector: (state: RootState) => T, callback: (st
 	const store = configureStore();
 
 	let lastState = selector(store.getState());
-	task.spawn(callback, lastState);
+	task.defer(callback, lastState);
 
 	return store.changed.connect((state) => {
 		const newState = selector(state);

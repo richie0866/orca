@@ -23,7 +23,7 @@ Roact.mount(
 
 // If 3 seconds passed since the game started, show the dashboard
 if (time() > 3) {
-	store.dispatch(setPagesVisible(true));
+	task.defer(() => store.dispatch(setPagesVisible(true)));
 }
 
 setGlobal(IS_LOADED, true);

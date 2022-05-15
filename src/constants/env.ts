@@ -1,4 +1,4 @@
-export const IS_LOADED = "__RECORD_IS_LOADED__";
+export const IS_LOADED = "__ORCA_IS_LOADED__";
 export const DATA_DIRECTORY = "orca-2.x";
 
 export const VERSION_TAG = VERSION ?? "studio";
