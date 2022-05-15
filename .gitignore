@@ -3,6 +3,7 @@
 /node_modules
 /out
 /include
-/public/dev.lua
+/public
+/dist
 *.rbxm
 *.rbxmx

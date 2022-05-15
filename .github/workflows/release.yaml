@@ -3,42 +3,41 @@ name: Release Build
 on:
   workflow_dispatch:
   release:
-    types: [ published ]
+    types: [ published, prereleased ]
 
 jobs:
   publish-release:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
-        with:
-          repository: ${{ github.event.repository.full_name }}
-          ref: "master"
+    - uses: actions/checkout@v2
+      with:
+        repository: ${{ github.event.repository.full_name }}
+        ref: "master"
 
-      - name: Install Foreman
-        uses: rojo-rbx/setup-foreman@v1.0.1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+    - name: Install Foreman
+      uses: rojo-rbx/setup-foreman@v1.0.1
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Install NPM dependencies
-        uses: bahmutov/npm-install@v1.7.4
+    - name: Install NPM dependencies
+      uses: bahmutov/npm-install@v1.7.4
 
-      - name: Compile roblox-ts
-        run: |
-          npm run compile
+    - name: Compile roblox-ts
+      run: |
+        npm run compile
 
-      - name: Build model
-        run: |
-          npm run build
+    - name: Build model
+      run: |
+        npm run build
 
-      - name: Bundle modules
-        run: |
-          remodel run ci/bundle-prod.lua public/latest.lua ${{ github.event.release.tag_name }}
-          remodel run ci/bundle-debug.lua public/latest.debug.lua ${{ github.event.release.tag_name }}-debug
+    - name: Bundle modules
+      run: |
+        remodel run ci/bundle-prod.lua dist/Orca.lua ${{ github.event.release.tag_name }}
+        remodel run ci/bundle-debug.lua dist/Orca.debug.lua ${{ github.event.release.tag_name }}-debug
 
-      - name: Commit latest
-        uses: EndBug/add-and-commit@v8.0.2
-        with:
-          default_author: "github_actions"
-          add: "['public/latest.lua', 'public/latest.debug.lua']"
-          message: 🐋 Release ${{ github.event.release.tag_name }}
+    - name: Upload to release
+      uses: AButler/upload-release-assets@v2.0
+      with:
+        files: "dist/Orca.lua;dist/Orca.debug.lua"
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
