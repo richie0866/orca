@@ -5,8 +5,8 @@
 		"watch": "npx rbxtsc -w",
 		"build": "rojo build default.project.json --output \"dist/Orca.rbxm\"",
 		"serve": "rojo serve place.project.json",
-		"bundle": "npm run build && remodel run ci/bundle-dev.lua dist/dev.lua dev-debug",
-		"bundle:prod": "npm run build && remodel run ci/bundle-prod.lua dist/dev.lua dev"
+		"bundle": "npm run build && remodel run ci/bundle-dev.lua dist/Orca.dev.lua dev",
+		"bundle:prod": "npm run build && remodel run ci/bundle-prod.lua dist/Orca.dev.lua prod"
 	},
 	"devDependencies": {
 		"@rbxts/compiler-types": "^1.3.2-types.0",
