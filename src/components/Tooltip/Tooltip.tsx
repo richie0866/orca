@@ -85,8 +85,7 @@ function Tooltip({ caption, style, alignment = "center" }: Props) {
 				Position={animation.map(
 					(n) => new UDim2(frameAlignment, 0, 0, -OFFSET + math.floor((1 - n) * TAIL_HEIGHT * 2)),
 				)}
-				BackgroundColor3={asColor(background)}
-				BorderSizePixel={0}
+				BackgroundTransparency={1}
 				Visible={animation.map((n) => n !== 0)}
 			>
 				<Dropshadow
@@ -101,7 +100,15 @@ function Tooltip({ caption, style, alignment = "center" }: Props) {
 				</Dropshadow>
 
 				{/* Caption */}
-				<frame ClipsDescendants Size={new UDim2(1, 0, 1, 0)} BackgroundTransparency={1}>
+				<frame
+					ClipsDescendants
+					Size={new UDim2(1, 0, 1, 0)}
+					BackgroundColor3={asColor(background)}
+					BorderSizePixel={0}
+				>
+					<uicorner CornerRadius={cornerRadius} />
+					<Gradient color={background} />
+
 					<textlabel
 						Text={caption}
 						Font="GothamBold"
@@ -119,9 +126,6 @@ function Tooltip({ caption, style, alignment = "center" }: Props) {
 						<Gradient color={foreground} />
 					</textlabel>
 				</frame>
-
-				<uicorner CornerRadius={cornerRadius} />
-				<Gradient color={background} />
 			</frame>
 		</>
 	);

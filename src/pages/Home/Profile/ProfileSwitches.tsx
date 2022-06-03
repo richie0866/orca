@@ -31,7 +31,7 @@ export default function ProfileSwitches() {
 			<ProfileSwitch
 				order={2}
 				name="godmode"
-				tooltip="💀 Enable godmode\n⚠️ May break reloading!"
+				tooltip="💀 Enable godmode\n🐞 Breaks respawning!"
 				icon="rbxassetid://8992253678"
 				position={new UDim2(0, switchOffsets[2], 0, 568)}
 			/>
