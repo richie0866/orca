@@ -10,7 +10,7 @@ import { DashboardPage } from "store/models/dashboard.model";
 import { px, scale } from "utils/udim2";
 import ShortcutItem, { ENTRY_HEIGHT, PADDING } from "./ShortcutItem";
 
-const ENTRY_COUNT = 5; // Hardcoded for now
+const ENTRY_COUNT = 6; // Hardcoded for now
 
 function Shortcuts() {
 	const store = useAppStore();
@@ -63,13 +63,23 @@ function Shortcuts() {
 					/>
 					<ShortcutItem
 						onActivate={() => {
+							dispatch(setJobActive("freecam", !store.getState().jobs.freecam.active));
+						}}
+						onSelect={setSelectedItem}
+						selectedItem={selectedItem}
+						action="setFreecam"
+						description="Set freecam"
+						index={2}
+					/>
+					<ShortcutItem
+						onActivate={() => {
 							dispatch(setJobActive("ghost", !store.getState().jobs.ghost.active));
 						}}
 						onSelect={setSelectedItem}
 						selectedItem={selectedItem}
 						action="setGhost"
 						description="Set ghost mode"
-						index={2}
+						index={3}
 					/>
 					<ShortcutItem
 						onActivate={() => {
@@ -79,7 +89,7 @@ function Shortcuts() {
 						selectedItem={selectedItem}
 						action="setSpeed"
 						description="Set walk speed"
-						index={3}
+						index={4}
 					/>
 					<ShortcutItem
 						onActivate={() => {
@@ -89,7 +99,7 @@ function Shortcuts() {
 						selectedItem={selectedItem}
 						action="setJumpHeight"
 						description="Set jump height"
-						index={4}
+						index={5}
 					/>
 				</scrollingframe>
 			</Canvas>

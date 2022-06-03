@@ -42,10 +42,14 @@ async function main() {
 			humanoid = newHumanoid;
 
 			setDefaultWalkSpeed(newHumanoid);
-			updateWalkSpeed(newHumanoid, walkSpeedJob);
-
 			setDefaultJumpHeight(newHumanoid);
-			updateJumpHeight(newHumanoid, jumpHeightJob);
+
+			if (walkSpeedJob.active) {
+				updateWalkSpeed(newHumanoid, walkSpeedJob);
+			}
+			if (jumpHeightJob.active) {
+				updateJumpHeight(newHumanoid, jumpHeightJob);
+			}
 		}
 	});
 
