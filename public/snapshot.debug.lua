@@ -5,7 +5,7 @@
 --
 -- Author: 0866
 -- License: MIT
--- Version: "22d112a-dbg"
+-- Version: "22d154a-dbg"
 -- GitHub: https://github.com/richie0866/orca
 --]]
 
@@ -106,7 +106,7 @@ end
 ---@return table<string, any> environment
 local function newEnv(id)
 	return setmetatable({
-		VERSION = "22d112a-dbg",
+		VERSION = "22d154a-dbg",
 		script = instanceFromId[id],
 		require = function (module)
 			return requireModuleInternal(module, instanceFromId[id])
@@ -2721,9 +2721,13 @@ local main = TS.async(function()\
 \9\9if newHumanoid and newHumanoid:IsA(\"Humanoid\") then\
 \9\9\9humanoid = newHumanoid\
 \9\9\9setDefaultWalkSpeed(newHumanoid)\
-\9\9\9updateWalkSpeed(newHumanoid, walkSpeedJob)\
 \9\9\9setDefaultJumpHeight(newHumanoid)\
-\9\9\9updateJumpHeight(newHumanoid, jumpHeightJob)\
+\9\9\9if walkSpeedJob.active then\
+\9\9\9\9updateWalkSpeed(newHumanoid, walkSpeedJob)\
+\9\9\9end\
+\9\9\9if jumpHeightJob.active then\
+\9\9\9\9updateJumpHeight(newHumanoid, jumpHeightJob)\
+\9\9\9end\
 \9\9end\
 \9end)\
 \9setDefaultWalkSpeed(humanoid)\
@@ -9171,7 +9175,7 @@ local _ShortcutItem = TS.import(script, script.Parent, \"ShortcutItem\")\
 local ShortcutItem = _ShortcutItem.default\
 local ENTRY_HEIGHT = _ShortcutItem.ENTRY_HEIGHT\
 local PADDING = _ShortcutItem.PADDING\
-local ENTRY_COUNT = 5\
+local ENTRY_COUNT = 6\
 local function Shortcuts()\
 \9local store = useAppStore()\
 \9local dispatch = useAppDispatch()\
@@ -9237,13 +9241,23 @@ local function Shortcuts()\
 \9\9\9\9}),\
 \9\9\9\9Roact.createElement(ShortcutItem, {\
 \9\9\9\9\9onActivate = function()\
+\9\9\9\9\9\9dispatch(setJobActive(\"freecam\", not store:getState().jobs.freecam.active))\
+\9\9\9\9\9end,\
+\9\9\9\9\9onSelect = setSelectedItem,\
+\9\9\9\9\9selectedItem = selectedItem,\
+\9\9\9\9\9action = \"setFreecam\",\
+\9\9\9\9\9description = \"Set freecam\",\
+\9\9\9\9\9index = 2,\
+\9\9\9\9}),\
+\9\9\9\9Roact.createElement(ShortcutItem, {\
+\9\9\9\9\9onActivate = function()\
 \9\9\9\9\9\9dispatch(setJobActive(\"ghost\", not store:getState().jobs.ghost.active))\
 \9\9\9\9\9end,\
 \9\9\9\9\9onSelect = setSelectedItem,\
 \9\9\9\9\9selectedItem = selectedItem,\
 \9\9\9\9\9action = \"setGhost\",\
 \9\9\9\9\9description = \"Set ghost mode\",\
-\9\9\9\9\9index = 2,\
+\9\9\9\9\9index = 3,\
 \9\9\9\9}),\
 \9\9\9\9Roact.createElement(ShortcutItem, {\
 \9\9\9\9\9onActivate = function()\
@@ -9253,7 +9267,7 @@ local function Shortcuts()\
 \9\9\9\9\9selectedItem = selectedItem,\
 \9\9\9\9\9action = \"setSpeed\",\
 \9\9\9\9\9description = \"Set walk speed\",\
-\9\9\9\9\9index = 3,\
+\9\9\9\9\9index = 4,\
 \9\9\9\9}),\
 \9\9\9\9Roact.createElement(ShortcutItem, {\
 \9\9\9\9\9onActivate = function()\
@@ -9263,7 +9277,7 @@ local function Shortcuts()\
 \9\9\9\9\9selectedItem = selectedItem,\
 \9\9\9\9\9action = \"setJumpHeight\",\
 \9\9\9\9\9description = \"Set jump height\",\
-\9\9\9\9\9index = 4,\
+\9\9\9\9\9index = 5,\
 \9\9\9\9}),\
 \9\9\9}),\
 \9\9}),\
