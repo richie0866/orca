@@ -2,16 +2,16 @@ import Roact from "@rbxts/roact";
 import { Players, Workspace } from "@rbxts/services";
 import { pure } from "@rbxts/roact-hooked";
 
-import SessionLabel from "./SessionLabel";
+import SessionCaption from "./components/SessionCaption";
 import { IS_RUNNING } from "constants/env";
 import { useClient } from "hooks/use-client";
 
-function SessionInfo() {
+function SessionCaptions() {
 	const client = useClient();
 
 	return (
 		<>
-			<SessionLabel
+			<SessionCaption
 				icon="rbxassetid://9550703910"
 				description="Played for"
 				getText={() => {
@@ -32,7 +32,7 @@ function SessionInfo() {
 				position={62}
 			/>
 
-			<SessionLabel
+			<SessionCaption
 				icon="rbxassetid://9550704015"
 				description="Network ping"
 				getText={() => `${math.round(client.GetNetworkPing() * 1000)} ms`}
@@ -40,7 +40,7 @@ function SessionInfo() {
 				position={102}
 			/>
 
-			<SessionLabel
+			<SessionCaption
 				icon="rbxassetid://9550704131"
 				description="People nearby"
 				getText={() => {
@@ -64,4 +64,4 @@ function SessionInfo() {
 	);
 }
 
-export default pure(SessionInfo);
+export default pure(SessionCaptions);

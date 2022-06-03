@@ -5,7 +5,7 @@ import { autosave } from "./autosave";
 
 let rootStore: Rodux.Store<RootState, Rodux.Action>;
 
-export function configureStore() {
+export function configureStore(): Rodux.Store<RootState, Rodux.Action> {
 	return rootStore || (rootStore = createStore());
 }
 
@@ -15,8 +15,8 @@ function createStore() {
 	}
 
 	return new Rodux.Store(rootReducer, {
-		settings: autosave("settings", () => rootStore.getState()),
-		shortcuts: autosave("shortcuts", () => rootStore.getState()),
-		themes: autosave("themes", () => rootStore.getState()),
+		settings: autosave("settings", configureStore),
+		shortcuts: autosave("shortcuts", configureStore),
+		themes: autosave("themes", configureStore),
 	});
 }

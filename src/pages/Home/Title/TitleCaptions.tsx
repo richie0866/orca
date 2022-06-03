@@ -1,34 +1,35 @@
 import Roact from "@rbxts/roact";
 
-import TitleText from "./components/TitleText";
+import TitleCaption from "./components/TitleCaption";
 import { CARD_INNER_MARGIN } from "constants/app";
-import { CardHeader } from "components/Card";
 import { VERSION_TAG } from "constants/env";
 
-export default function TitleContent() {
+export default function TitleCaptions() {
 	return (
 		<>
-			<CardHeader text="Orca" getColor={(theme) => theme.title.foreground} page="Home" />
-			<TitleText
-				id={1}
+			<TitleCaption
+				order={1}
 				text={VERSION_TAG}
 				transparency={0.2}
 				position={new UDim2(0, CARD_INNER_MARGIN, 0, CARD_INNER_MARGIN + 40)}
 			/>
-			<TitleText
-				id={2}
+
+			<TitleCaption
+				order={2}
 				text="By 0866"
 				transparency={0.2}
 				position={new UDim2(0, CARD_INNER_MARGIN, 0, CARD_INNER_MARGIN + 63)}
 			/>
-			<TitleText
-				id={3}
+
+			<TitleCaption
+				order={3}
 				text="New rewrite!"
 				transparency={0.2}
 				position={new UDim2(0, CARD_INNER_MARGIN, 0, CARD_INNER_MARGIN + 86)}
 			/>
-			<TitleText
-				id={4}
+
+			<TitleCaption
+				order={4}
 				text="richie0866/orca"
 				alignment="Bottom"
 				position={new UDim2(0, CARD_INNER_MARGIN, 1, -CARD_INNER_MARGIN)}

@@ -6,7 +6,7 @@ import { setInterval, useSpring } from "@rbxts/roact-hooked-plus";
 import Dropshadow, { DropshadowBlur } from "components/Dropshadow";
 import Gradient from "components/Gradient";
 import InnerStroke from "components/InnerStroke";
-import Screen from "components/Screen";
+import Root from "components/Root";
 
 import { HEIGHT, MAX_WIDTH, MIN_WIDTH, PADDING, POSITION_CLOSED, POSITION_OPENED } from "./constants";
 import { asColor, asTransparency } from "reducers/themes";
@@ -38,7 +38,7 @@ function Clock() {
 	}, []);
 
 	return (
-		<Screen>
+		<Root>
 			<uipadding PaddingBottom={useMargin().map((m) => new UDim(0, m))} />
 
 			<frame
@@ -105,7 +105,7 @@ function Clock() {
 					{style.stroke && <InnerStroke color={style.stroke} radius={style.cornerRadius} />}
 				</frame>
 			</frame>
-		</Screen>
+		</Root>
 	);
 }
 

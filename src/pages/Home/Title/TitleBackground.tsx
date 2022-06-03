@@ -5,7 +5,7 @@ import ImageParallax from "components/ImageParallax";
 import { useParallax } from "hooks/use-parallax";
 import { useTheme } from "hooks/use-theme";
 
-function TitleArt() {
+function TitleBackground() {
 	const cornerRadius = useTheme((theme) => theme.title.cornerRadius);
 	const offset = useParallax();
 
@@ -34,4 +34,4 @@ function TitleArt() {
 	);
 }
 
-export default pure(TitleArt);
+export default pure(TitleBackground);

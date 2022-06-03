@@ -5,23 +5,20 @@ import { useDelayedEffect, useSingleMotor } from "@rbxts/roact-hooked-plus";
 
 import Gradient from "components/Gradient";
 import { CARD_INNER_MARGIN } from "constants/app";
-import { GradientColor, SolidColor, Theme, asColor, asTransparency, multiplyTransparency } from "reducers/themes";
-import { Page } from "reducers/pages";
+import { asColor, asTransparency, multiplyTransparency } from "reducers/themes";
+import { useCardContext } from "./use-card-context";
 import { usePageOpen } from "hooks/use-page-open";
-import { useTheme } from "hooks/use-theme";
 
 interface Props {
-	getColor: (theme: Theme) => SolidColor | GradientColor;
 	text: string;
-	page?: keyof typeof Page;
 	delayMs?: number;
 }
 
-const TITLE_POSITION = new UDim2(0, CARD_INNER_MARGIN, 0, CARD_INNER_MARGIN);
-const TITLE_POSITION_HIDDEN = new UDim2(0, -CARD_INNER_MARGIN, 0, CARD_INNER_MARGIN);
+const POSITION = new UDim2(0, CARD_INNER_MARGIN, 0, CARD_INNER_MARGIN);
+const POSITION_HIDDEN = new UDim2(0, -CARD_INNER_MARGIN, 0, CARD_INNER_MARGIN);
 
-function CardHeader({ getColor, text, page, delayMs = 100 }: Props) {
-	const color = useTheme(getColor);
+function CardCaption({ text, delayMs = 100 }: Props) {
+	const { style, page } = useCardContext();
 	const visible = usePageOpen(page);
 
 	const [visibility, setGoal] = useSingleMotor(visible ? 1 : 0);
@@ -38,25 +35,21 @@ function CardHeader({ getColor, text, page, delayMs = 100 }: Props) {
 			Text={text}
 			Font="GothamBlack"
 			TextSize={19}
-			TextColor3={asColor(color)}
+			TextColor3={asColor(style.foreground)}
 			TextTransparency={
 				page !== undefined
-					? visibility.map((n) => multiplyTransparency(asTransparency(color), 1 - n))
-					: asTransparency(color)
+					? visibility.map((n) => multiplyTransparency(asTransparency(style.foreground), 1 - n))
+					: asTransparency(style.foreground)
 			}
 			TextXAlignment="Left"
 			TextYAlignment="Top"
 			Size={new UDim2(1, 0, 0, 20)}
-			Position={
-				page !== undefined
-					? visibility.map((n) => TITLE_POSITION_HIDDEN.Lerp(TITLE_POSITION, n))
-					: TITLE_POSITION
-			}
+			Position={page !== undefined ? visibility.map((n) => POSITION_HIDDEN.Lerp(POSITION, n)) : POSITION}
 			BackgroundTransparency={1}
 		>
-			<Gradient color={color} />
+			<Gradient color={style.foreground} />
 		</textlabel>
 	);
 }
 
-export default pure(CardHeader);
+export default pure(CardCaption);

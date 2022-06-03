@@ -11,14 +11,14 @@ const DELAY = 60;
 const DELAY_START = 200;
 
 interface Props {
-	id: number;
+	order: number;
 	text: string;
 	transparency?: number;
 	alignment?: Roact.InferEnumNames<Enum.TextYAlignment>;
 	position: UDim2;
 }
 
-function TitleText({ id, text, position, transparency = 0, alignment = "Top" }: Props) {
+function TitleCaption({ order, text, position, transparency = 0, alignment = "Top" }: Props) {
 	const style = useTheme((theme) => theme.title);
 	const visible = usePageOpen("Home");
 
@@ -27,7 +27,7 @@ function TitleText({ id, text, position, transparency = 0, alignment = "Top" }: 
 		() => {
 			setGoal(new Spring(visible ? 1 : 0, { frequency: 3 }));
 		},
-		visible ? DELAY_START + DELAY * id : 0,
+		visible ? DELAY_START + DELAY * order : 0,
 		[visible],
 	);
 
@@ -50,4 +50,4 @@ function TitleText({ id, text, position, transparency = 0, alignment = "Top" }: 
 	);
 }
 
-export default pure(TitleText);
+export default pure(TitleCaption);

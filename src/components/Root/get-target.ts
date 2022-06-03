@@ -1,14 +1,14 @@
 import { Players } from "@rbxts/services";
 
-function canMountToCoreGui() {
+function hasCoreAccess() {
 	return opcall(() => game.GetService("CoreGui").Name).success;
 }
 
-export function getMountTarget() {
+export function getTarget() {
 	if (gethui) {
 		return gethui();
 	}
-	if (canMountToCoreGui()) {
+	if (hasCoreAccess()) {
 		return game.GetService("CoreGui");
 	}
 	return Players.LocalPlayer.WaitForChild("PlayerGui");

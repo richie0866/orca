@@ -1,2 +1,5 @@
-export { default } from "./Card";
-export { default as CardHeader } from "./CardHeader";
+import Card from "./Card";
+import CardBody from "./CardBody";
+import CardCaption from "./CardCaption";
+
+export default { Root: Card, Body: CardBody, Caption: CardCaption };

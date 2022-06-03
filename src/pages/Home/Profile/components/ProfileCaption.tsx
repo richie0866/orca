@@ -15,7 +15,7 @@ interface Props {
 	position: UDim2;
 }
 
-function ProfileInfo({ index, color, text, enabled, size, position }: Props) {
+function ProfileCaption({ index, color, text, enabled, size, position }: Props) {
 	const visible = usePageOpen("Home");
 
 	const [visibility, setVisibility] = useSingleMotor(enabled && visible ? 1 : 0);
@@ -45,4 +45,4 @@ function ProfileInfo({ index, color, text, enabled, size, position }: Props) {
 	);
 }
 
-export default pure(ProfileInfo);
+export default pure(ProfileCaption);

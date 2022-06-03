@@ -5,13 +5,15 @@ import { CARD_HEIGHT_25, CARD_HEIGHT_50, CARD_MARGIN, CARD_WIDTH } from "constan
 
 export default function Config() {
 	return (
-		<Card
+		<Card.Root
+			name="config"
 			page="Settings"
+			order={0}
 			align="left"
-			index={0}
-			getStyle={(theme) => theme.config}
 			size={new UDim2(0, CARD_WIDTH, 0, CARD_HEIGHT_25)}
 			position={new UDim2(0, 0, 1, -CARD_HEIGHT_50 - CARD_MARGIN)}
-		/>
+		>
+			<Card.Body />
+		</Card.Root>
 	);
 }

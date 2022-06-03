@@ -5,13 +5,15 @@ import { CARD_HEIGHT_50, CARD_MARGIN, CARD_WIDTH } from "constants/app";
 
 export default function Themes() {
 	return (
-		<Card
-			index={2}
+		<Card.Root
+			name="themes"
 			page="Settings"
+			order={2}
 			align="left"
-			getStyle={(theme) => theme.themes}
 			size={new UDim2(0, CARD_WIDTH, 0, CARD_HEIGHT_50)}
 			position={new UDim2(0, CARD_WIDTH + CARD_MARGIN, 1, 0)}
-		/>
+		>
+			<Card.Body />
+		</Card.Root>
 	);
 }

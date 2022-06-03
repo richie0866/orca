@@ -1,7 +1,7 @@
 import Roact from "@rbxts/roact";
 import { pure } from "@rbxts/roact-hooked";
 
-import Screen from "components/Screen";
+import Root from "components/Root";
 import { HEIGHT as NAVBAR_HEIGHT } from "features/Navbar";
 import { SCREEN_MARGIN } from "constants/app";
 import { useMargin } from "hooks/use-margin";
@@ -12,7 +12,7 @@ function Page(props: Roact.PropsWithChildren) {
 	const margin = useMargin();
 
 	return (
-		<Screen>
+		<Root>
 			<frame
 				Size={new UDim2(1, -SCREEN_MARGIN * 2, 1, -SCREEN_MARGIN - NAVBAR_HEIGHT)}
 				Position={new UDim2(0, SCREEN_MARGIN, 0, SCREEN_MARGIN)}
@@ -31,7 +31,7 @@ function Page(props: Roact.PropsWithChildren) {
 
 				<uipadding PaddingBottom={margin.map((m) => new UDim(0, m * 2))} />
 			</frame>
-		</Screen>
+		</Root>
 	);
 }
 

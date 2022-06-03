@@ -1,7 +1,7 @@
 import Roact from "@rbxts/roact";
 import { pure, useMemo } from "@rbxts/roact-hooked";
 
-import ProfileInfo from "./components/ProfileInfo";
+import ProfileCaption from "./components/ProfileCaption";
 import { CARD_INNER_MARGIN } from "constants/app";
 import { asColor, asTransparency, multiplyTransparency } from "reducers/themes";
 import { useClient } from "hooks/use-client";
@@ -9,7 +9,7 @@ import { useFriends } from "hooks/use-friends";
 import { useScale } from "hooks/use-scale";
 import { useTheme } from "hooks/use-theme";
 
-function ProfileActivity() {
+function ProfileCaptions() {
 	const client = useClient();
 	const scale = useScale();
 	const color = useTheme((theme) => theme.profile.foreground);
@@ -45,7 +45,7 @@ function ProfileActivity() {
 			</frame>
 
 			{/* Player info */}
-			<ProfileInfo
+			<ProfileCaption
 				index={0}
 				color={color}
 				text={`Joined\n${joinDate}`}
@@ -53,7 +53,7 @@ function ProfileActivity() {
 				size={new UDim2(0, 86, 0, 48)}
 				position={new UDim2(0, CARD_INNER_MARGIN, 0, 300)}
 			/>
-			<ProfileInfo
+			<ProfileCaption
 				index={1}
 				color={color}
 				text={friendsOnline === 1 ? "1 friend\nonline" : `${friendsOnline} friends\nonline`}
@@ -61,7 +61,7 @@ function ProfileActivity() {
 				size={new UDim2(0, 86, 0, 48)}
 				position={new UDim2(0, CARD_INNER_MARGIN + 98, 0, 300)}
 			/>
-			<ProfileInfo
+			<ProfileCaption
 				index={2}
 				color={color}
 				text={friendsInGame === 1 ? "1 friend\nin-game" : `${friendsInGame} friends\nin-game`}
@@ -73,4 +73,4 @@ function ProfileActivity() {
 	);
 }
 
-export default pure(ProfileActivity);
+export default pure(ProfileCaptions);

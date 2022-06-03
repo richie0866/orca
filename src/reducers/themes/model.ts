@@ -2,6 +2,8 @@ export interface ThemesState {
 	currentTheme: string;
 }
 
+export type FilterCardThemes = Pick<Theme, { [K in keyof Theme]: Theme[K] extends CardStyle ? K : never }[keyof Theme]>;
+
 export interface GradientColor {
 	color?: ColorSequence;
 	transparency?: NumberSequence;

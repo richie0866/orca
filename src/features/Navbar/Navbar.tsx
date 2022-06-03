@@ -5,10 +5,10 @@ import { useSpring } from "@rbxts/roact-hooked-plus";
 import NavbarBody from "./NavbarBody";
 import NavbarShadow from "./NavbarShadow";
 import NavbarTabs from "./NavbarTabs";
-import Screen from "components/Screen";
+import Root from "components/Root";
 
 import { HEIGHT, POSITION_CLOSED, POSITION_OPENED, WIDTH } from "./constants";
-import { selectCurrentPage } from "reducers/pages";
+import { pageNumbers, selectCurrentPage } from "reducers/pages";
 import { useMargin } from "hooks/use-margin";
 import { usePagesVisible } from "hooks/use-page-open";
 import { useRootSelector } from "hooks/use-root-store";
@@ -20,11 +20,11 @@ function Navbar() {
 	const currentPage = useRootSelector(selectCurrentPage);
 	const visible = usePagesVisible();
 
-	const pageNumber = useSpring(currentPage, { frequency: 3.9, dampingRatio: 0.76 });
+	const pageNumber = useSpring(pageNumbers[currentPage], { frequency: 3.9, dampingRatio: 0.76 });
 	const navbarVisibility = useSpring(visible ? 1 : 0, {});
 
 	return (
-		<Screen>
+		<Root>
 			<frame
 				Size={new UDim2(0, WIDTH, 0, HEIGHT)}
 				Position={navbarVisibility.map((n) => POSITION_CLOSED.Lerp(POSITION_OPENED, n))}
@@ -46,7 +46,7 @@ function Navbar() {
 			</frame>
 
 			<uipadding PaddingBottom={useMargin().map((m) => new UDim(0, m))} />
-		</Screen>
+		</Root>
 	);
 }
 

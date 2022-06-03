@@ -19,7 +19,7 @@ interface Props {
 
 const getOffset = (visibility: number) => math.floor((1 - visibility) * CARD_INNER_MARGIN * 2);
 
-function SessionLabel({ icon, order, position, description, getText }: Props) {
+function SessionCaption({ icon, order, position, description, getText }: Props) {
 	const foreground = useTheme((theme) => theme.session.foreground);
 	const visible = usePageOpen("Home");
 
@@ -87,4 +87,4 @@ function SessionLabel({ icon, order, position, description, getText }: Props) {
 	);
 }
 
-export default pure(SessionLabel);
+export default pure(SessionCaption);

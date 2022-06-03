@@ -1,10 +1,14 @@
+import Rodux from "@rbxts/rodux";
 import { HttpService } from "@rbxts/services";
 import { setInterval } from "@rbxts/roact-hooked-plus";
 
 import { DATA_DIRECTORY } from "constants/env";
 import { RootState } from "reducers";
 
-export function autosave<T extends keyof RootState>(key: T, getState: () => RootState): RootState[T] | undefined {
+export function autosave<T extends keyof RootState>(
+	key: T,
+	configureStore: () => Rodux.Store<RootState>,
+): RootState[T] | undefined {
 	try {
 		// Create orca state folder
 		if (makefolder && !isfolder(DATA_DIRECTORY)) {
@@ -19,7 +23,7 @@ export function autosave<T extends keyof RootState>(key: T, getState: () => Root
 		let prevState: RootState[T] | undefined;
 
 		setInterval(() => {
-			const newState = getState()[key];
+			const newState = configureStore().getState()[key];
 
 			if (prevState !== newState) {
 				prevState = newState;
