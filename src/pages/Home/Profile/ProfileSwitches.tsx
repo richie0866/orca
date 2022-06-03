@@ -14,26 +14,32 @@ export default function ProfileSwitches() {
 	return (
 		<frame Size={new UDim2(1, 0, 1, 0)} BackgroundTransparency={1} ClipsDescendants>
 			<ProfileSwitch
-				index={0}
-				key="respawn"
+				order={0}
+				name="respawn"
+				tooltip="🔃 Respawn at your current position"
+				tooltipAlignment="left"
 				icon="rbxassetid://8992253511"
 				position={new UDim2(0, switchOffsets[0], 0, 568)}
 			/>
 			<ProfileSwitch
-				index={1}
-				key="ghostmode"
+				order={1}
+				name="ghostmode"
+				tooltip="👻 Spawns a ghost character\n🎯 Tap again to move to it"
 				icon="rbxassetid://8992253792"
 				position={new UDim2(0, switchOffsets[1], 0, 568)}
 			/>
 			<ProfileSwitch
-				index={2}
-				key="godmode"
+				order={2}
+				name="godmode"
+				tooltip="💀 Enable godmode\n⚠️ May break reloading!"
 				icon="rbxassetid://8992253678"
 				position={new UDim2(0, switchOffsets[2], 0, 568)}
 			/>
 			<ProfileSwitch
-				index={3}
-				key="freecam"
+				order={3}
+				name="freecam"
+				tooltip="📷 Enable freecam"
+				tooltipAlignment="right"
 				icon="rbxassetid://8992253933"
 				position={new UDim2(0, switchOffsets[3], 0, 568)}
 			/>

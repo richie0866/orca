@@ -5,6 +5,7 @@ import { useDelayedEffect, useSingleMotor } from "@rbxts/roact-hooked-plus";
 
 import Button from "components/Button";
 import Slider from "components/Slider";
+import Tooltip from "components/Tooltip";
 import { DropshadowBlur } from "components/Dropshadow";
 import { ProfileState, selectSliderEnabled, toggleProfileSlider, updateProfileSlider } from "reducers/profile";
 import { usePageOpen } from "hooks/use-page-open";
@@ -19,29 +20,42 @@ const SWITCH_HEIGHT = 50;
 const SWITCH_PADDING = 14;
 
 interface Props extends Roact.PropsWithChildren {
-	index: number;
-	key: keyof ProfileState["sliders"];
+	order: number;
+	name: keyof ProfileState["sliders"];
 	text: string;
+	tooltip: string;
+	tooltipAlignment?: "left" | "right" | "center";
 	units: string;
 	min: number;
 	max: number;
 	position: UDim2;
 }
 
-function ProfileSlider({ index, key, text, units, min, max, position, [Roact.Children]: children }: Props) {
+function ProfileSlider({
+	order,
+	name,
+	text,
+	tooltip,
+	tooltipAlignment,
+	units,
+	min,
+	max,
+	position,
+	[Roact.Children]: children,
+}: Props) {
 	const store = useRootStore();
 	const dispatch = useRootDispatch();
 
 	const visible = usePageOpen("Home");
 	const styles = useTheme((theme) => theme.profile);
-	const enabled = useRootSelector((state) => selectSliderEnabled(state, key));
+	const enabled = useRootSelector((state) => selectSliderEnabled(state, name));
 
 	const [visibility, setGoal] = useSingleMotor(visible ? 1 : 0);
 	useDelayedEffect(
 		() => {
 			setGoal(new Spring(visible ? 1 : 0, { frequency: 5 }));
 		},
-		visible ? 200 + index * 50 : 200,
+		visible ? 200 + order * 50 : 200,
 		[visible],
 	);
 
@@ -54,9 +68,9 @@ function ProfileSlider({ index, key, text, units, min, max, position, [Roact.Chi
 	return (
 		<>
 			<Button.Root
-				onClick={() => dispatch(toggleProfileSlider(key, !enabled))}
+				onClick={() => dispatch(toggleProfileSlider(name, !enabled))}
 				active={enabled}
-				style={styles.switches[key]}
+				style={styles.switches[name]}
 				size={new UDim2(0, SWITCH_WIDTH, 0, SWITCH_HEIGHT)}
 				position={visibility.map((n) => switchPositionHidden.Lerp(switchPosition, n))}
 			>
@@ -69,15 +83,17 @@ function ProfileSlider({ index, key, text, units, min, max, position, [Roact.Chi
 				<Button.Body />
 				<Button.Text text={text} textSize={15} textFont="GothamBold" position={new UDim2(0.5, 0, 0.5, 1)} />
 
+				<Tooltip caption={tooltip} style={styles.switches[name]} alignment={tooltipAlignment} />
+
 				{children}
 			</Button.Root>
 
 			<Slider.Root
-				onChange={(value) => dispatch(updateProfileSlider(key, value))}
+				onChange={(value) => dispatch(updateProfileSlider(name, value))}
 				min={min}
 				max={max}
-				defaultValue={useMemo(() => store.getState().profile.sliders[key].value, [])}
-				style={styles.sliders[key]}
+				defaultValue={useMemo(() => store.getState().profile.sliders[name].value, [])}
+				style={styles.sliders[name]}
 				size={new UDim2(0, SLIDER_WIDTH, 0, SLIDER_HEIGHT)}
 				position={visibility.map((n) => sliderPositionHidden.Lerp(sliderPosition, n))}
 			>

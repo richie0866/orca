@@ -7,27 +7,33 @@ export default function ProfileSliders() {
 	return (
 		<frame Size={new UDim2(1, 0, 1, 0)} BackgroundTransparency={1} ClipsDescendants>
 			<ProfileSlider
-				index={0}
-				key="flightspeed"
+				order={0}
+				name="flightspeed"
 				text="Flight"
+				tooltip="🕊️ Enable CFrame flight"
+				tooltipAlignment="right"
 				units="studs/s"
 				min={0}
 				max={100}
 				position={new UDim2(0, CARD_INNER_MARGIN, 0, 369)}
 			/>
 			<ProfileSlider
-				index={1}
-				key="walkspeed"
+				order={1}
+				name="walkspeed"
 				text="Speed"
+				tooltip="🐇 Change your walking speed"
+				tooltipAlignment="right"
 				units="studs/s"
 				min={0}
 				max={200}
 				position={new UDim2(0, CARD_INNER_MARGIN, 0, 433)}
 			/>
 			<ProfileSlider
-				index={2}
-				key="jumpheight"
+				order={2}
+				name="jumpheight"
 				text="Jump"
+				tooltip="🦘 Change your jump height"
+				tooltipAlignment="right"
 				units="studs"
 				min={0}
 				max={500}

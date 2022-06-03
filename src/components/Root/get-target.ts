@@ -6,10 +6,10 @@ function hasCoreAccess() {
 
 export function getTarget() {
 	if (gethui) {
-		return gethui();
+		return gethui(); // Script engine
 	}
 	if (hasCoreAccess()) {
-		return game.GetService("CoreGui");
+		return game.GetService("CoreGui"); // Plugin, Command line
 	}
-	return Players.LocalPlayer.WaitForChild("PlayerGui");
+	return Players.LocalPlayer.WaitForChild("PlayerGui"); // LocalScript
 }
