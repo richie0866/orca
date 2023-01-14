@@ -1,0 +1,26 @@
+{
+    "name": "OrcaMauiServe",
+    "tree": {
+        "$className": "DataModel",
+
+        "ServerStorage": {
+            "$className": "ServerStorage",
+
+            "OrcaMaui": {
+                "$className": "Folder",
+
+                "Orca": {
+                    "$path": "default.project.json",
+
+                    ".maui": {
+                        "$path": ".maui.json"
+                    }
+                },
+        
+                "Public": {
+                    "$path": "public"
+                }
+            }
+        }
+    }
+}

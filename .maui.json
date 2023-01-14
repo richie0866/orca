@@ -1,0 +1,11 @@
+{
+    "FormatVersion": 1,
+
+    "Output": {
+        "Directory": "return script.Parent.Parent.Public",
+        "ScriptName": "latest-maui",
+
+        "MinifyTable": true,
+        "UseMinifiedLoader": true
+    }
+}
